@@ -29,7 +29,7 @@ export default function RegisterPage() {
         return;
       }
 
-      document.cookie = `token=${data.token}; path=/; max-age=604800`;
+      localStorage.setItem("token", data.token);
       router.push("/dashboard");
     } catch (err) {
       setError("Something went wrong");

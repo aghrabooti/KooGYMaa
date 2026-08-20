@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const token = document.cookie.split("; ").find(row => row.startsWith("token="))?.split("=")[1];
+    const token = localStorage.getItem("token");
     if (!token) {
       router.push("/login");
       return;
@@ -17,7 +17,7 @@ export default function DashboardPage() {
     try {
       const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
       const payload = JSON.parse(atob(base64));
-      setUser({ name: "User", role: payload.role });
+      setRole(payload.role);
     } catch (err) {
       router.push("/login");
     }
@@ -25,11 +25,11 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
-    document.cookie = "token=; path=/; max-age=0";
+    localStorage.removeItem("token");
     router.push("/login");
   };
 
-  if (!user) return <div className="p-8">Loading...</div>;
+  if (!role) return <div className="p-8">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -45,10 +45,10 @@ export default function DashboardPage() {
 
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
         <h2 className="text-xl font-semibold mb-2">Welcome!</h2>
-        <p className="text-gray-600">Role: {user.role}</p>
+        <p className="text-gray-600">Role: {role}</p>
       </div>
 
-      {user.role === "ADMIN" && (
+      {role === "ADMIN" && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a href="/admin/gyms" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg">
             <h3 className="text-lg font-semibold">Manage Gyms</h3>
@@ -65,7 +65,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {user.role === "TRAINER" && (
+      {role === "TRAINER" && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a href="/trainer/students" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg">
             <h3 className="text-lg font-semibold">My Students</h3>
@@ -82,7 +82,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {user.role === "USER" && (
+      {role === "USER" && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <a href="/user/gyms" className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg">
             <h3 className="text-lg font-semibold">Browse Gyms</h3>
