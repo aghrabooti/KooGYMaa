@@ -1,90 +1,141 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AuthShell } from "@/components/auth-shell";
+import { Icon } from "@/components/icon";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("USER");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
-      const res = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password, role }),
       });
+      const data = await response.json();
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error);
+      if (!response.ok) {
+        setError(data.error || "We couldn’t create your account. Please try again.");
         return;
       }
 
-      document.cookie = `token=${data.token}; path=/; max-age=604800`;
-      router.push("/dashboard");
-    } catch (err) {
-      setError("Something went wrong");
+      if (data.token) {
+        document.cookie = `token=${data.token}; path=/; max-age=604800; SameSite=Lax`;
+        router.push("/dashboard");
+      } else {
+        router.push("/login");
+      }
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Check your connection and try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">Register</h1>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="w-full p-2 border rounded"
-          >
-            <option value="USER">User</option>
-            <option value="TRAINER">Trainer</option>
-          </select>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          >
-            Register
-          </button>
-        </form>
-        <p className="mt-4 text-center">
-          Already have an account? <a href="/login" className="text-blue-500">Login</a>
-        </p>
-      </div>
-    </div>
+    <AuthShell
+      eyebrow="Start your journey"
+      title="Create your account"
+      description="Join your gym community and put every goal within reach."
+    >
+      {error && <div className="form-alert" role="alert">{error}</div>}
+      <form className="auth-form auth-form--register" onSubmit={handleSubmit}>
+        <label className="field">
+          <span>Full name</span>
+          <div className="field__control">
+            <Icon name="user" size={19} />
+            <input
+              autoComplete="name"
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Your name"
+              required
+              type="text"
+              value={name}
+            />
+          </div>
+        </label>
+
+        <label className="field">
+          <span>Email address</span>
+          <div className="field__control">
+            <Icon name="mail" size={19} />
+            <input
+              autoComplete="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              required
+              type="email"
+              value={email}
+            />
+          </div>
+        </label>
+
+        <label className="field">
+          <span>Password</span>
+          <div className="field__control">
+            <Icon name="lock" size={19} />
+            <input
+              autoComplete="new-password"
+              minLength={6}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="At least 6 characters"
+              required
+              type={showPassword ? "text" : "password"}
+              value={password}
+            />
+            <button
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="field__action"
+              onClick={() => setShowPassword((visible) => !visible)}
+              type="button"
+            >
+              <Icon name={showPassword ? "eye-off" : "eye"} size={19} />
+            </button>
+          </div>
+        </label>
+
+        <fieldset className="role-picker">
+          <legend>I&apos;m joining as</legend>
+          <div>
+            <label className={role === "USER" ? "active" : ""}>
+              <input checked={role === "USER"} name="role" onChange={() => setRole("USER")} type="radio" value="USER" />
+              <span><Icon name="flame" size={20} /></span>
+              <strong>Member</strong>
+              <small>Train and track</small>
+            </label>
+            <label className={role === "TRAINER" ? "active" : ""}>
+              <input checked={role === "TRAINER"} name="role" onChange={() => setRole("TRAINER")} type="radio" value="TRAINER" />
+              <span><Icon name="dumbbell" size={20} /></span>
+              <strong>Trainer</strong>
+              <small>Coach and guide</small>
+            </label>
+          </div>
+        </fieldset>
+
+        <button className="auth-submit" disabled={isLoading} type="submit">
+          {isLoading ? <span className="button-loader" /> : <>Create my account <Icon name="arrow" size={18} /></>}
+        </button>
+      </form>
+
+      <p className="auth-switch">
+        Already have an account? <Link href="/login">Log in</Link>
+      </p>
+    </AuthShell>
   );
 }
