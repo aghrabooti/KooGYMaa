@@ -14,8 +14,13 @@ export default function DashboardPage() {
       return;
     }
 
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    setUser({ name: "User", role: payload.role });
+    try {
+      const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+      const payload = JSON.parse(atob(base64));
+      setUser({ name: "User", role: payload.role });
+    } catch (err) {
+      router.push("/login");
+    }
   }, [router]);
 
   const handleLogout = async () => {
