@@ -5,8 +5,12 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const databaseUrl =
-  process.env.LIBSQL_DATABASE_URL || process.env.DATABASE_URL || "file:./dev.db";
+const databaseUrl = (
+  process.env.LIBSQL_DATABASE_URL ||
+  process.env.TURSO_DATABASE_URL ||
+  process.env.DATABASE_URL ||
+  "file:./dev.db"
+).trim();
 
 // Detect configurations that can never serve queries and describe the fix with
 // an actionable message. These do NOT throw at module load: Next.js imports
@@ -56,7 +60,9 @@ function createPrismaClient(): PrismaClient {
   const adapter = new PrismaLibSql({
     url: databaseUrl,
     authToken:
-      process.env.LIBSQL_DATABASE_AUTH_TOKEN || process.env.DATABASE_AUTH_TOKEN,
+      process.env.LIBSQL_DATABASE_AUTH_TOKEN ||
+      process.env.TURSO_AUTH_TOKEN ||
+      process.env.DATABASE_AUTH_TOKEN,
   });
 
   return globalForPrisma.prisma ?? new PrismaClient({ adapter });
