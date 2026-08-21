@@ -75,7 +75,7 @@ export default function LoginPage() {
             <Icon name="lock" size={19} />
             <input
               autoComplete="current-password"
-              minLength={6}
+              maxLength={72}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
               required

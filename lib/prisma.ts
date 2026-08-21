@@ -18,6 +18,17 @@ if (databaseUrl.startsWith("postgres")) {
   );
 }
 
+// Serverless filesystems are read-only, so a file: URL on Vercel means every
+// login/register write fails with a confusing 500. Fail fast with guidance.
+if (process.env.VERCEL === "1" && databaseUrl.startsWith("file:")) {
+  throw new Error(
+    "KooGYMaa cannot use a local SQLite file on Vercel (read-only filesystem). " +
+      "Create a hosted libSQL database (Turso), apply prisma/turso-demo-setup.sql, " +
+      "then set LIBSQL_DATABASE_URL (libsql://...), LIBSQL_DATABASE_AUTH_TOKEN, and " +
+      "JWT_SECRET in Vercel → Settings → Environment Variables. See docs/deployment.md."
+  );
+}
+
 const adapter = new PrismaLibSql({
   url: databaseUrl,
   authToken:

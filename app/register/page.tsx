@@ -6,6 +6,12 @@ import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/auth-shell";
 import { Icon } from "@/components/icon";
 
+// Must match validatePassword in @/lib/auth-validation. Written as a normal
+// JS string (not a JSX attribute literal) so `\\d` is escaped exactly once —
+// inside a JSX string literal backslashes are NOT decoded and every extra
+// backslash reaches the browser verbatim, which silently breaks the rule.
+const PASSWORD_PATTERN = "(?=.*[A-Za-z])(?=.*\\d).{8,72}";
+
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -91,7 +97,7 @@ export default function RegisterPage() {
               maxLength={72}
               minLength={8}
               onChange={(event) => setPassword(event.target.value)}
-              pattern="(?=.*[A-Za-z])(?=.*\\d).{8,72}"
+              pattern={PASSWORD_PATTERN}
               placeholder="8+ characters with a letter and number"
               required
               title="Use 8–72 characters with at least one letter and one number"
