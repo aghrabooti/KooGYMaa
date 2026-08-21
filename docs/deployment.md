@@ -125,3 +125,7 @@ Login and registration both return HTTP 500 ("Unable to sign in right now" / "Un
 3. **Auth token** — `DATABASE_AUTH_TOKEN` (or `LIBSQL_DATABASE_AUTH_TOKEN`) must match a token generated for the same hosted database.
 4. **Schema drift** — if the hosted schema was created by hand or from an older file, re-apply `prisma/turso-demo-setup.sql` on a fresh database. `tests/hosted-sql.test.ts` keeps that file provably in sync with the migration chain.
 5. After changing any variable, **redeploy** — serverless functions copy env at boot.
+   Vercel scopes variables per environment: a branch deploy is a *Preview* deployment,
+   so variables set only for *Production* are invisible to it. Enable the database
+   variables for **both Production and Preview** (or a branch deploy renders pages but
+   every database call fails — `/api/health` explains the exact cause).
