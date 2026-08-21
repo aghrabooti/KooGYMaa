@@ -1,23 +1,104 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import "server-only";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-this";
+import bcrypt from "bcryptjs";
+import jwt, { type JwtPayload } from "jsonwebtoken";
+
+export const APP_ROLES = ["ADMIN", "TRAINER", "USER"] as const;
+export type AppRole = (typeof APP_ROLES)[number];
+
+export const SESSION_COOKIE_NAME = "koogymaa_session";
+export const LEGACY_SESSION_COOKIE_NAME = "token";
+export const SHORT_SESSION_SECONDS = 24 * 60 * 60;
+export const LONG_SESSION_SECONDS = 7 * 24 * 60 * 60;
+
+const JWT_ISSUER = "koogymaa";
+const JWT_AUDIENCE = "koogymaa-web";
+const DEVELOPMENT_SECRET = "koogymaa-development-only-secret-change-me";
+const INVALID_PASSWORD_HASH = "$2b$12$yfFuN.vNwQh8E6DzztDN6OeQgKBST37TNgKxagxgIrBIgsRtAwx3K";
+
+type SessionPayload = JwtPayload & {
+  role?: unknown;
+};
+
+export type SessionClaims = {
+  userId: string;
+  role: AppRole;
+};
+
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET?.trim();
+
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("JWT_SECRET must be configured in production.");
+    }
+
+    return DEVELOPMENT_SECRET;
+  }
+
+  if (process.env.NODE_ENV === "production" && secret.length < 32) {
+    throw new Error("JWT_SECRET must contain at least 32 characters in production.");
+  }
+
+  return secret;
+}
+
+export function isAppRole(value: unknown): value is AppRole {
+  return typeof value === "string" && APP_ROLES.includes(value as AppRole);
+}
 
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10);
+  return bcrypt.hash(password, 12);
 }
 
 export async function verifyPassword(password: string, hashed: string): Promise<boolean> {
   return bcrypt.compare(password, hashed);
 }
 
-export function signToken(userId: string, role: string): string {
-  return jwt.sign({ userId, role }, JWT_SECRET, { expiresIn: "7d" });
+export async function verifyPasswordForUser(
+  password: string,
+  passwordHash: string | null | undefined,
+): Promise<boolean> {
+  const isValid = await verifyPassword(password, passwordHash ?? INVALID_PASSWORD_HASH);
+  return Boolean(passwordHash) && isValid;
 }
 
-export function verifyToken(token: string): { userId: string; role: string } | null {
+export function signToken(
+  userId: string,
+  role: AppRole,
+  expiresInSeconds = LONG_SESSION_SECONDS,
+): string {
+  return jwt.sign(
+    { role },
+    getJwtSecret(),
+    {
+      algorithm: "HS256",
+      audience: JWT_AUDIENCE,
+      expiresIn: expiresInSeconds,
+      issuer: JWT_ISSUER,
+      subject: userId,
+    },
+  );
+}
+
+export function verifyToken(token: string | null | undefined): SessionClaims | null {
+  if (!token) return null;
+
+  const secret = getJwtSecret();
+
   try {
-    return jwt.verify(token, JWT_SECRET) as { userId: string; role: string };
+    const payload = jwt.verify(token, secret, {
+      algorithms: ["HS256"],
+      audience: JWT_AUDIENCE,
+      issuer: JWT_ISSUER,
+    }) as SessionPayload;
+
+    if (!payload.sub || !isAppRole(payload.role)) return null;
+
+    return {
+      userId: payload.sub,
+      role: payload.role,
+    };
   } catch {
     return null;
   }

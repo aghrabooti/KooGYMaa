@@ -5,6 +5,8 @@ export type IconName =
   | "bar-chart"
   | "bell"
   | "bolt"
+  | "building"
+  | "credit-card"
   | "calendar"
   | "check"
   | "chevron"
@@ -41,6 +43,8 @@ export function Icon({ name, size = 20, ...props }: IconProps) {
     "bar-chart": <><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-7" /><path d="M22 20H2" /></>,
     bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></>,
     bolt: <path d="m13 2-9 12h8l-1 8 9-12h-8l1-8Z" />,
+    building: <><path d="M4 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17" /><path d="M8 7h4M8 11h4M8 15h4M2 21h20M16 9h3a1 1 0 0 1 1 1v11" /></>,
+    "credit-card": <><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20M6 15h4" /></>,
     calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></>,
     check: <path d="m5 12 4 4L19 6" />,
     chevron: <path d="m9 18 6-6-6-6" />,

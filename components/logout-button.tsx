@@ -13,7 +13,6 @@ export function LogoutButton() {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } finally {
-      document.cookie = "token=; path=/; max-age=0; SameSite=Lax";
       router.push("/login");
       router.refresh();
     }

@@ -1,11 +1,11 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { Icon, type IconName } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
-import { verifyToken } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { requireCurrentUser } from "@/lib/session";
 
 type DashboardRole = "ADMIN" | "TRAINER" | "USER";
 
@@ -78,13 +78,35 @@ function roleLabel(role: DashboardRole) {
   return "Member";
 }
 
+function getInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
+
 export default async function DashboardPage() {
-  const token = (await cookies()).get("token")?.value;
-  const payload = token ? verifyToken(token) : null;
+  const user = await requireCurrentUser();
 
-  if (!payload) redirect("/login");
+  if (user.role === "ADMIN") {
+    const workspace = await prisma.gymStaff.findFirst({
+      where: { userId: user.id, status: "ACTIVE" },
+      select: { gymId: true },
+      orderBy: { joinedAt: "asc" },
+    });
+    redirect(workspace ? `/admin/gyms/${workspace.gymId}` : "/admin/gyms");
+  }
 
-  const role = (payload.role in dashboardData ? payload.role : "USER") as DashboardRole;
+  if (user.role === "TRAINER") {
+    redirect("/trainer");
+  }
+
+  if (user.role === "USER") {
+    redirect("/user");
+  }
+
+  const role = user.role as DashboardRole;
   const data = dashboardData[role];
 
   return (
@@ -131,8 +153,8 @@ export default async function DashboardPage() {
           </label>
           <div className="dashboard-user">
             <button aria-label="Notifications" className="icon-button" type="button"><Icon name="bell" size={20} /><span /></button>
-            <div className="dashboard-user__avatar">KG</div>
-            <div><strong>KooGYMaa</strong><small>{roleLabel(role)}</small></div>
+            <div className="dashboard-user__avatar">{getInitials(user.name)}</div>
+            <div><strong>{user.name}</strong><small>{roleLabel(role)}</small></div>
             <Icon name="chevron" size={15} />
           </div>
         </header>

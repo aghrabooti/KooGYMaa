@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -23,7 +24,8 @@ export default function LoginPage() {
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        credentials: "same-origin",
+        body: JSON.stringify({ email, password, remember }),
       });
       const data = await response.json();
 
@@ -32,7 +34,6 @@ export default function LoginPage() {
         return;
       }
 
-      document.cookie = `token=${data.token}; path=/; max-age=604800; SameSite=Lax`;
       router.push("/dashboard");
       router.refresh();
     } catch {
@@ -93,8 +94,12 @@ export default function LoginPage() {
         </label>
 
         <label className="check-field">
-          <input type="checkbox" />
-          <span>Keep me signed in</span>
+          <input
+            checked={remember}
+            onChange={(event) => setRemember(event.target.checked)}
+            type="checkbox"
+          />
+          <span>Keep me signed in for 7 days</span>
         </label>
 
         <button className="auth-submit" disabled={isLoading} type="submit">

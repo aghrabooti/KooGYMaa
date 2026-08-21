@@ -10,7 +10,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("USER");
+  const [role, setRole] = useState<"USER" | "TRAINER">("USER");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,6 +25,7 @@ export default function RegisterPage() {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({ name, email, password, role }),
       });
       const data = await response.json();
@@ -34,12 +35,7 @@ export default function RegisterPage() {
         return;
       }
 
-      if (data.token) {
-        document.cookie = `token=${data.token}; path=/; max-age=604800; SameSite=Lax`;
-        router.push("/dashboard");
-      } else {
-        router.push("/login");
-      }
+      router.push("/dashboard");
       router.refresh();
     } catch {
       setError("Something went wrong. Check your connection and try again.");
@@ -92,10 +88,13 @@ export default function RegisterPage() {
             <Icon name="lock" size={19} />
             <input
               autoComplete="new-password"
-              minLength={6}
+              maxLength={72}
+              minLength={8}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="At least 6 characters"
+              pattern="(?=.*[A-Za-z])(?=.*\\d).{8,72}"
+              placeholder="8+ characters with a letter and number"
               required
+              title="Use 8–72 characters with at least one letter and one number"
               type={showPassword ? "text" : "password"}
               value={password}
             />
