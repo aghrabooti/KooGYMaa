@@ -6,8 +6,7 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 const adapter = new PrismaLibSql({
-  url: process.env.DATABASE_URL || "file:./dev.db",
-});
+  url: process.env.LIBSQL_DATABASE_URL || process.env.DATABASE_URL || "file:./dev.db",});
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
