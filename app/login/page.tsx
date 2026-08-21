@@ -1,72 +1,115 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AuthShell } from "@/components/auth-shell";
+import { Icon } from "@/components/icon";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        credentials: "same-origin",
+        body: JSON.stringify({ email, password, remember }),
       });
+      const data = await response.json();
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error);
+      if (!response.ok) {
+        setError(data.error || "We couldn’t sign you in. Please try again.");
         return;
       }
 
-      document.cookie = `token=${data.token}; path=/; max-age=604800`;
       router.push("/dashboard");
-    } catch (err) {
-      setError("Something went wrong");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Check your connection and try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <AuthShell
+      eyebrow="Welcome back"
+      title="Log in to your space"
+      description="Pick up where you left off and keep the momentum going."
+    >
+      {error && <div className="form-alert" role="alert">{error}</div>}
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <label className="field">
+          <span>Email address</span>
+          <div className="field__control">
+            <Icon name="mail" size={19} />
+            <input
+              autoComplete="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              required
+              type="email"
+              value={email}
+            />
+          </div>
+        </label>
+
+        <label className="field">
+          <span className="field__label-row">
+            Password
+            <a href="#">Forgot password?</a>
+          </span>
+          <div className="field__control">
+            <Icon name="lock" size={19} />
+            <input
+              autoComplete="current-password"
+              minLength={6}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Enter your password"
+              required
+              type={showPassword ? "text" : "password"}
+              value={password}
+            />
+            <button
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="field__action"
+              onClick={() => setShowPassword((visible) => !visible)}
+              type="button"
+            >
+              <Icon name={showPassword ? "eye-off" : "eye"} size={19} />
+            </button>
+          </div>
+        </label>
+
+        <label className="check-field">
           <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
+            checked={remember}
+            onChange={(event) => setRemember(event.target.checked)}
+            type="checkbox"
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          >
-            Login
-          </button>
-        </form>
-        <p className="mt-4 text-center">
-          No account? <a href="/register" className="text-blue-500">Register</a>
-        </p>
-      </div>
-    </div>
+          <span>Keep me signed in for 7 days</span>
+        </label>
+
+        <button className="auth-submit" disabled={isLoading} type="submit">
+          {isLoading ? <span className="button-loader" /> : <>Log in <Icon name="arrow" size={18} /></>}
+        </button>
+      </form>
+
+      <p className="auth-switch">
+        New to KooGYMaa? <Link href="/register">Create an account</Link>
+      </p>
+    </AuthShell>
   );
 }

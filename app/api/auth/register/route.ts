@@ -1,45 +1,108 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import {
+  isAppRole,
+  LONG_SESSION_SECONDS,
+  signToken,
+  hashPassword,
+} from "@/lib/auth";
+import { validateRegisterInput } from "@/lib/auth-validation";
 import { prisma } from "@/lib/prisma";
-import { hashPassword, signToken } from "@/lib/auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { setSessionCookie } from "@/lib/session-cookie";
 
-export async function POST(req: Request) {
+const REGISTER_WINDOW_MS = 60 * 60 * 1000;
+
+function isUniqueConstraintError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "P2002"
+  );
+}
+
+export async function POST(request: NextRequest) {
+  const rateLimit = checkRateLimit(
+    `register:${getClientIp(request)}`,
+    5,
+    REGISTER_WINDOW_MS,
+  );
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many accounts created. Please try again later." },
+      {
+        headers: { "Retry-After": String(rateLimit.retryAfter) },
+        status: 429,
+      },
+    );
+  }
+
   try {
-    const { name, email, password, role } = await req.json();
+    const body = await request.json().catch(() => null);
+    const validation = validateRegisterInput(body);
 
-    if (!name || !email || !password) {
-      return NextResponse.json({ error: "All fields required" }, { status: 400 });
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
+    const { email, name, password, role } = validation.data;
     const existingUser = await prisma.user.findUnique({
       where: { email },
+      select: { id: true },
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: "Email already exists" }, { status: 400 });
+      return NextResponse.json(
+        { error: "An account with this email already exists." },
+        { status: 409 },
+      );
     }
 
-    const hashedPassword = await hashPassword(password);
-
+    const passwordHash = await hashPassword(password);
     const user = await prisma.user.create({
       data: {
-        name,
         email,
-        password: hashedPassword,
-        role: role || "USER",
+        name,
+        password: passwordHash,
+        role,
+        ...(role === "TRAINER"
+          ? { trainerProfile: { create: {} } }
+          : {}),
+      },
+      select: {
+        email: true,
+        id: true,
+        name: true,
+        role: true,
       },
     });
 
-    const token = signToken(user.id, user.role);
+    if (!isAppRole(user.role)) {
+      throw new Error("User was created with an unsupported role.");
+    }
 
-    return NextResponse.json({ 
-      token, 
-      user: { id: user.id, name: user.name, email: user.email, role: user.role } 
-    }, { status: 201 });
+    const token = signToken(user.id, user.role, LONG_SESSION_SECONDS);
+    const response = NextResponse.json(
+      { user },
+      { status: 201 },
+    );
+
+    response.headers.set("Cache-Control", "no-store");
+    setSessionCookie(response, token, LONG_SESSION_SECONDS);
+    return response;
   } catch (error) {
-    console.error("Register error:", error);
-    return NextResponse.json({ 
-      error: "Something went wrong", 
-      details: String(error) 
-    }, { status: 500 });
+    if (isUniqueConstraintError(error)) {
+      return NextResponse.json(
+        { error: "An account with this email already exists." },
+        { status: 409 },
+      );
+    }
+
+    console.error("Registration failed:", error);
+    return NextResponse.json(
+      { error: "Unable to create your account right now. Please try again." },
+      { status: 500 },
+    );
   }
 }

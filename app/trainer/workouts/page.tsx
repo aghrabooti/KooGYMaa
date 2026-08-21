@@ -1,0 +1,14 @@
+import { CreatePlan, PlanCardActions } from "@/components/trainer/plan-list-controls";
+import { Icon } from "@/components/icon";
+import { requireTrainerAccess } from "@/lib/trainer-access";
+import { prisma } from "@/lib/prisma";
+
+export default async function WorkoutPlansPage() {
+  const access = await requireTrainerAccess();
+  const [plans, gyms] = await Promise.all([
+    prisma.workoutPlan.findMany({ where: { trainerId: access.profile.id }, select: { id: true, title: true, description: true, status: true, version: true, isTemplate: true, updatedAt: true, gym: { select: { name: true } }, days: { select: { _count: { select: { exercises: true } } } }, _count: { select: { assignments: true, derivedPlans: true } } }, orderBy: [{ status: "asc" }, { updatedAt: "desc" }] }),
+    prisma.gymTrainer.findMany({ where: { trainerId: access.profile.id, status: "ACTIVE" }, select: { gym: { select: { id: true, name: true } } }, orderBy: { gym: { name: "asc" } } }),
+  ]);
+  const active = plans.filter((plan) => plan.status === "ACTIVE").length; const drafts = plans.filter((plan) => plan.status === "DRAFT").length;
+  return <div className="trainer-page"><header className="trainer-page__heading trainer-page__heading--compact"><div><span>PROGRAM DESIGN</span><h1>Workout plans</h1><p>Build structured, versioned programs and assign them without changing history.</p></div><CreatePlan gyms={gyms.map((item) => item.gym)} kind="workouts" /></header><section className="trainer-summary"><div><span>Active plans</span><strong>{active}</strong></div><div><span>Drafts</span><strong>{drafts}</strong></div><div><span>Assignments</span><strong>{plans.reduce((sum, plan) => sum + plan._count.assignments, 0)}</strong></div><div><span>Templates</span><strong>{plans.filter((plan) => plan.isTemplate).length}</strong></div></section>{plans.length ? <div className="trainer-plan-grid">{plans.map((plan) => { const exercises = plan.days.reduce((sum, day) => sum + day._count.exercises, 0); return <article key={plan.id}><div className="trainer-plan-card__top"><span><Icon name="dumbbell" size={21} /></span><b className={`trainer-status trainer-status--${plan.status.toLowerCase()}`}>{plan.status}</b></div><small>{plan.isTemplate ? "TEMPLATE" : plan.gym?.name || "INDEPENDENT"} · VERSION {plan.version}</small><h2>{plan.title}</h2><p>{plan.description || "No description added."}</p><div className="trainer-plan-stats"><span><strong>{plan.days.length}</strong><small>days</small></span><span><strong>{exercises}</strong><small>exercises</small></span><span><strong>{plan._count.assignments}</strong><small>assignments</small></span></div><PlanCardActions id={plan.id} kind="workouts" status={plan.status} /></article>; })}</div> : <div className="trainer-panel trainer-empty"><Icon name="clipboard" size={26} /><strong>No workout plans yet</strong><span>Create a reusable template or a student-specific program.</span></div>}</div>;
+}

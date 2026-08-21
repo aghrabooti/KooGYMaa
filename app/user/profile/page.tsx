@@ -1,0 +1,5 @@
+import { MemberProfileForm } from "@/components/user/profile-form";
+import { requireCurrentUser } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
+
+export default async function MemberProfilePage(){const session=await requireCurrentUser(["USER"]);const user=await prisma.user.findUniqueOrThrow({where:{id:session.id},select:{name:true,email:true,phone:true,avatarUrl:true,createdAt:true,_count:{select:{gymMemberships:true,trainerRelationships:true,workoutLogs:true}}}});return <div className="member-page"><header className="member-page__heading"><div><span>ACCOUNT</span><h1>Your profile</h1><p>Keep your personal and contact information up to date.</p></div></header><section className="member-profile-summary"><div><strong>{user._count.gymMemberships}</strong><span>gym relationships</span></div><div><strong>{user._count.trainerRelationships}</strong><span>trainer relationships</span></div><div><strong>{user._count.workoutLogs}</strong><span>workout logs</span></div><div><strong>{user.createdAt.toLocaleDateString()}</strong><span>member since</span></div></section><MemberProfileForm user={user}/></div>}
