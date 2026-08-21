@@ -4,21 +4,18 @@
 
 Vercel **cannot serve the local `dev.db` file** — serverless functions have a read-only filesystem, and runtime-opened files are not bundled. Use a hosted libSQL database (Turso):
 
-1. Create the database and a token:
+1. Create the database — pick one:
+   - **Dashboard, no CLI:** sign in at `app.turso.tech` → *Create Database* (name: `koogymaa`). On the database page, copy the `libsql://koogymaa-....turso.io` URL and click *Generate Token*.
+   - **CLI:** `turso db create koogymaa` → `turso db show koogymaa --url` → `turso db tokens create koogymaa`.
 
-   ```bash
-   turso db create koogymaa
-   turso db show koogymaa --url          # -> libsql://koogymaa-....turso.io
-   turso db tokens create koogymaa       # -> auth token
-   ```
+2. Apply schema **and** demo data in one step — pick one:
+   - **Dashboard:** open the database's *SQL Editor*, paste the contents of `prisma/turso-demo-setup.sql`, run it.
+   - **CLI:** `turso db shell koogymaa < prisma/turso-demo-setup.sql`
 
-2. Apply the schema (one command, from the repo root):
-
-   ```bash
-   cat prisma/migrations/*/migration.sql | turso db shell koogymaa
-   ```
-
-   Optional demo data: `DATABASE_URL=libsql://... DATABASE_AUTH_TOKEN=... ALLOW_PRODUCTION_SEED=true SEED_PASSWORD=... npm run db:seed`
+   The file is generated from the seeded local dev database and contains all 33 tables plus the
+   demo accounts (member/trainer/admin@koogymaa.test, password `KooGYMaa123!`). Regenerate it
+   any time with `node scripts/dump-hosted-sql.mjs`. For an empty production DB with no demo
+   data, instead run: `cat prisma/migrations/*/migration.sql | turso db shell koogymaa`
 
 3. In **Vercel → Project → Settings → Environment Variables** (Production):
 
