@@ -9,6 +9,8 @@ if (process.env.NODE_ENV === "production" && process.env.ALLOW_PRODUCTION_SEED !
 
 const adapter = new PrismaLibSql({
   url: process.env.DATABASE_URL || "file:./dev.db",
+  // Required for hosted libSQL (e.g. Turso). Leave unset for local file:./dev.db.
+  authToken: process.env.DATABASE_AUTH_TOKEN,
 });
 const prisma = new PrismaClient({ adapter });
 
