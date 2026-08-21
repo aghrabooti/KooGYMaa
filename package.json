@@ -14,7 +14,9 @@
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "node prisma/seed.mjs",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:turso:setup": "node scripts/setup-turso.mjs",
+    "db:turso:fresh": "RESET=1 node scripts/setup-turso.mjs"
   },
   "dependencies": {
     "@prisma/adapter-libsql": "^7.9.1",

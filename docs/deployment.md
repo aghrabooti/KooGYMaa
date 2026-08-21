@@ -9,6 +9,7 @@ Vercel **cannot serve the local `dev.db` file** — serverless functions have a 
    - **CLI:** `turso db create koogymaa` → `turso db show koogymaa --url` → `turso db tokens create koogymaa`.
 
 2. Apply schema **and** demo data in one step — pick one:
+   - **No CLI (recommended):** `npm run db:turso:setup` runs `scripts/setup-turso.mjs`, which applies `prisma/turso-demo-setup.sql` to the hosted database directly via the libSQL client (no `turso` CLI needed). Use `npm run db:turso:fresh` to drop everything and re-apply.
    - **Dashboard:** open the database's *SQL Editor*, paste the contents of `prisma/turso-demo-setup.sql`, run it.
    - **CLI:** `turso db shell koogymaa < prisma/turso-demo-setup.sql`
 

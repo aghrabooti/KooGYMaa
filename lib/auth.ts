@@ -25,15 +25,18 @@ export type SessionClaims = {
   role: AppRole;
 };
 
+// Demo project: a secret is embedded so sessions work with no environment
+// configuration. Set JWT_SECRET to override it for a real deployment.
+const EMBEDDED_JWT_SECRET = "TT1zvOx1kt+8L/hu/YJ1RJ3eundPa5Ibf1mqvIxRuyQ=";
+
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET?.trim();
 
   if (!secret) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("JWT_SECRET must be configured in production.");
-    }
-
-    return DEVELOPMENT_SECRET;
+    // No env var: use an embedded demo secret in any environment.
+    return process.env.NODE_ENV === "production"
+      ? EMBEDDED_JWT_SECRET
+      : DEVELOPMENT_SECRET;
   }
 
   if (process.env.NODE_ENV === "production" && secret.length < 32) {

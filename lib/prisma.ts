@@ -5,12 +5,26 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+// Demo project: Turso credentials are embedded so the app reads/writes the
+// hosted database with no environment configuration. Any env var below still
+// overrides these if set (e.g. for a real deployment).
+const EMBEDDED_TURSO_URL = "libsql://koogymaa-aghrabooti.aws-us-east-2.turso.io";
+const EMBEDDED_TURSO_TOKEN =
+  "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODczMjcwMzIsImlkIjoiMDFhMDI0ZmUtMGIwMS03NmE2LTg0MmYtMzUwZWVkMmFmNmExIiwia2lkIjoiRXFGT284TVNSTEh4Vl9ETy1uSUNTUU5wNC1rSTBSVTJNYjdMVVpDaDNDSSIsInJpZCI6IjhjY2FiNDM0LTJiYzYtNGVlMy1iZDMzLWM0ZGYzNzc1NDhhZiJ9.D8SM0SyTzlpQ577bCGLs0qRIWhlEK1qEsC1DG_tH2T0li9KIKNFiiqkx7UQ8XicsZG7YpqpFWZnAQTxgRgcYCw";
+
 const databaseUrl = (
   process.env.LIBSQL_DATABASE_URL ||
   process.env.TURSO_DATABASE_URL ||
   process.env.DATABASE_URL ||
-  "file:./dev.db"
+  EMBEDDED_TURSO_URL
 ).trim();
+
+// Token resolution: env vars win, otherwise the embedded demo token is used.
+const authToken =
+  process.env.LIBSQL_DATABASE_AUTH_TOKEN ||
+  process.env.TURSO_AUTH_TOKEN ||
+  process.env.DATABASE_AUTH_TOKEN ||
+  EMBEDDED_TURSO_TOKEN;
 
 // Detect configurations that can never serve queries and describe the fix with
 // an actionable message. These do NOT throw at module load: Next.js imports
@@ -59,10 +73,7 @@ function createPrismaClient(): PrismaClient {
 
   const adapter = new PrismaLibSql({
     url: databaseUrl,
-    authToken:
-      process.env.LIBSQL_DATABASE_AUTH_TOKEN ||
-      process.env.TURSO_AUTH_TOKEN ||
-      process.env.DATABASE_AUTH_TOKEN,
+    authToken,
   });
 
   return globalForPrisma.prisma ?? new PrismaClient({ adapter });

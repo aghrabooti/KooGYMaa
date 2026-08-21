@@ -5,21 +5,24 @@ import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { Icon, type IconName } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useT } from "@/lib/i18n/language-provider";
 
 type TrainerNavProps = {
   pendingStudents: number;
   user: { name: string };
 };
 
-const items: Array<{ href: string; icon: IconName; label: string }> = [
-  { href: "/trainer", icon: "grid", label: "Overview" },
-  { href: "/trainer/students", icon: "users", label: "My students" },
-  { href: "/trainer/progress", icon: "trend", label: "Client progress" },
-  { href: "/trainer/gyms", icon: "building", label: "My gyms" },
-  { href: "/trainer/workouts", icon: "clipboard", label: "Workout plans" },
-  { href: "/trainer/nutrition", icon: "heart", label: "Nutrition plans" },
-  { href: "/trainer/schedule", icon: "calendar", label: "Schedule" },
-  { href: "/trainer/profile", icon: "user", label: "Trainer profile" },
+const items: Array<{ href: string; icon: IconName; labelKey: string }> = [
+  { href: "/trainer", icon: "grid", labelKey: "nav.overview" },
+  { href: "/trainer/students", icon: "users", labelKey: "nav.myStudents" },
+  { href: "/trainer/progress", icon: "trend", labelKey: "nav.clientProgress" },
+  { href: "/trainer/gyms", icon: "building", labelKey: "nav.myGyms" },
+  { href: "/trainer/workouts", icon: "clipboard", labelKey: "nav.workoutPlans" },
+  { href: "/trainer/nutrition", icon: "heart", labelKey: "nav.nutritionPlans" },
+  { href: "/trainer/schedule", icon: "calendar", labelKey: "nav.schedule" },
+  { href: "/trainer/profile", icon: "user", labelKey: "nav.trainerProfile" },
 ];
 
 function initials(name: string) {
@@ -28,6 +31,7 @@ function initials(name: string) {
 
 export function TrainerNav({ pendingStudents, user }: TrainerNavProps) {
   const pathname = usePathname();
+  const t = useT();
 
   return (
     <>
@@ -35,20 +39,20 @@ export function TrainerNav({ pendingStudents, user }: TrainerNavProps) {
         <Brand light />
         <div className="trainer-identity">
           <span>{initials(user.name)}</span>
-          <div><strong>{user.name}</strong><small>Trainer workspace</small></div>
+          <div><strong>{user.name}</strong><small>{t("nav.trainerWorkspace")}</small></div>
         </div>
         <nav className="trainer-nav" aria-label="Trainer navigation">
-          <small>COACHING</small>
+          <small>{t("nav.coaching")}</small>
           {items.map((item) => {
             const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href);
-            return <Link className={active ? "active" : ""} href={item.href} key={item.href}><Icon name={item.icon} size={19} /><span>{item.label}</span>{item.label === "My students" && pendingStudents > 0 && <b>{pendingStudents}</b>}</Link>;
+            return <Link className={active ? "active" : ""} href={item.href} key={item.labelKey}><Icon name={item.icon} size={19} /><span>{t(item.labelKey)}</span>{item.labelKey === "nav.myStudents" && pendingStudents > 0 && <b>{pendingStudents}</b>}</Link>;
           })}
         </nav>
-        <div className="trainer-sidebar__tip"><Icon name="sparkles" size={17} /><strong>Coach with clarity</strong><p>Profiles with complete details receive more member interest.</p><Link href="/trainer/profile">Complete profile <Icon name="arrow" size={13} /></Link></div>
-        <div className="trainer-sidebar__bottom"><LogoutButton /></div>
+        <div className="trainer-sidebar__tip"><Icon name="sparkles" size={17} /><strong>{t("dash.greatMomentum")}</strong><p>{t("authShell.benefit1")}</p><Link href="/trainer/profile">{t("nav.trainerProfile")} <Icon name="arrow" size={13} /></Link></div>
+        <div className="trainer-sidebar__bottom"><LanguageSwitcher className="trainer-language" /><ThemeToggle className="trainer-theme" /><LogoutButton /></div>
       </aside>
-      <header className="trainer-mobile-header"><Brand compact /><div><strong>{user.name}</strong><small>Trainer workspace</small></div><Link href="/trainer/profile"><Icon name="user" size={18} /></Link></header>
-      <nav className="trainer-mobile-nav" aria-label="Mobile trainer navigation">{items.map((item) => { const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href); return <Link aria-label={item.label} className={active ? "active" : ""} href={item.href} key={item.href}><Icon name={item.icon} size={18} /><span>{item.label}</span></Link>; })}</nav>
+      <header className="trainer-mobile-header"><Brand compact /><div><strong>{user.name}</strong><small>{t("nav.trainerWorkspace")}</small></div><Link href="/trainer/profile"><Icon name="user" size={18} /></Link></header>
+      <nav className="trainer-mobile-nav" aria-label="Mobile trainer navigation">{items.map((item) => { const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href); return <Link aria-label={t(item.labelKey)} className={active ? "active" : ""} href={item.href} key={item.labelKey}><Icon name={item.icon} size={18} /><span>{t(item.labelKey)}</span></Link>; })}</nav>
     </>
   );
 }

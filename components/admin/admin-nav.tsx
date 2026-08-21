@@ -5,6 +5,9 @@ import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { Icon, type IconName } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useT } from "@/lib/i18n/language-provider";
 
 type AdminNavProps = {
   gym: { city: string | null; id: string; name: string };
@@ -12,14 +15,14 @@ type AdminNavProps = {
   user: { name: string };
 };
 
-const items: Array<{ href: string; icon: IconName; label: string }> = [
-  { href: "", icon: "grid", label: "Overview" },
-  { href: "/members", icon: "users", label: "Members" },
-  { href: "/trainers", icon: "dumbbell", label: "Trainers" },
-  { href: "/plans", icon: "clipboard", label: "Plans" },
-  { href: "/subscriptions", icon: "credit-card", label: "Subscriptions" },
-  { href: "/payments", icon: "shield", label: "Payments & audit" },
-  { href: "/settings", icon: "settings", label: "Gym settings" },
+const items: Array<{ href: string; icon: IconName; labelKey: string }> = [
+  { href: "", icon: "grid", labelKey: "nav.overview" },
+  { href: "/members", icon: "users", labelKey: "nav.members" },
+  { href: "/trainers", icon: "dumbbell", labelKey: "nav.trainers" },
+  { href: "/plans", icon: "clipboard", labelKey: "nav.plans" },
+  { href: "/subscriptions", icon: "credit-card", labelKey: "nav.subscriptions" },
+  { href: "/payments", icon: "shield", labelKey: "nav.payments" },
+  { href: "/settings", icon: "settings", labelKey: "nav.gymSettings" },
 ];
 
 function initials(name: string) {
@@ -28,6 +31,7 @@ function initials(name: string) {
 
 export function AdminNav({ gym, pendingCount, user }: AdminNavProps) {
   const pathname = usePathname();
+  const t = useT();
   const base = `/admin/gyms/${gym.id}`;
 
   return (
@@ -36,20 +40,20 @@ export function AdminNav({ gym, pendingCount, user }: AdminNavProps) {
         <Brand light />
         <Link className="admin-workspace" href="/admin/gyms">
           <span className="admin-workspace__mark"><Icon name="building" size={18} /></span>
-          <span><strong>{gym.name}</strong><small>{gym.city || "Location not set"}</small></span>
+          <span><strong>{gym.name}</strong><small>{gym.city || t("nav.locationNotSet")}</small></span>
           <Icon name="chevron" size={15} />
         </Link>
 
         <nav className="admin-nav" aria-label="Gym administration">
-          <small>GYM MANAGEMENT</small>
+          <small>{t("nav.gymManagement")}</small>
           {items.map((item) => {
             const href = `${base}${item.href}`;
             const active = item.href ? pathname.startsWith(href) : pathname === base;
             return (
-              <Link className={`admin-nav__item ${active ? "active" : ""}`} href={href} key={item.label}>
+              <Link className={`admin-nav__item ${active ? "active" : ""}`} href={href} key={item.labelKey}>
                 <Icon name={item.icon} size={19} />
-                <span>{item.label}</span>
-                {item.label === "Members" && pendingCount > 0 && <b>{pendingCount}</b>}
+                <span>{t(item.labelKey)}</span>
+                {item.labelKey === "nav.members" && pendingCount > 0 && <b>{pendingCount}</b>}
               </Link>
             );
           })}
@@ -58,22 +62,24 @@ export function AdminNav({ gym, pendingCount, user }: AdminNavProps) {
         <div className="admin-sidebar__bottom">
           <div className="admin-user-card">
             <span>{initials(user.name)}</span>
-            <div><strong>{user.name}</strong><small>Gym administrator</small></div>
+            <div><strong>{user.name}</strong><small>{t("nav.gymAdministrator")}</small></div>
           </div>
+          <LanguageSwitcher className="admin-language" />
+          <ThemeToggle className="admin-theme" />
           <LogoutButton />
         </div>
       </aside>
 
       <header className="admin-mobile-header">
         <Brand compact />
-        <div><strong>{gym.name}</strong><small>Admin workspace</small></div>
+        <div><strong>{gym.name}</strong><small>{t("nav.gymAdministrator")}</small></div>
         <Link href="/admin/gyms"><Icon name="building" size={19} /></Link>
       </header>
       <nav className="admin-mobile-nav" aria-label="Mobile gym administration">
         {items.map((item) => {
           const href = `${base}${item.href}`;
-          const active = item.href ? pathname.startsWith(href) : pathname === base;
-          return <Link aria-label={item.label} className={active ? "active" : ""} href={href} key={item.label}><Icon name={item.icon} size={18} /><span>{item.label}</span></Link>;
+          const active = pathname.startsWith(href);
+          return <Link aria-label={t(item.labelKey)} className={active ? "active" : ""} href={href} key={item.labelKey}><Icon name={item.icon} size={18} /><span>{t(item.labelKey)}</span></Link>;
         })}
       </nav>
     </>
