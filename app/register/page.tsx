@@ -91,8 +91,7 @@ export default function RegisterPage() {
               maxLength={72}
               minLength={8}
               onChange={(event) => setPassword(event.target.value)}
-              pattern="(?=.*[A-Za-z])(?=.*\\d).{8,72}"
-              placeholder="8+ characters with a letter and number"
+              pattern="(?=.*[A-Za-z])(?=.*\d).{8,72}"
               required
               title="Use 8–72 characters with at least one letter and one number"
               type={showPassword ? "text" : "password"}
