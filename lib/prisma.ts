@@ -6,7 +6,7 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 const databaseUrl =
-  process.env.LIBSQL_DATABASE_UR || process.env.DATABASE_URL || "file:./dev.db";
+  process.env.LIBSQL_DATABASE_URL || process.env.DATABASE_URL || "file:./dev.db";
 
 if (databaseUrl.startsWith("postgres")) {
   throw new Error(
@@ -21,7 +21,7 @@ if (databaseUrl.startsWith("postgres")) {
 const adapter = new PrismaLibSql({
   url: databaseUrl,
   authToken:
-    process.env.LIBSQL_DATABASE_A_TOKE || process.env.DATABASE_AUTH_TOKEN,
+    process.env.LIBSQL_DATABASE_AUTH_TOKEN || process.env.DATABASE_AUTH_TOKEN,
 });
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
