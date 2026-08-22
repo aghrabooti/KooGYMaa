@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/auth-shell";
 import { Icon } from "@/components/icon";
+import { useT } from "@/lib/i18n/language-provider";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const t = useT();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -30,14 +32,14 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "We couldn’t sign you in. Please try again.");
+        setError(data.error || t("auth.loginDesc"));
         return;
       }
 
       router.push("/dashboard");
       router.refresh();
     } catch {
-      setError("Something went wrong. Check your connection and try again.");
+      setError(t("auth.loginDesc"));
     } finally {
       setIsLoading(false);
     }
@@ -45,20 +47,20 @@ export default function LoginPage() {
 
   return (
     <AuthShell
-      eyebrow="Welcome back"
-      title="Log in to your space"
-      description="Pick up where you left off and keep the momentum going."
+      eyebrow={t("auth.welcomeBack")}
+      title={t("auth.loginTitle")}
+      description={t("auth.loginDesc")}
     >
       {error && <div className="form-alert" role="alert">{error}</div>}
       <form className="auth-form" onSubmit={handleSubmit}>
         <label className="field">
-          <span>Email address</span>
+          <span>{t("auth.email")}</span>
           <div className="field__control">
             <Icon name="mail" size={19} />
             <input
               autoComplete="email"
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
+              placeholder={t("auth.placeholderEmail")}
               required
               type="email"
               value={email}
@@ -68,22 +70,22 @@ export default function LoginPage() {
 
         <label className="field">
           <span className="field__label-row">
-            Password
-            <a href="#">Forgot password?</a>
+            {t("auth.password")}
+            <a href="#">{t("auth.forgotPassword")}</a>
           </span>
           <div className="field__control">
             <Icon name="lock" size={19} />
             <input
               autoComplete="current-password"
-              minLength={6}
+              maxLength={72}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter your password"
+              placeholder={t("auth.placeholderPassword")}
               required
               type={showPassword ? "text" : "password"}
               value={password}
             />
             <button
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? t("auth.password") : t("auth.password")}
               className="field__action"
               onClick={() => setShowPassword((visible) => !visible)}
               type="button"
@@ -99,16 +101,16 @@ export default function LoginPage() {
             onChange={(event) => setRemember(event.target.checked)}
             type="checkbox"
           />
-          <span>Keep me signed in for 7 days</span>
+          <span>{t("auth.keepSignedIn")}</span>
         </label>
 
         <button className="auth-submit" disabled={isLoading} type="submit">
-          {isLoading ? <span className="button-loader" /> : <>Log in <Icon name="arrow" size={18} /></>}
+          {isLoading ? <span className="button-loader" /> : <>{t("auth.login")} <Icon name="arrow" size={18} /></>}
         </button>
       </form>
 
       <p className="auth-switch">
-        New to KooGYMaa? <Link href="/register">Create an account</Link>
+        {t("auth.newToKooGYMaa")} <Link href="/register">{t("auth.createAccount")}</Link>
       </p>
     </AuthShell>
   );

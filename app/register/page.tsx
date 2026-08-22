@@ -5,6 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthShell } from "@/components/auth-shell";
 import { Icon } from "@/components/icon";
+import { useT } from "@/lib/i18n/language-provider";
+
+// Must match validatePassword in @/lib/auth-validation. Written as a normal
+// JS string (not a JSX attribute literal) so `\\d` is escaped exactly once —
+// inside a JSX string literal backslashes are NOT decoded and every extra
+// backslash reaches the browser verbatim, which silently breaks the rule.
+const PASSWORD_PATTERN = "(?=.*[A-Za-z])(?=.*\\d).{8,72}";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -15,6 +22,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const t = useT();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -31,14 +39,14 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "We couldn’t create your account. Please try again.");
+        setError(data.error || t("auth.registerDesc"));
         return;
       }
 
       router.push("/dashboard");
       router.refresh();
     } catch {
-      setError("Something went wrong. Check your connection and try again.");
+      setError(t("auth.registerDesc"));
     } finally {
       setIsLoading(false);
     }
@@ -46,20 +54,20 @@ export default function RegisterPage() {
 
   return (
     <AuthShell
-      eyebrow="Start your journey"
-      title="Create your account"
-      description="Join your gym community and put every goal within reach."
+      eyebrow={t("auth.startJourney")}
+      title={t("auth.registerTitle")}
+      description={t("auth.registerDesc")}
     >
       {error && <div className="form-alert" role="alert">{error}</div>}
       <form className="auth-form auth-form--register" onSubmit={handleSubmit}>
         <label className="field">
-          <span>Full name</span>
+          <span>{t("auth.fullName")}</span>
           <div className="field__control">
             <Icon name="user" size={19} />
             <input
               autoComplete="name"
               onChange={(event) => setName(event.target.value)}
-              placeholder="Your name"
+              placeholder={t("auth.placeholderName")}
               required
               type="text"
               value={name}
@@ -68,13 +76,13 @@ export default function RegisterPage() {
         </label>
 
         <label className="field">
-          <span>Email address</span>
+          <span>{t("auth.email")}</span>
           <div className="field__control">
             <Icon name="mail" size={19} />
             <input
               autoComplete="email"
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
+              placeholder={t("auth.placeholderEmail")}
               required
               type="email"
               value={email}
@@ -83,7 +91,7 @@ export default function RegisterPage() {
         </label>
 
         <label className="field">
-          <span>Password</span>
+          <span>{t("auth.password")}</span>
           <div className="field__control">
             <Icon name="lock" size={19} />
             <input
@@ -91,15 +99,15 @@ export default function RegisterPage() {
               maxLength={72}
               minLength={8}
               onChange={(event) => setPassword(event.target.value)}
-              pattern="(?=.*[A-Za-z])(?=.*\\d).{8,72}"
-              placeholder="8+ characters with a letter and number"
+              pattern={PASSWORD_PATTERN}
+              placeholder={t("auth.placeholderPassword")}
               required
-              title="Use 8–72 characters with at least one letter and one number"
+              title={t("auth.placeholderPassword")}
               type={showPassword ? "text" : "password"}
               value={password}
             />
             <button
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? t("auth.password") : t("auth.password")}
               className="field__action"
               onClick={() => setShowPassword((visible) => !visible)}
               type="button"
@@ -110,30 +118,30 @@ export default function RegisterPage() {
         </label>
 
         <fieldset className="role-picker">
-          <legend>I&apos;m joining as</legend>
+          <legend>{t("auth.joiningAs")}</legend>
           <div>
             <label className={role === "USER" ? "active" : ""}>
               <input checked={role === "USER"} name="role" onChange={() => setRole("USER")} type="radio" value="USER" />
               <span><Icon name="flame" size={20} /></span>
-              <strong>Member</strong>
-              <small>Train and track</small>
+              <strong>{t("auth.member")}</strong>
+              <small>{t("auth.memberHint")}</small>
             </label>
             <label className={role === "TRAINER" ? "active" : ""}>
               <input checked={role === "TRAINER"} name="role" onChange={() => setRole("TRAINER")} type="radio" value="TRAINER" />
               <span><Icon name="dumbbell" size={20} /></span>
-              <strong>Trainer</strong>
-              <small>Coach and guide</small>
+              <strong>{t("auth.trainer")}</strong>
+              <small>{t("auth.trainerHint")}</small>
             </label>
           </div>
         </fieldset>
 
         <button className="auth-submit" disabled={isLoading} type="submit">
-          {isLoading ? <span className="button-loader" /> : <>Create my account <Icon name="arrow" size={18} /></>}
+          {isLoading ? <span className="button-loader" /> : <>{t("auth.createMyAccount")} <Icon name="arrow" size={18} /></>}
         </button>
       </form>
 
       <p className="auth-switch">
-        Already have an account? <Link href="/login">Log in</Link>
+        {t("auth.alreadyHaveAccount")} <Link href="/login">{t("auth.login")}</Link>
       </p>
     </AuthShell>
   );

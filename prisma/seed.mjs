@@ -7,10 +7,27 @@ if (process.env.NODE_ENV === "production" && process.env.ALLOW_PRODUCTION_SEED !
   throw new Error("Refusing to seed production without ALLOW_PRODUCTION_SEED=true.");
 }
 
+// Demo project: Turso credentials are embedded so the seed runs with no
+// environment configuration. Env vars still override these if set.
+const EMBEDDED_TURSO_URL = "libsql://koogymaa-aghrabooti.aws-us-east-2.turso.io";
+const EMBEDDED_TURSO_TOKEN =
+  "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODczMjcwMzIsImlkIjoiMDFhMDI0ZmUtMGIwMS03NmE2LTg0MmYtMzUwZWVkMmFmNmExIiwia2lkIjoiRXFGT284TVNSTEh4Vl9ETy1uSUNTUU5wNC1rSTBSVTJNYjdMVVpDaDNDSSIsInJpZCI6IjhjY2FiNDM0LTJiYzYtNGVlMy1iZDMzLWM0ZGYzNzc1NDhhZiJ9.D8SM0SyTzlpQ577bCGLs0qRIWhlEK1qEsC1DG_tH2T0li9KIKNFiiqkx7UQ8XicsZG7YpqpFWZnAQTxgRgcYCw";
+
+const databaseUrl = (
+  process.env.LIBSQL_DATABASE_URL ||
+  process.env.TURSO_DATABASE_URL ||
+  process.env.DATABASE_URL ||
+  EMBEDDED_TURSO_URL
+).trim();
+
 const adapter = new PrismaLibSql({
-  url: process.env.DATABASE_URL || "file:./dev.db",
+  url: databaseUrl,
   // Required for hosted libSQL (e.g. Turso). Leave unset for local file:./dev.db.
-  authToken: process.env.DATABASE_AUTH_TOKEN,
+  authToken:
+    process.env.LIBSQL_DATABASE_AUTH_TOKEN ||
+    process.env.TURSO_AUTH_TOKEN ||
+    process.env.DATABASE_AUTH_TOKEN ||
+    EMBEDDED_TURSO_TOKEN,
 });
 const prisma = new PrismaClient({ adapter });
 

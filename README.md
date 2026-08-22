@@ -65,6 +65,86 @@ Money values are stored as integers in the currency's smallest unit. Local `.db`
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Quickstart: Turso only (no Vercel)
+
+If you just want the app to read and write a hosted libSQL database directly —
+no Vercel, no local SQLite file — point the project at your Turso database and
+apply the schema. The app already supports this natively (`lib/prisma.ts`
+reads `LIBSQL_DATABASE_URL` / `LIBSQL_DATABASE_AUTH_TOKEN`).
+
+1. *(Optional)* Configure the database. The Turso URL, auth token, JWT secret,
+   and demo payment settings are **embedded in the code** (`lib/prisma.ts`,
+   `lib/auth.ts`, `lib/env.ts`), so the app reads/writes Turso with **no
+   environment variables at all**. To point at a different database, override
+   them via `.env` (see `.env.example`):
+
+   ```env
+   LIBSQL_DATABASE_URL=libsql://your-db.turso.io
+   LIBSQL_DATABASE_AUTH_TOKEN=<read/write token>
+   JWT_SECRET=<openssl rand -base64 32>
+   ```
+
+2. Install dependencies and generate the Prisma client:
+
+   ```bash
+   npm ci
+   ```
+
+3. Apply the schema **and** demo data to Turso in one step (no `turso` CLI
+   needed — it uses the libSQL client already in `node_modules`):
+
+   ```bash
+   npm run db:turso:setup     # fresh database
+   # npm run db:turso:fresh   # drop everything first, then re-apply
+   ```
+
+4. Run the app — it talks to Turso directly:
+
+   ```bash
+   npm run dev
+   ```
+
+   Verify health at [http://localhost:3000/api/health](http://localhost:3000/api/health):
+   it reports `database: "connected"` and the hosted database URL kind.
+
+Seed accounts after setup: `admin@koogymaa.test`, `trainer@koogymaa.test`,
+`member@koogymaa.test` (password `SEED_PASSWORD`, default `KooGYMaa123!`).
+
+To apply schema changes later, edit the migration SQL and regenerate the hosted
+setup file (`node scripts/dump-hosted-sql.mjs`), or re-run `npm run db:turso:fresh`.
+
+## Internationalization (Persian + English)
+
+The UI ships with English and Persian (فارسی), switchable from the language
+toggle (EN | فا) shown in the navigation, the auth screens, and the landing
+page header. The choice is saved in a `locale` cookie and flips the page
+direction to RTL for Persian.
+
+- Translations live in `lib/i18n/translations.ts` — the `en` and `fa` objects
+  must stay in key parity. Add a key to both, then use `t("your.key")` in a
+  Client Component or `createT(await getLocale())` in a Server Component.
+- `lib/i18n/language-provider.tsx` provides `useT()` / `useI18n()`;
+  `lib/i18n/server.ts` exposes `getLocale()` for Server Components;
+  `components/language-switcher.tsx` is the toggle.
+- Persian text uses a Tahoma-based system font stack (the CSP blocks external
+  font hosts). For nicer Persian, add Vazirmatn via `next/font` and extend the
+  `html.locale-fa` rule in `app/globals.css`.
+
+The nav bars, auth screens, landing page, and dashboard are localized. Inner
+page content reuses the same dictionary and can be translated incrementally by
+wrapping strings in `t(...)`.
+
+## Theme & typography
+
+- A light/dark toggle (sun/moon) sits next to the language switcher in the nav
+  and headers; the choice persists in a `theme` cookie and adds `.theme-dark` to
+  `<html>`. The dark palette overrides live in `app/globals.css` under
+  `.theme-dark`.
+- Persian text uses **Vazirmatn** (loaded via `next/font`, self-hosted so it
+  respects the CSP). It is applied automatically whenever the locale is فارسی.
+- The brand's Persian name is **کوجیما** (not کوگیما) — shown under the wordmark
+  on the auth screen.
+
 ## Quality checks
 
 ```bash

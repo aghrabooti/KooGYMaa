@@ -1,7 +1,12 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { Icon } from "@/components/icon";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { useT } from "@/lib/i18n/language-provider";
 
 type AuthShellProps = {
   eyebrow: string;
@@ -10,39 +15,39 @@ type AuthShellProps = {
   children: ReactNode;
 };
 
-const benefits = [
-  "Your training, plans, and progress in one place",
-  "Simple tools for every role in your fitness journey",
-  "Private, secure, and built to keep you moving",
+const benefitKeys = [
+  "authShell.benefit1",
+  "authShell.benefit2",
+  "authShell.benefit3",
 ];
 
 export function AuthShell({ eyebrow, title, description, children }: AuthShellProps) {
+  const t = useT();
+
   return (
     <main className="auth-page">
       <section className="auth-story" aria-label="About KooGYMaa">
         <div className="auth-story__glow" />
         <Brand light />
+        <span className="auth-brand-fa">{t("brand.fa")}</span>
 
         <div className="auth-story__content">
           <div className="eyebrow eyebrow--dark">
             <Icon name="sparkles" size={15} />
-            Built for better movement
+            {t("authShell.eyebrow")}
           </div>
           <h2>
-            Stronger habits.
+            {t("authShell.title1")}
             <br />
-            <span>Smarter training.</span>
+            <span>{t("authShell.title2")}</span>
           </h2>
-          <p>
-            The calm, capable home for your gym life—from the first check-in to
-            your strongest set yet.
-          </p>
+          <p>{t("authShell.desc")}</p>
 
           <div className="auth-benefits">
-            {benefits.map((benefit) => (
-              <div className="auth-benefit" key={benefit}>
+            {benefitKeys.map((key) => (
+              <div className="auth-benefit" key={key}>
                 <span><Icon name="check" size={15} /></span>
-                {benefit}
+                {t(key)}
               </div>
             ))}
           </div>
@@ -53,16 +58,18 @@ export function AuthShell({ eyebrow, title, description, children }: AuthShellPr
             <span>MK</span><span>JL</span><span>AS</span>
           </div>
           <div>
-            <strong>Trusted by growing fitness communities</strong>
-            <p>One workspace. Every goal.</p>
+            <strong>{t("authShell.trustedBy")}</strong>
+            <p>{t("authShell.oneWorkspace")}</p>
           </div>
         </div>
       </section>
 
       <section className="auth-form-panel">
         <div className="auth-mobile-brand"><Brand /></div>
+        <LanguageSwitcher className="auth-language" />
+        <ThemeToggle className="auth-theme" />
         <Link className="auth-back" href="/">
-          <span aria-hidden="true">←</span> Back to home
+          <span aria-hidden="true">←</span> {t("auth.backToHome")}
         </Link>
         <div className="auth-form-wrap">
           <div className="auth-heading">
@@ -73,7 +80,7 @@ export function AuthShell({ eyebrow, title, description, children }: AuthShellPr
           {children}
         </div>
         <p className="auth-legal">
-          By continuing, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.
+          {t("auth.agreeTo")} <a href="#">{t("auth.terms")}</a> {t("auth.and")} <a href="#">{t("auth.privacy")}</a>.
         </p>
       </section>
     </main>

@@ -4,13 +4,17 @@ import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { Icon, type IconName } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { prisma } from "@/lib/prisma";
 import { requireCurrentUser } from "@/lib/session";
+import { getLocale } from "@/lib/i18n/server";
+import { createT } from "@/lib/i18n/translations";
 
 type DashboardRole = "ADMIN" | "TRAINER" | "USER";
 
 type Stat = {
-  label: string;
+  labelKey: string;
   value: string;
   change: string;
   icon: IconName;
@@ -18,52 +22,52 @@ type Stat = {
 };
 
 const dashboardData: Record<DashboardRole, {
-  title: string;
-  subtitle: string;
-  action: string;
+  titleKey: string;
+  subtitleKey: string;
+  actionKey: string;
   stats: Stat[];
 }> = {
   ADMIN: {
-    title: "Ready for a strong day?",
-    subtitle: "Here’s what’s happening across your gym right now.",
-    action: "Add member",
+    titleKey: "dash.adminTitle",
+    subtitleKey: "dash.adminSubtitle",
+    actionKey: "dash.actionAddMember",
     stats: [
-      { label: "Active members", value: "1,248", change: "+8.4% this month", icon: "users", tone: "lime" },
-      { label: "Monthly revenue", value: "$48.2k", change: "+12.1% this month", icon: "trend", tone: "orange" },
-      { label: "Today’s check-ins", value: "186", change: "72% of daily avg.", icon: "check", tone: "violet" },
-      { label: "Active trainers", value: "24", change: "4 coaching now", icon: "dumbbell", tone: "blue" },
+      { labelKey: "dash.statActiveMembers", value: "1,248", change: "+8.4% this month", icon: "users", tone: "lime" },
+      { labelKey: "dash.statMonthlyRevenue", value: "$48.2k", change: "+12.1% this month", icon: "trend", tone: "orange" },
+      { labelKey: "dash.statTodaysCheckins", value: "186", change: "72% of daily avg.", icon: "check", tone: "violet" },
+      { labelKey: "dash.statActiveTrainers", value: "24", change: "4 coaching now", icon: "dumbbell", tone: "blue" },
     ],
   },
   TRAINER: {
-    title: "Let’s make today count.",
-    subtitle: "Your clients, sessions, and coaching plan are all on track.",
-    action: "Build a plan",
+    titleKey: "dash.trainerTitle",
+    subtitleKey: "dash.trainerSubtitle",
+    actionKey: "dash.actionBuildPlan",
     stats: [
-      { label: "Active clients", value: "28", change: "+3 this month", icon: "users", tone: "lime" },
-      { label: "Today’s sessions", value: "8", change: "Next at 10:30", icon: "calendar", tone: "orange" },
-      { label: "Plans delivered", value: "42", change: "6 updated this week", icon: "clipboard", tone: "violet" },
-      { label: "Average rating", value: "4.9", change: "From 96 reviews", icon: "sparkles", tone: "blue" },
+      { labelKey: "dash.statActiveClients", value: "28", change: "+3 this month", icon: "users", tone: "lime" },
+      { labelKey: "dash.statTodaysSessions", value: "8", change: "Next at 10:30", icon: "calendar", tone: "orange" },
+      { labelKey: "dash.statPlansDelivered", value: "42", change: "6 updated this week", icon: "clipboard", tone: "violet" },
+      { labelKey: "dash.statAverageRating", value: "4.9", change: "From 96 reviews", icon: "sparkles", tone: "blue" },
     ],
   },
   USER: {
-    title: "Your next win starts here.",
-    subtitle: "Keep the streak alive and stay focused on your weekly plan.",
-    action: "Start workout",
+    titleKey: "dash.userTitle",
+    subtitleKey: "dash.userSubtitle",
+    actionKey: "dash.actionStartWorkout",
     stats: [
-      { label: "Workouts this week", value: "4/5", change: "One more to goal", icon: "dumbbell", tone: "lime" },
-      { label: "Current streak", value: "12 days", change: "Personal best", icon: "flame", tone: "orange" },
-      { label: "Plan progress", value: "76%", change: "+9% this week", icon: "trend", tone: "violet" },
-      { label: "Next session", value: "10:30", change: "Upper body", icon: "clock", tone: "blue" },
+      { labelKey: "dash.statWorkoutsThisWeek", value: "4/5", change: "One more to goal", icon: "dumbbell", tone: "lime" },
+      { labelKey: "dash.statCurrentStreak", value: "12 days", change: "Personal best", icon: "flame", tone: "orange" },
+      { labelKey: "dash.statPlanProgress", value: "76%", change: "+9% this week", icon: "trend", tone: "violet" },
+      { labelKey: "dash.statNextSession", value: "10:30", change: "Upper body", icon: "clock", tone: "blue" },
     ],
   },
 };
 
-const navItems: Array<{ label: string; icon: IconName; href: string }> = [
-  { label: "Overview", icon: "grid", href: "#overview" },
-  { label: "Schedule", icon: "calendar", href: "#schedule" },
-  { label: "People", icon: "users", href: "#people" },
-  { label: "Plans", icon: "clipboard", href: "#plans" },
-  { label: "Insights", icon: "bar-chart", href: "#insights" },
+const navItems: Array<{ labelKey: string; icon: IconName; href: string }> = [
+  { labelKey: "nav.overview", icon: "grid", href: "#overview" },
+  { labelKey: "nav.schedule", icon: "calendar", href: "#schedule" },
+  { labelKey: "nav.people", icon: "users", href: "#people" },
+  { labelKey: "nav.plans", icon: "clipboard", href: "#plans" },
+  { labelKey: "nav.insights", icon: "bar-chart", href: "#insights" },
 ];
 
 const schedule = [
@@ -72,10 +76,10 @@ const schedule = [
   { time: "02:30", period: "PM", title: "1:1 Coaching · Alex M.", meta: "Training floor · 60 min", tone: "violet", initials: ["AM"] },
 ];
 
-function roleLabel(role: DashboardRole) {
-  if (role === "ADMIN") return "Gym admin";
-  if (role === "TRAINER") return "Trainer";
-  return "Member";
+function roleLabelKey(role: DashboardRole) {
+  if (role === "ADMIN") return "nav.gymAdministrator";
+  if (role === "TRAINER") return "auth.trainer";
+  return "auth.member";
 }
 
 function getInitials(name: string) {
@@ -88,6 +92,7 @@ function getInitials(name: string) {
 
 export default async function DashboardPage() {
   const user = await requireCurrentUser();
+  const t = createT(await getLocale());
 
   if (user.role === "ADMIN") {
     const workspace = await prisma.gymStaff.findFirst({
@@ -122,24 +127,24 @@ export default async function DashboardPage() {
           </button>
         </div>
         <nav className="dashboard-nav" aria-label="Dashboard navigation">
-          <small>MAIN MENU</small>
+          <small>{t("nav.mainMenu")}</small>
           {navItems.map((item, index) => (
-            <a className={`dashboard-nav__item ${index === 0 ? "active" : ""}`} href={item.href} key={item.label}>
+            <a className={`dashboard-nav__item ${index === 0 ? "active" : ""}`} href={item.href} key={item.labelKey}>
               <Icon name={item.icon} size={19} />
-              <span>{item.label}</span>
-              {item.label === "Schedule" && <b>8</b>}
+              <span>{t(item.labelKey)}</span>
+              {item.labelKey === "nav.schedule" && <b>8</b>}
             </a>
           ))}
         </nav>
         <div className="dashboard-nav dashboard-nav--bottom">
-          <a className="dashboard-nav__item" href="#settings"><Icon name="settings" size={19} /><span>Settings</span></a>
+          <a className="dashboard-nav__item" href="#settings"><Icon name="settings" size={19} /><span>{t("nav.settings")}</span></a>
           <LogoutButton />
         </div>
         <div className="sidebar-help">
           <span><Icon name="sparkles" size={17} /></span>
-          <strong>Need a hand?</strong>
-          <p>Our support team is ready.</p>
-          <a href="mailto:support@koogymaa.com">Get support <Icon name="arrow" size={14} /></a>
+          <strong>{t("dash.needAHand")}</strong>
+          <p>{t("dash.supportReady")}</p>
+          <a href="mailto:support@koogymaa.com">{t("dash.getSupport")} <Icon name="arrow" size={14} /></a>
         </div>
       </aside>
 
@@ -148,33 +153,35 @@ export default async function DashboardPage() {
           <div className="dashboard-mobile-brand"><Brand compact /></div>
           <label className="dashboard-search">
             <Icon name="search" size={19} />
-            <input aria-label="Search dashboard" placeholder="Search members, plans, sessions…" type="search" />
+            <input aria-label={t("common.search")} placeholder={t("dash.searchPlaceholder")} type="search" />
             <kbd>⌘ K</kbd>
           </label>
           <div className="dashboard-user">
-            <button aria-label="Notifications" className="icon-button" type="button"><Icon name="bell" size={20} /><span /></button>
+            <button aria-label={t("nav.notifications")} className="icon-button" type="button"><Icon name="bell" size={20} /><span /></button>
             <div className="dashboard-user__avatar">{getInitials(user.name)}</div>
-            <div><strong>{user.name}</strong><small>{roleLabel(role)}</small></div>
+            <div><strong>{user.name}</strong><small>{t(roleLabelKey(role))}</small></div>
             <Icon name="chevron" size={15} />
           </div>
+          <LanguageSwitcher className="dashboard-language" />
+          <ThemeToggle className="dashboard-theme" />
         </header>
 
         <div className="dashboard-content">
           <div className="dashboard-welcome">
             <div>
               <span className="dashboard-date">FRIDAY · AUGUST 21</span>
-              <h1>{data.title}</h1>
-              <p>{data.subtitle}</p>
+              <h1>{t(data.titleKey)}</h1>
+              <p>{t(data.subtitleKey)}</p>
             </div>
-            <button className="dashboard-primary-action" type="button"><Icon name="plus" size={18} /> {data.action}</button>
+            <button className="dashboard-primary-action" type="button"><Icon name="plus" size={18} /> {t(data.actionKey)}</button>
           </div>
 
           <section className="dashboard-stat-grid" aria-label="At a glance">
             {data.stats.map((stat) => (
-              <article className="dashboard-stat" key={stat.label}>
+              <article className="dashboard-stat" key={stat.labelKey}>
                 <div className={`dashboard-stat__icon dashboard-stat__icon--${stat.tone}`}><Icon name={stat.icon} size={21} /></div>
                 <div className="dashboard-stat__value"><strong>{stat.value}</strong><Icon name="trend" size={17} /></div>
-                <p>{stat.label}</p>
+                <p>{t(stat.labelKey)}</p>
                 <small>{stat.change}</small>
               </article>
             ))}
@@ -183,8 +190,8 @@ export default async function DashboardPage() {
           <div className="dashboard-layout-grid">
             <section className="dashboard-panel activity-panel" id="insights">
               <div className="dashboard-panel__header">
-                <div><h2>Weekly activity</h2><p>Member visits across all sessions</p></div>
-                <button type="button">Last 7 days <span>⌄</span></button>
+                <div><h2>{t("dash.weeklyActivity")}</h2><p>{t("dash.memberVisits")}</p></div>
+                <button type="button">{t("dash.last7Days")} <span>⌄</span></button>
               </div>
               <div className="activity-summary"><strong>2,846</strong><span><Icon name="trend" size={15} /> 14.2%</span><small>vs. previous week</small></div>
               <div className="activity-chart-wrap">
@@ -205,13 +212,13 @@ export default async function DashboardPage() {
             </section>
 
             <section className="dashboard-panel progress-panel" id="plans">
-              <div className="dashboard-panel__header"><div><h2>Monthly goal</h2><p>August progress</p></div><button aria-label="More options" className="more-button" type="button">•••</button></div>
+              <div className="dashboard-panel__header"><div><h2>{t("dash.monthlyGoal")}</h2><p>{t("dash.monthProgress")}</p></div><button aria-label="More options" className="more-button" type="button">•••</button></div>
               <div className="progress-ring" style={{ "--progress": "76%" } as CSSProperties}>
-                <div><strong>76%</strong><span>on track</span></div>
+                <div><strong>76%</strong><span>{t("dash.monthProgress")}</span></div>
               </div>
               <div className="progress-copy">
-                <strong>Great momentum!</strong>
-                <p>You&apos;re 1,140 visits away from this month&apos;s target.</p>
+                <strong>{t("dash.greatMomentum")}</strong>
+                <p>{t("dash.visitsToTarget")}</p>
               </div>
               <div className="progress-legend"><span><i /> 3,860 completed</span><span><i /> 5,000 goal</span></div>
             </section>
@@ -219,8 +226,8 @@ export default async function DashboardPage() {
 
           <section className="dashboard-panel schedule-panel" id="schedule">
             <div className="dashboard-panel__header">
-              <div><h2>Today&apos;s schedule</h2><p>8 sessions · Friday, August 21</p></div>
-              <a href="#schedule">View full schedule <Icon name="arrow" size={16} /></a>
+              <div><h2>{t("dash.todaysSchedule")}</h2><p>8 sessions · Friday, August 21</p></div>
+              <a href="#schedule">{t("landing.explorePlatform")} <Icon name="arrow" size={16} /></a>
             </div>
             <div className="schedule-list">
               {schedule.map((session) => (
@@ -238,7 +245,7 @@ export default async function DashboardPage() {
 
           <footer className="dashboard-footer">
             <span>© 2026 KooGYMaa</span>
-            <div><Link href="/">Home</Link><a href="#settings">Help center</a><a href="#settings">Privacy</a></div>
+            <div><Link href="/">{t("common.home")}</Link><a href="#settings">{t("common.helpCenter")}</a><a href="#settings">{t("common.privacy")}</a></div>
           </footer>
         </div>
       </section>

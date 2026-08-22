@@ -1,58 +1,48 @@
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { Icon, type IconName } from "@/components/icon";
+import { getLocale } from "@/lib/i18n/server";
+import { createT } from "@/lib/i18n/translations";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const features: Array<{
   icon: IconName;
   number: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descKey: string;
   tone: string;
 }> = [
-  {
-    icon: "grid",
-    number: "01",
-    title: "Run the whole floor",
-    description: "Members, subscriptions, check-ins, and operations—clear, connected, and never buried in spreadsheets.",
-    tone: "lime",
-  },
-  {
-    icon: "clipboard",
-    number: "02",
-    title: "Coach with context",
-    description: "Build workout and nutrition plans, follow progress, and keep every client moving toward the next win.",
-    tone: "orange",
-  },
-  {
-    icon: "trend",
-    number: "03",
-    title: "Make progress visible",
-    description: "Members see their plans, streaks, and milestones in a focused space designed to keep motivation high.",
-    tone: "violet",
-  },
+  { icon: "grid", number: "01", titleKey: "landing.feature1Title", descKey: "landing.feature1Desc", tone: "lime" },
+  { icon: "clipboard", number: "02", titleKey: "landing.feature2Title", descKey: "landing.feature2Desc", tone: "orange" },
+  { icon: "trend", number: "03", titleKey: "landing.feature3Title", descKey: "landing.feature3Desc", tone: "violet" },
 ];
 
 const roles = [
-  { label: "GYM OWNERS", title: "Less admin. More momentum.", icon: "bar-chart" as IconName, stat: "24h", statLabel: "saved every month" },
-  { label: "TRAINERS", title: "Every client, fully in view.", icon: "users" as IconName, stat: "3.2×", statLabel: "faster plan building" },
-  { label: "MEMBERS", title: "Know the plan. Feel the progress.", icon: "flame" as IconName, stat: "82%", statLabel: "stay on track" },
+  { labelKey: "landing.roleOwners", titleKey: "landing.ownersTitle", icon: "bar-chart" as IconName, stat: "24h", statLabelKey: "landing.statSavedMonth" },
+  { labelKey: "landing.roleTrainers", titleKey: "landing.trainersTitle", icon: "users" as IconName, stat: "3.2×", statLabelKey: "landing.statFasterPlans" },
+  { labelKey: "landing.roleMembers", titleKey: "landing.membersTitle", icon: "flame" as IconName, stat: "82%", statLabelKey: "landing.statStayOnTrack" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const t = createT(await getLocale());
+
   return (
     <main className="landing-page">
       <section className="hero" id="home">
         <nav className="site-nav" aria-label="Main navigation">
           <Brand light />
           <div className="site-nav__links">
-            <a href="#platform">Platform</a>
-            <a href="#for-you">For you</a>
-            <a href="#why-us">Why KooGYMaa</a>
+            <a href="#platform">{t("landing.platform")}</a>
+            <a href="#for-you">{t("landing.forYou")}</a>
+            <a href="#why-us">{t("landing.whyUs")}</a>
           </div>
           <div className="site-nav__actions">
-            <Link className="nav-login" href="/login">Log in</Link>
+            <LanguageSwitcher className="landing-language" />
+            <ThemeToggle className="landing-theme" />
+            <Link className="nav-login" href="/login">{t("landing.logIn")}</Link>
             <Link className="button button--lime button--small" href="/register">
-              Get started <Icon name="arrow" size={16} />
+              {t("landing.getStarted")} <Icon name="arrow" size={16} />
             </Link>
           </div>
         </nav>
@@ -62,22 +52,22 @@ export default function Home() {
           <div className="hero__copy">
             <div className="eyebrow eyebrow--dark">
               <span className="live-dot" />
-              One place for every rep
+              {t("landing.heroEyebrow")}
             </div>
             <h1>
-              Move better.
+              {t("landing.heroTitle1")}
               <br />
-              <span>Manage smarter.</span>
+              <span>{t("landing.heroTitle2")}</span>
             </h1>
             <p className="hero__lead">
-              KooGYMaa brings gym operations, coaching, and member progress into one beautifully simple workspace.
+              {t("landing.heroLead")}
             </p>
             <div className="hero__actions">
               <Link className="button button--lime" href="/register">
-                Start building momentum <Icon name="arrow" size={18} />
+                {t("landing.heroCta1")} <Icon name="arrow" size={18} />
               </Link>
               <a className="button button--ghost" href="#platform">
-                <span className="play-icon">▶</span> Explore the platform
+                <span className="play-icon">▶</span> {t("landing.heroCta2")}
               </a>
             </div>
             <div className="hero__proof">
@@ -86,7 +76,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="hero__stars">★★★★★ <strong>4.9</strong></div>
-                <p>Loved by teams that move</p>
+                <p>{t("authShell.trustedBy")}</p>
               </div>
             </div>
           </div>
@@ -141,7 +131,7 @@ export default function Home() {
           </div>
         </div>
         <div className="hero__ticker" aria-label="Platform benefits">
-          <span>GYM OPERATIONS</span><b>✦</b><span>COACHING TOOLS</span><b>✦</b><span>MEMBER PROGRESS</span><b>✦</b><span>ONE CONNECTED SPACE</span><b>✦</b><span>BETTER EVERY DAY</span>
+          <span>{t("landing.ticker1")}</span><b>✦</b><span>{t("landing.ticker2")}</span><b>✦</b><span>{t("landing.ticker3")}</span><b>✦</b><span>{t("landing.ticker4")}</span><b>✦</b><span>{t("landing.ticker5")}</span>
         </div>
       </section>
 
@@ -149,22 +139,22 @@ export default function Home() {
         <div className="container">
           <div className="section-heading">
             <div>
-              <div className="eyebrow"><Icon name="bolt" size={15} /> THE PLATFORM</div>
-              <h2>Everything your gym needs.<br /><span>Nothing it doesn&apos;t.</span></h2>
+              <div className="eyebrow"><Icon name="bolt" size={15} /> {t("landing.thePlatform")}</div>
+              <h2>{t("landing.everythingYourGymNeeds")}<br /><span>{t("landing.nothingItDoesnt")}</span></h2>
             </div>
-            <p>Purpose-built tools that keep the work simple and put people, progress, and performance first.</p>
+            <p>{t("landing.purposeBuilt")}</p>
           </div>
 
           <div className="feature-grid">
             {features.map((feature) => (
-              <article className={`feature-card feature-card--${feature.tone}`} key={feature.title}>
+              <article className={`feature-card feature-card--${feature.tone}`} key={feature.titleKey}>
                 <div className="feature-card__top">
                   <span className="feature-card__icon"><Icon name={feature.icon} size={24} /></span>
                   <small>{feature.number}</small>
                 </div>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
-                <a href="#for-you">See what&apos;s inside <Icon name="arrow" size={17} /></a>
+                <h3>{t(feature.titleKey)}</h3>
+                <p>{t(feature.descKey)}</p>
+                <a href="#for-you">{t("landing.explorePlatform")} <Icon name="arrow" size={17} /></a>
               </article>
             ))}
           </div>
@@ -174,18 +164,18 @@ export default function Home() {
       <section className="roles-section" id="for-you">
         <div className="container">
           <div className="roles-intro">
-            <div className="eyebrow eyebrow--dark"><Icon name="sparkles" size={15} /> MADE FOR EVERY GOAL</div>
-            <h2>One system.<br /><span>Three powerful views.</span></h2>
-            <p>Everyone gets exactly what they need—without the noise they don&apos;t.</p>
+            <div className="eyebrow eyebrow--dark"><Icon name="sparkles" size={15} /> {t("landing.madeForEveryGoal")}</div>
+            <h2>{t("landing.oneSystem")}<br /><span>{t("landing.threeViews")}</span></h2>
+            <p>{t("landing.everyoneGets")}</p>
           </div>
           <div className="role-grid">
             {roles.map((role, index) => (
-              <article className={`role-card role-card--${index + 1}`} key={role.label}>
+              <article className={`role-card role-card--${index + 1}`} key={role.labelKey}>
                 <div className="role-card__icon"><Icon name={role.icon} size={23} /></div>
-                <small>{role.label}</small>
-                <h3>{role.title}</h3>
-                <div className="role-card__stat"><strong>{role.stat}</strong><span>{role.statLabel}</span></div>
-                <Link href="/register">Explore your view <Icon name="arrow" size={17} /></Link>
+                <small>{t(role.labelKey)}</small>
+                <h3>{t(role.titleKey)}</h3>
+                <div className="role-card__stat"><strong>{role.stat}</strong><span>{t(role.statLabelKey)}</span></div>
+                <Link href="/register">{t("landing.forYou")} <Icon name="arrow" size={17} /></Link>
               </article>
             ))}
           </div>
@@ -195,13 +185,13 @@ export default function Home() {
       <section className="confidence-section" id="why-us">
         <div className="container confidence-grid">
           <div>
-            <div className="eyebrow"><Icon name="shield" size={15} /> BUILT FOR THE LONG RUN</div>
-            <h2>Simple on day one.<br />Powerful every day after.</h2>
+            <div className="eyebrow"><Icon name="shield" size={15} /> {t("landing.builtForLongRun")}</div>
+            <h2>{t("landing.simpleDayOne")}<br /><span>{t("landing.powerfulAfter")}</span></h2>
           </div>
           <div className="confidence-list">
-            <div><span><Icon name="check" size={17} /></span><p><strong>Fast to start</strong>Set up your workspace and invite your team in minutes.</p></div>
-            <div><span><Icon name="check" size={17} /></span><p><strong>Easy to use</strong>A focused interface people actually enjoy coming back to.</p></div>
-            <div><span><Icon name="check" size={17} /></span><p><strong>Ready to grow</strong>From your first member to your next location.</p></div>
+            <div><span><Icon name="check" size={17} /></span><p><strong>{t("landing.fastToStart")}</strong>{t("landing.fastToStartDesc")}</p></div>
+            <div><span><Icon name="check" size={17} /></span><p><strong>{t("landing.easyToUse")}</strong>{t("landing.easyToUseDesc")}</p></div>
+            <div><span><Icon name="check" size={17} /></span><p><strong>{t("landing.readyToGrow")}</strong>{t("landing.readyToGrowDesc")}</p></div>
           </div>
         </div>
       </section>
@@ -209,20 +199,20 @@ export default function Home() {
       <section className="cta-section">
         <div className="cta-orbit cta-orbit--one" /><div className="cta-orbit cta-orbit--two" />
         <div className="cta-section__content">
-          <div className="eyebrow eyebrow--dark">YOUR NEXT REP STARTS HERE</div>
-          <h2>Ready to build<br /><span>something stronger?</span></h2>
-          <p>Bring your gym, your people, and your progress together.</p>
-          <Link className="button button--dark" href="/register">Get started for free <Icon name="arrow" size={18} /></Link>
+          <div className="eyebrow eyebrow--dark">{t("landing.yourNextRep")}</div>
+          <h2>{t("landing.readyToBuild")}<br /><span>{t("landing.somethingStronger")}</span></h2>
+          <p>{t("landing.bringYourGym")}</p>
+          <Link className="button button--dark" href="/register">{t("landing.getStartedFree")} <Icon name="arrow" size={18} /></Link>
         </div>
       </section>
 
       <footer className="site-footer">
         <div className="container site-footer__main">
           <Brand light />
-          <p>Movement, managed beautifully.</p>
-          <div><a href="#platform">Platform</a><a href="#for-you">For you</a><Link href="/login">Log in</Link></div>
+          <p>{t("landing.movementManaged")}</p>
+          <div><a href="#platform">{t("landing.platform")}</a><a href="#for-you">{t("landing.forYou")}</a><Link href="/login">{t("landing.logIn")}</Link></div>
         </div>
-        <div className="container site-footer__bottom"><span>© 2026 KooGYMaa</span><span>Made for people who move.</span></div>
+        <div className="container site-footer__bottom"><span>© 2026 KooGYMaa</span><span>{t("landing.madeForPeople")}</span></div>
       </footer>
     </main>
   );
