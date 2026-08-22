@@ -2623,3 +2623,61 @@ html.locale-fa body {
 /* Generic surface fallback so any -card / -panel flips text in dark mode */
 .theme-dark [class*="card"],
 .theme-dark [class*="panel"] { color: var(--ink); }
+
+/* ── Dashboard accessibility and complete dark-theme surfaces ─────── */
+/* The original dashboard UI used 6–10px type in several views. Keep all
+   operational text at a readable size, including controls and metadata. */
+.dashboard-shell, .admin-shell, .trainer-shell, .member-shell { font-size: 16px; }
+.dashboard-shell :is(button, input, select, textarea) { font-size: max(14px, 1em); }
+.admin-shell :is(button, input, select, textarea),
+.trainer-shell :is(button, input, select, textarea),
+.member-shell :is(button, input, select, textarea) { font-size: max(14px, 1em); }
+
+.dashboard-shell :is(small, label, p, time, td, th, li, a, button, input, select, textarea) { font-size: max(14px, 1em); }
+.admin-shell :is(small, label, p, time, td, th, li, a, button, input, select, textarea),
+.trainer-shell :is(small, label, p, time, td, th, li, a, button, input, select, textarea),
+.member-shell :is(small, label, p, time, td, th, li, a, button, input, select, textarea) { font-size: max(14px, 1em); }
+
+.dashboard-shell :is(h2, h3, strong),
+.admin-shell :is(h2, h3, strong),
+.trainer-shell :is(h2, h3, strong),
+.member-shell :is(h2, h3, strong) { font-size: max(16px, 1em); }
+
+.admin-shell :is(.admin-primary-button, .admin-secondary-button),
+.trainer-shell :is(.trainer-primary-button, .trainer-secondary-button),
+.member-shell :is(.member-primary-button, .member-secondary-button) { font-size: 15px; min-height: 42px; }
+.dashboard-shell .dashboard-primary-action { font-size: 15px; min-height: 42px; }
+
+.theme-dark :is(.admin-shell, .trainer-shell, .member-shell, .loading-shell) { background: var(--paper-2); }
+.theme-dark :is(.admin-main, .trainer-main, .member-main, .admin-page, .trainer-page, .member-page) { background: transparent; color: var(--ink); }
+.theme-dark :is(.admin-mobile-header, .admin-mobile-nav, .trainer-mobile-header, .trainer-mobile-nav, .member-mobile-header, .member-mobile-nav) { background: #111812; border-color: var(--line); }
+.theme-dark :is(.admin-panel, .trainer-panel, .member-panel, .admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .admin-trainer-card, .admin-plan-card, .member-workout-grid > article, .member-nutrition-grid > article, .member-profile-form, .checkout-card, .market-filters) { background: #121a14; border-color: var(--line); box-shadow: none; }
+.theme-dark :is(.admin-inline-form input, .admin-inline-form select, .admin-create-form input, .admin-create-form select, .admin-settings-form input, .admin-settings-form select, .admin-settings-form textarea, .member-profile-form input, .member-profile-form select, .member-profile-form textarea, .market-filters input, .market-filters select, .review-editor textarea) { background: #0d130f; border-color: #344036; color: var(--ink); }
+.theme-dark :is(.admin-main, .trainer-main, .member-main) :is(h1, h2, h3, strong, label, th) { color: var(--ink); }
+.theme-dark :is(.admin-main, .trainer-main, .member-main) :is(p, small, td, time, .member-empty-line) { color: var(--muted); }
+.theme-dark :is(.trainer-tool-list > a, .trainer-tool-disabled, .member-dashboard-notifications > div > a, .market-plan-list article, .market-trainer-strip > div > a, .review-editor, .review-eligibility) { background: #182119; border-color: #344036; }
+.theme-dark :is(.admin-primary-button, .trainer-primary-button, .member-primary-button) { background: var(--lime); color: #16200f; }
+.theme-dark :is(.admin-secondary-button, .trainer-secondary-button, .member-secondary-button) { background: #202b21; border-color: #3b473d; color: var(--ink); }
+.theme-dark :is(.admin-sidebar, .trainer-sidebar, .member-sidebar) { background: #0c110d; border-color: var(--line); }
+.theme-dark :is(.admin-sidebar, .trainer-sidebar, .member-sidebar) :is(a, strong) { color: #e7eee5; }
+.theme-dark :is(.admin-sidebar, .trainer-sidebar, .member-sidebar) :is(small, p) { color: #aeb9ad; }
+.theme-dark .language-switcher { background: #202a21; border-color: #3a453b; }
+.theme-dark .auth-theme.theme-toggle { background: #202a21; border-color: #3a453b; color: var(--ink); }
+
+/* `--ink` is a foreground token in dark mode. These components use it as a
+   surface in the light theme, so they need an explicit dark surface instead. */
+.theme-dark :is(.hero, .roles-section, .site-footer, .auth-story) { background: #171e18; }
+.theme-dark :is(.button--dark, .dashboard-primary-action, .admin-primary-button, .admin-filter-links a.active, .language-switcher button.active) { background: var(--lime); color: #16200f; }
+.theme-dark :is(.button--dark:hover, .dashboard-primary-action:hover, .admin-primary-button:hover:not(:disabled)) { background: #dbff89; color: #16200f; }
+.theme-dark :is(.chart-tooltip, .cta-orbit::after) { background: #1b241c; }
+.theme-dark .brand__mark span { background: #172017; }
+.theme-dark :is(.button--lime, .dashboard-nav__item.active, .admin-nav__item.active, .member-sidebar > nav a.active) { color: #16200f; }
+.theme-dark .site-footer__bottom { border-color: rgba(255, 255, 255, .14); }
+.theme-dark .confidence-section { background: #0f1610; }
+.theme-dark .cta-section { color: #172017; }
+.theme-dark :is(.cta-section h2, .cta-section h2 span, .cta-section p, .cta-section .eyebrow) { color: #172017; }
+
+/* Form, editor and list views are shared by the trainer/member dashboards. */
+.theme-dark :is(.trainer-main, .member-main) :is([class*="form"], [class*="editor"], [class*="summary"], [class*="day"], [class*="grid"] > article) { background: #121a14; border-color: var(--line); box-shadow: none; }
+.theme-dark .trainer-main :is(input, select, textarea) { background: #0d130f; border-color: #344036; color: var(--ink); }
+.theme-dark :is(.trainer-main, .member-main) :is([class*="list"] > article, [class*="list"] > a, [class*="row"] > button, [class*="actions"] > button) { background-color: #182119; border-color: #344036; }
