@@ -1256,6 +1256,8 @@ button {
   .auth-form-panel { min-height: 100vh; padding-top: 115px; }
   .auth-mobile-brand { display: block; left: 36px; position: absolute; top: 34px; }
   .auth-back { left: auto; right: 36px; top: 42px; }
+  .auth-language { right: 36px; top: 78px; }
+  .auth-theme { right: 186px; top: 78px; }
   .dashboard-sidebar { width: 72px; padding-inline: 12px; }
   .dashboard-sidebar > .brand { margin-inline: auto; }
   .dashboard-sidebar .brand__wordmark, .dashboard-workspace > span, .dashboard-workspace button > span:nth-child(2), .dashboard-workspace button > svg, .dashboard-nav > small, .dashboard-nav__item span, .dashboard-nav__item b, .sidebar-help { display: none; }
@@ -1300,6 +1302,8 @@ button {
   .auth-form-panel { align-items: flex-start; padding: 113px 22px 72px; }
   .auth-mobile-brand { left: 22px; }
   .auth-back { right: 22px; }
+  .auth-language { right: 22px; top: 78px; }
+  .auth-theme { right: 172px; top: 78px; }
   .auth-heading h1 { font-size: 33px; }
   .auth-legal { bottom: 20px; }
   .dashboard-sidebar { display: none; }
@@ -2523,7 +2527,11 @@ html.locale-fa body {
 .member-language + .theme-toggle,
 .landing-language + .theme-toggle { margin-inline-start: 8px; }
 .dashboard-theme { margin-inline-start: 12px; }
-.auth-theme { margin-bottom: 14px; }
+/* Auth pages: pin language + theme to the top corner, out of the form flow */
+.auth-language { position: absolute; right: 46px; top: 38px; z-index: 5; }
+.auth-theme { margin: 0; position: absolute; right: 196px; top: 38px; z-index: 5; }
+/* RTL: flip the back arrow so it points backward */
+html.locale-fa .auth-back span { display: inline-block; transform: scaleX(-1); }
 .auth-theme.theme-toggle { background: #eceee8; border-color: #d9ddd5; color: #5d655c; }
 .auth-theme.theme-toggle:hover { background: #e2e5dd; }
 
@@ -2570,6 +2578,11 @@ html.locale-fa body {
 .theme-dark .role-picker small { color: var(--muted); }
 .theme-dark .auth-back,
 .theme-dark .auth-legal { color: var(--muted); }
+.theme-dark .auth-language.language-switcher { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .14); }
+.theme-dark .auth-language.language-switcher button { color: #cfd5cc; }
+.theme-dark .auth-language.language-switcher button.active { background: var(--lime); color: #16210d; }
+.theme-dark .auth-theme.theme-toggle { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .14); color: #d7dbd2; }
+.theme-dark .auth-theme.theme-toggle:hover { background: rgba(255, 255, 255, .16); }
 .theme-dark .auth-legal a { color: #9fbe5e; }
 
 .theme-dark .landing-page { background: #090d0a; }
@@ -2656,6 +2669,19 @@ html.locale-fa body {
 .theme-dark :is(.admin-main, .trainer-main, .member-main) :is(h1, h2, h3, strong, label, th) { color: var(--ink); }
 .theme-dark :is(.admin-main, .trainer-main, .member-main) :is(p, small, td, time, .member-empty-line) { color: var(--muted); }
 .theme-dark :is(.trainer-tool-list > a, .trainer-tool-disabled, .member-dashboard-notifications > div > a, .market-plan-list article, .market-trainer-strip > div > a, .review-editor, .review-eligibility) { background: #182119; border-color: #344036; }
+/* Panels: form controls, buttons, tables and pale surfaces follow the theme */
+.theme-dark :is(.admin-shell, .trainer-shell, .member-shell) :is(input, select, textarea) { background: #0d130f; border-color: #344036; color: var(--ink); }
+.theme-dark :is(.admin-shell, .trainer-shell, .member-shell) ::placeholder { color: #6f786f; }
+.theme-dark :is(.admin-secondary-button, .trainer-secondary-button, .member-secondary-button) { background: #1c231c; border-color: var(--line); color: var(--ink); }
+.theme-dark :is(.admin-row-actions, .admin-subscription-actions, .trainer-row-actions, .trainer-session-actions, .trainer-plan-actions, .trainer-slot-list, .trainer-assignment-list) button { background: #1e251e; border-color: var(--line); color: var(--ink); }
+.theme-dark :is(.admin-row-actions, .admin-subscription-actions) button.approve,
+.theme-dark :is(.trainer-row-actions, .trainer-session-actions) button.approve,
+.theme-dark :is(.trainer-session-actions) button.complete,
+.theme-dark :is(.trainer-plan-actions) button.publish { background: #22301a; border-color: #4a6428; color: #c8e58a; }
+.theme-dark .admin-table th { background: #131a14; border-color: var(--line); }
+.theme-dark .admin-table td { border-color: var(--line); }
+.theme-dark .admin-table tbody tr:hover { background: #131a14; }
+.theme-dark :is(.admin-quick-grid > a, .trainer-location-list > a, .member-today > div:last-child > a, .trainer-student-context, .member-feedback-reply, .trainer-feedback-history article > div, .member-exercise-log__head, .admin-toolbar form, .member-actions-card, .member-resume-note, .trainer-plan-notice) { background: #131a14; border-color: var(--line); }
 .theme-dark :is(.admin-primary-button, .trainer-primary-button, .member-primary-button) { background: var(--lime); color: #16200f; }
 .theme-dark :is(.admin-secondary-button, .trainer-secondary-button, .member-secondary-button) { background: #202b21; border-color: #3b473d; color: var(--ink); }
 .theme-dark :is(.admin-sidebar, .trainer-sidebar, .member-sidebar) { background: #0c110d; border-color: var(--line); }

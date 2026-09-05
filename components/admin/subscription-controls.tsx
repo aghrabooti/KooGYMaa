@@ -29,27 +29,27 @@ export function CreateSubscription({ gymId, plans }: { gymId: string; plans: Pla
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || "Unable to create subscription.");
+        setError(data.error || "اشتراک ساخته نشد.");
         return;
       }
       setOpen(false);
       router.refresh();
     } catch {
-      setError("Unable to connect.");
+      setError("اتصال برقرار نشد.");
     } finally {
       setPending(false);
     }
   }
 
-  if (!open) return <button className="admin-primary-button" onClick={() => setOpen(true)} type="button"><Icon name="plus" size={16} /> New subscription</button>;
+  if (!open) return <button className="admin-primary-button" onClick={() => setOpen(true)} type="button"><Icon name="plus" size={16} /> اشتراک تازه</button>;
 
   return (
     <form className="admin-inline-form admin-inline-form--subscription" onSubmit={submit}>
-      <label><span>Account email</span><input autoFocus name="email" placeholder="member@example.com" required type="email" /></label>
-      <label><span>Plan</span><select name="planId" required><option value="">Choose a plan</option>{plans.map((plan) => <option key={plan.id} value={plan.id}>{plan.name} · {plan.audience}</option>)}</select></label>
-      <label className="admin-checkbox"><input name="autoRenew" type="checkbox" /><span>Auto-renew</span></label>
-      <button className="admin-primary-button" disabled={pending} type="submit">{pending ? "Creating…" : "Create"}</button>
-      <button className="admin-secondary-button" onClick={() => setOpen(false)} type="button">Cancel</button>
+      <label><span>ایمیل حساب</span><input autoFocus name="email" placeholder="member@example.com" required type="email" /></label>
+      <label><span>طرح</span><select name="planId" required><option value="">یک طرح انتخاب کنید</option>{plans.map((plan) => <option key={plan.id} value={plan.id}>{plan.name} · {plan.audience}</option>)}</select></label>
+      <label className="admin-checkbox"><input name="autoRenew" type="checkbox" /><span>تمدید خودکار</span></label>
+      <button className="admin-primary-button" disabled={pending} type="submit">{pending ? "در حال ایجاد…" : "ایجاد"}</button>
+      <button className="admin-secondary-button" onClick={() => setOpen(false)} type="button">انصراف</button>
       {error && <small role="alert">{error}</small>}
     </form>
   );
@@ -79,12 +79,12 @@ export function SubscriptionActions({
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || "Update failed.");
+        setError(data.error || "به‌روزرسانی انجام نشد.");
         return;
       }
       router.refresh();
     } catch {
-      setError("Unable to connect.");
+      setError("اتصال برقرار نشد.");
     } finally {
       setPending("");
     }
@@ -92,8 +92,8 @@ export function SubscriptionActions({
 
   return (
     <div className="admin-subscription-actions">
-      <button disabled={Boolean(pending)} onClick={() => update({ extendDays: 30 }, "extend")} type="button">{pending === "extend" ? "Extending…" : "Extend 30d"}</button>
-      {status === "ACTIVE" ? <button disabled={Boolean(pending)} onClick={() => update({ status: "CANCELLED" }, "cancel")} type="button">Cancel</button> : <button className="approve" disabled={Boolean(pending)} onClick={() => update({ status: "ACTIVE" }, "activate")} type="button">Activate</button>}
+      <button disabled={Boolean(pending)} onClick={() => update({ extendDays: 30 }, "extend")} type="button">{pending === "extend" ? "در حال تمدید…" : "تمدید ۳۰ روزه"}</button>
+      {status === "ACTIVE" ? <button disabled={Boolean(pending)} onClick={() => update({ status: "CANCELLED" }, "cancel")} type="button">انصراف</button> : <button className="approve" disabled={Boolean(pending)} onClick={() => update({ status: "ACTIVE" }, "activate")} type="button">فعال‌سازی</button>}
       <button disabled={Boolean(pending)} onClick={() => update({ autoRenew: !autoRenew }, "renew")} type="button">Auto-renew {autoRenew ? "off" : "on"}</button>
       {error && <small>{error}</small>}
     </div>

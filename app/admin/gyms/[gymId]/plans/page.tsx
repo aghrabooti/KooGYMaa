@@ -26,7 +26,7 @@ export default async function PlansPage({ params }: PageProps) {
   return (
     <div className="admin-page">
       <header className="admin-page__heading admin-page__heading--compact">
-        <div><span>PRICING & ACCESS</span><h1>Subscription plans</h1><p>Create flexible plans for gym members and trainers.</p></div>
+        <div><span>قیمت و دسترسی</span><h1>طرح‌های اشتراک</h1><p>برای اعضای باشگاه و مربی‌ها طرح‌های منعطف بسازید.</p></div>
       </header>
       <PlanManager gymId={gymId} plans={plans.map(({ _count, ...plan }: any) => ({ ...plan, subscriptionCount: _count.subscriptions }))} />
     </div>

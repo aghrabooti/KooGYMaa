@@ -4,24 +4,25 @@ import { requireGymAdminAccess } from "@/lib/admin-access";
 import { prisma } from "@/lib/prisma";
 import { summarizePayments, monthlyRevenue as monthlyRevenueSeries } from "@/lib/finance";
 import { formatMoney as formatMoneyFa } from "@/lib/fa";
+import { faStatus } from "@/components/fa";
 
 type PageProps = { params: Promise<{ gymId: string }> };
 
 function formatMoney(value: number, currency = "IRR") {
   try {
-    return new Intl.NumberFormat("en", {
+    return new Intl.NumberFormat("fa-IR", {
       style: "currency",
       currency,
       maximumFractionDigits: 0,
       notation: value >= 1_000_000_000 ? "compact" : "standard",
     }).format(value);
   } catch {
-    return `${value.toLocaleString()} ${currency}`;
+    return `${value.toLocaleString("fa-IR")} ${currency}`;
   }
 }
 
 function formatDate(value: Date) {
-  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(value);
+  return new Intl.DateTimeFormat("fa-IR", { month: "short", day: "numeric" }).format(value);
 }
 
 export default async function GymOverviewPage({ params }: PageProps) {
@@ -91,7 +92,7 @@ export default async function GymOverviewPage({ params }: PageProps) {
       name: membership.user.name,
       detail: membership.user.email,
       requestedAt: membership.requestedAt,
-      type: "Member",
+      type: "عضو",
     })),
     ...recentTrainers.map((membership: any) => ({
       id: membership.id,
@@ -99,22 +100,22 @@ export default async function GymOverviewPage({ params }: PageProps) {
       name: membership.trainer.user.name,
       detail: membership.trainer.user.email,
       requestedAt: membership.requestedAt,
-      type: "Trainer",
+      type: "مربی",
     })),
   ].sort((a, b) => b.requestedAt.getTime() - a.requestedAt.getTime()).slice(0, 5);
 
   const stats: Array<{ change: string; icon: IconName; label: string; tone: string; value: string }> = [
-    { label: "Active members", value: activeMembers.toLocaleString(), change: `${pendingMembers} awaiting review`, icon: "users", tone: "lime" },
-    { label: "Active trainers", value: activeTrainers.toLocaleString(), change: `${pendingTrainers} awaiting review`, icon: "dumbbell", tone: "orange" },
-    { label: "Active subscriptions", value: activeSubscriptions.toLocaleString(), change: `${expiringSubscriptions.length} expire this week`, icon: "credit-card", tone: "violet" },
-    { label: "Net revenue (paid)", value: formatMoneyFa(totalRevenue, currency), change: revenueNote, icon: "trend", tone: "blue" },
+    { label: "اعضای فعال", value: activeMembers.toLocaleString("fa-IR"), change: `${pendingMembers} در انتظار بررسی`, icon: "users", tone: "lime" },
+    { label: "مربی‌های فعال", value: activeTrainers.toLocaleString("fa-IR"), change: `${pendingTrainers} در انتظار بررسی`, icon: "dumbbell", tone: "orange" },
+    { label: "اشتراک‌های فعال", value: activeSubscriptions.toLocaleString("fa-IR"), change: `${expiringSubscriptions.length} این هفته منقضی می‌شود`, icon: "credit-card", tone: "violet" },
+    { label: "درآمد خالص (پرداخت‌شده)", value: formatMoneyFa(totalRevenue, currency), change: revenueNote, icon: "trend", tone: "blue" },
   ];
 
   return (
     <div className="admin-page">
       <header className="admin-page__heading">
-        <div><span>{now.toLocaleDateString("en", { weekday: "long", month: "long", day: "numeric" }).toUpperCase()}</span><h1>Good to see you, {user.name.split(" ")[0]}.</h1><p>Here&apos;s the latest from {gym.name}.</p></div>
-        <Link className="admin-primary-button" href={`/admin/gyms/${gymId}/members`}><Icon name="plus" size={17} /> Manage members</Link>
+        <div><span>{now.toLocaleDateString("fa-IR", { weekday: "long", month: "long", day: "numeric" }).toUpperCase()}</span><h1>Good to see you, {user.name.split(" ")[0]}.</h1><p>Here&apos;s the latest from {gym.name}.</p></div>
+        <Link className="admin-primary-button" href={`/admin/gyms/${gymId}/members`}><Icon name="plus" size={17} /> مدیریت اعضا</Link>
       </header>
 
       <section className="admin-metric-grid">
@@ -128,8 +129,8 @@ export default async function GymOverviewPage({ params }: PageProps) {
 
       <div className="admin-overview-grid">
         <section className="admin-panel admin-revenue-panel">
-          <div className="admin-panel__heading"><div><h2>Revenue overview</h2><p>Successful payments · last six months · net of refunds</p></div><span>{currency}</span></div>
-          <div className="admin-revenue-total"><strong>{formatMoneyFa(totalRevenue, currency)}</strong><span>net paid revenue</span></div><p className="admin-note">تمدیدها: {finance.renewalsSucceeded} · بازپرداخت: {formatMoneyFa(finance.refunded, currency)}</p>
+          <div className="admin-panel__heading"><div><h2>نمای درآمد</h2><p>پرداخت‌های موفق · شش ماه گذشته · خالص پس از بازپرداخت</p></div><span>{currency}</span></div>
+          <div className="admin-revenue-total"><strong>{formatMoneyFa(totalRevenue, currency)}</strong><span>درآمد خالص پرداخت‌شده</span></div><p className="admin-note">تمدیدها: {finance.renewalsSucceeded} · بازپرداخت: {formatMoneyFa(finance.refunded, currency)}</p>
           <div className="admin-bar-chart">
             {monthlyRevenue.map((month) => (
               <div key={month.label}><span title={formatMoney(month.total, currency)} style={{ height: `${Math.max(8, (month.total / maxRevenue) * 100)}%` }} /><small>{month.label}</small></div>
@@ -138,31 +139,31 @@ export default async function GymOverviewPage({ params }: PageProps) {
         </section>
 
         <section className="admin-panel">
-          <div className="admin-panel__heading"><div><h2>Pending requests</h2><p>{pendingMembers + pendingTrainers} require attention</p></div><Icon name="bell" size={18} /></div>
+          <div className="admin-panel__heading"><div><h2>درخواست‌های در انتظار</h2><p>{pendingMembers + pendingTrainers} نیاز به بررسی</p></div><Icon name="bell" size={18} /></div>
           {pending.length ? <div className="admin-request-list">{pending.map((item) => (
             <Link href={item.href} key={`${item.type}-${item.id}`}>
               <span className="admin-avatar">{item.name.slice(0, 2).toUpperCase()}</span>
-              <div><strong>{item.name}</strong><small>{item.type} · {item.detail}</small></div>
+              <div><strong>{item.name}</strong><small>{faStatus(item.type)} · {item.detail}</small></div>
               <span>{formatDate(item.requestedAt)} <Icon name="chevron" size={13} /></span>
             </Link>
-          ))}</div> : <div className="admin-empty-small"><Icon name="check" size={22} /><strong>You&apos;re all caught up</strong><span>No pending requests.</span></div>}
+          ))}</div> : <div className="admin-empty-small"><Icon name="check" size={22} /><strong>همه‌چیز به‌روز است</strong><span>درخواست در انتظاری وجود ندارد.</span></div>}
         </section>
       </div>
 
       <div className="admin-bottom-grid">
         <section className="admin-panel">
-          <div className="admin-panel__heading"><div><h2>Expiring soon</h2><p>Subscriptions ending in the next 7 days</p></div><Link href={`/admin/gyms/${gymId}/subscriptions`}>View all <Icon name="arrow" size={14} /></Link></div>
+          <div className="admin-panel__heading"><div><h2>رو به انقضا</h2><p>اشتراک‌هایی که در ۷ روز آینده تمام می‌شوند</p></div><Link href={`/admin/gyms/${gymId}/subscriptions`}>مشاهده همه <Icon name="arrow" size={14} /></Link></div>
           {expiringSubscriptions.length ? <div className="admin-expiring-list">{expiringSubscriptions.map((subscription: any) => (
             <div key={subscription.id}><span><Icon name="clock" size={16} /></span><div><strong>{subscription.subscriber.name}</strong><small>{subscription.plan.name}</small></div><b>{formatDate(subscription.endDate)}</b></div>
-          ))}</div> : <div className="admin-empty-row"><Icon name="shield" size={18} /> No subscriptions expire this week.</div>}
+          ))}</div> : <div className="admin-empty-row"><Icon name="shield" size={18} /> این هفته اشتراکی منقضی نمی‌شود.</div>}
         </section>
 
         <section className="admin-panel admin-quick-panel">
-          <div className="admin-panel__heading"><div><h2>Quick actions</h2><p>Jump back into daily operations</p></div></div>
+          <div className="admin-panel__heading"><div><h2>اقدامات سریع</h2><p>به کارهای روزانه برگردید</p></div></div>
           <div className="admin-quick-grid">
-            <Link href={`/admin/gyms/${gymId}/plans`}><Icon name="clipboard" size={18} /><span><strong>Create a plan</strong><small>Pricing and access</small></span><Icon name="chevron" size={14} /></Link>
-            <Link href={`/admin/gyms/${gymId}/trainers`}><Icon name="dumbbell" size={18} /><span><strong>Review trainers</strong><small>Applications and roster</small></span><Icon name="chevron" size={14} /></Link>
-            <Link href={`/admin/gyms/${gymId}/settings`}><Icon name="settings" size={18} /><span><strong>Gym details</strong><small>Contact and visibility</small></span><Icon name="chevron" size={14} /></Link>
+            <Link href={`/admin/gyms/${gymId}/plans`}><Icon name="clipboard" size={18} /><span><strong>ساخت طرح</strong><small>قیمت‌گذاری و دسترسی</small></span><Icon name="chevron" size={14} /></Link>
+            <Link href={`/admin/gyms/${gymId}/trainers`}><Icon name="dumbbell" size={18} /><span><strong>مرور مربی‌ها</strong><small>درخواست‌ها و فهرست</small></span><Icon name="chevron" size={14} /></Link>
+            <Link href={`/admin/gyms/${gymId}/settings`}><Icon name="settings" size={18} /><span><strong>مشخصات باشگاه</strong><small>تماس و نمایش</small></span><Icon name="chevron" size={14} /></Link>
           </div>
         </section>
       </div>

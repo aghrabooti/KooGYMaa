@@ -36,7 +36,7 @@ export function AddPersonForm({ endpoint, kind }: AddPersonFormProps) {
       setOpen(false);
       router.refresh();
     } catch {
-      setError("Unable to connect. Please try again.");
+      setError("اتصال برقرار نشد. لطفاً دوباره تلاش کنید.");
     } finally {
       setPending(false);
     }
@@ -48,9 +48,9 @@ export function AddPersonForm({ endpoint, kind }: AddPersonFormProps) {
 
   return (
     <form className="admin-inline-form" onSubmit={submit}>
-      <label><span>{kind === "member" ? "Member" : "Trainer"} account email</span><input autoFocus name="email" placeholder={`${kind}@example.com`} required type="email" /></label>
-      <button className="admin-primary-button" disabled={pending} type="submit">{pending ? "Adding…" : "Add"}</button>
-      <button className="admin-secondary-button" onClick={() => setOpen(false)} type="button">Cancel</button>
+      <label><span>{kind === "member" ? "عضو" : "مربی"} ایمیل حساب</span><input autoFocus name="email" placeholder={`${kind}@example.com`} required type="email" /></label>
+      <button className="admin-primary-button" disabled={pending} type="submit">{pending ? "در حال افزودن…" : "Add"}</button>
+      <button className="admin-secondary-button" onClick={() => setOpen(false)} type="button">انصراف</button>
       {error && <small role="alert">{error}</small>}
     </form>
   );

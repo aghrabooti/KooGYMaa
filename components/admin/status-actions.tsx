@@ -26,12 +26,12 @@ export function StatusActions({ endpoint, status }: StatusActionsProps) {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || "Update failed.");
+        setError(data.error || "به‌روزرسانی انجام نشد.");
         return;
       }
       router.refresh();
     } catch {
-      setError("Unable to connect.");
+      setError("اتصال برقرار نشد.");
     } finally {
       setPending(null);
     }
@@ -40,15 +40,15 @@ export function StatusActions({ endpoint, status }: StatusActionsProps) {
   return (
     <div className="admin-row-actions">
       {status === "PENDING" && <>
-        <button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")} type="button">{pending === "ACTIVE" ? "Approving…" : "Approve"}</button>
-        <button disabled={Boolean(pending)} onClick={() => update("REJECTED")} type="button">Reject</button>
+        <button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")} type="button">{pending === "ACTIVE" ? "در حال تأیید…" : "تأیید"}</button>
+        <button disabled={Boolean(pending)} onClick={() => update("REJECTED")} type="button">رد</button>
       </>}
-      {status === "ACTIVE" && <button disabled={Boolean(pending)} onClick={() => update("SUSPENDED")} type="button">{pending ? "Updating…" : "Suspend"}</button>}
+      {status === "ACTIVE" && <button disabled={Boolean(pending)} onClick={() => update("SUSPENDED")} type="button">{pending ? "در حال به‌روزرسانی…" : "تعلیق"}</button>}
       {status === "SUSPENDED" && <>
-        <button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")} type="button">Reactivate</button>
-        <button disabled={Boolean(pending)} onClick={() => update("CANCELLED")} type="button">Remove</button>
+        <button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")} type="button">فعال‌سازی دوباره</button>
+        <button disabled={Boolean(pending)} onClick={() => update("CANCELLED")} type="button">حذف</button>
       </>}
-      {(status === "REJECTED" || status === "CANCELLED" || status === "EXPIRED") && <button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")} type="button">Restore</button>}
+      {(status === "REJECTED" || status === "CANCELLED" || status === "EXPIRED") && <button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")} type="button">بازگردانی</button>}
       {error && <small role="alert">{error}</small>}
     </div>
   );

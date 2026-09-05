@@ -44,7 +44,7 @@ export function AdminNav({ gym, pendingCount, user }: AdminNavProps) {
           <Icon name="chevron" size={15} />
         </Link>
 
-        <nav className="admin-nav" aria-label="Gym administration">
+        <nav className="admin-nav" aria-label="مدیریت باشگاه">
           <small>{t("nav.gymManagement")}</small>
           {items.map((item) => {
             const href = `${base}${item.href}`;
@@ -77,7 +77,7 @@ export function AdminNav({ gym, pendingCount, user }: AdminNavProps) {
         <Link href={`${base}/settings`} aria-label={t("nav.gymSettings")}><Icon name="settings" size={19} /></Link>
         <LogoutButton />
       </header>
-      <nav className="admin-mobile-nav" aria-label="Mobile gym administration">
+      <nav className="admin-mobile-nav" aria-label="مدیریت باشگاه">
         {items.map((item) => {
           const href = `${base}${item.href}`;
           const active = pathname.startsWith(href);

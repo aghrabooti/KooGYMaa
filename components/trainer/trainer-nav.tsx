@@ -41,7 +41,7 @@ export function TrainerNav({ pendingStudents, user }: TrainerNavProps) {
           <span>{initials(user.name)}</span>
           <div><strong>{user.name}</strong><small>{t("nav.trainerWorkspace")}</small></div>
         </div>
-        <nav className="trainer-nav" aria-label="Trainer navigation">
+        <nav className="trainer-nav" aria-label="ناوبری مربی">
           <small>{t("nav.coaching")}</small>
           {items.map((item) => {
             const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href);
@@ -52,7 +52,7 @@ export function TrainerNav({ pendingStudents, user }: TrainerNavProps) {
         <div className="trainer-sidebar__bottom"><LanguageSwitcher className="trainer-language" /><ThemeToggle className="trainer-theme" /><LogoutButton /></div>
       </aside>
       <header className="trainer-mobile-header"><Brand compact /><div><strong>{user.name}</strong><small>{t("nav.trainerWorkspace")}</small></div><Link href="/trainer/profile"><Icon name="user" size={18} /></Link><LogoutButton /></header>
-      <nav className="trainer-mobile-nav" aria-label="Mobile trainer navigation">{items.map((item) => { const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href); return <Link aria-label={t(item.labelKey)} className={active ? "active" : ""} href={item.href} key={item.labelKey}><Icon name={item.icon} size={18} /><span>{t(item.labelKey)}</span></Link>; })}</nav>
+      <nav className="trainer-mobile-nav" aria-label="ناوبری مربی">{items.map((item) => { const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href); return <Link aria-label={t(item.labelKey)} className={active ? "active" : ""} href={item.href} key={item.labelKey}><Icon name={item.icon} size={18} /><span>{t(item.labelKey)}</span></Link>; })}</nav>
     </>
   );
 }

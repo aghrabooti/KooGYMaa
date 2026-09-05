@@ -8,7 +8,7 @@ import { Icon } from "@/components/icon";
 export function PhotoUpload({ measurementId }: { measurementId?: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
-  const [pose, setPose] = useState("Front");
+  const [pose, setPose] = useState("روبه‌رو");
   const input = useRef<HTMLInputElement>(null);
   const router = useRouter();
 

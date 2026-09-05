@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
+import { faStatus } from "@/components/fa";
 import { RestTimer } from "@/components/user/rest-timer";
 
 export function StartWorkout({ assignmentId, dayId, hasUnfinished }: { assignmentId: string; dayId: string; hasUnfinished?: boolean }) {
@@ -12,11 +13,11 @@ export function StartWorkout({ assignmentId, dayId, hasUnfinished }: { assignmen
     try {
       const response = await fetch("/api/user/workout-logs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ assignmentId, dayId }) });
       const data = await response.json();
-      if (!response.ok) { setError(data.error || "Unable to start workout."); return; }
+      if (!response.ok) { setError(data.error || "تمرین شروع نشد."); return; }
       router.push(`/user/workouts?log=${data.log.id}${data.resumed ? "&resumed=1" : ""}`); router.refresh();
-    } catch { setError("Unable to connect."); } finally { setPending(false); }
+    } catch { setError("اتصال برقرار نشد."); } finally { setPending(false); }
   }
-  return <div className="member-start-action"><button className="member-primary-button" disabled={pending} onClick={start}>{pending ? "Starting…" : hasUnfinished ? "Continue workout" : "Start workout"} <Icon name="arrow" size={14} /></button>{error && <small>{error}</small>}</div>;
+  return <div className="member-start-action"><button className="member-primary-button" disabled={pending} onClick={start}>{pending ? "در حال شروع…" : hasUnfinished ? "ادامه تمرین" : "شروع تمرین"} <Icon name="arrow" size={14} /></button>{error && <small>{error}</small>}</div>;
 }
 
 type Exercise = { exerciseId: string; name: string; prescribedSets: number | null; prescribedReps: string | null; prescribedWeight: string | null; completed: boolean; actualSets: number | null; actualReps: string; actualWeight: string; rpe: number | null; notes: string };
@@ -88,20 +89,20 @@ export function WorkoutLogForm({ logId, initial, title, previous, resumed }: {
     try {
       const response = await fetch(`/api/user/workout-logs/${logId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status, perceivedEffort: effort, notes, exercises: exercises.map((item) => ({ exerciseId: item.exerciseId, completed: item.completed, actualSets: item.actualSets, actualReps: item.actualReps, actualWeight: item.actualWeight, rpe: item.rpe, notes: item.notes })) }) });
       const data = await response.json();
-      if (!response.ok) { setError(data.error || "Unable to save workout."); return; }
+      if (!response.ok) { setError(data.error || "تمرین ذخیره نشد."); return; }
       try { localStorage.removeItem(storageKey); } catch { /* ignore */ }
       router.push("/user/workouts"); router.refresh();
-    } catch { setError("Unable to connect."); } finally { setPending(""); }
+    } catch { setError("اتصال برقرار نشد."); } finally { setPending(""); }
   }
 
   const done = exercises.filter((e) => e.completed).length;
 
   return <section className="member-log-editor">
-    <header><div><span>WORKOUT {resumed ? "RESUMED" : "IN PROGRESS"} · {done}/{exercises.length}</span><h1>{title}</h1><p>Record what you completed and how each exercise felt.</p></div><button className="member-secondary-button" onClick={() => router.push("/user/workouts")}>Exit</button></header>
+    <header><div><span>تمرین {faStatus(resumed ? "RESUMED" : "IN_PROGRESS")} · {done}/{exercises.length}</span><h1>{title}</h1><p>آنچه انجام دادید و حس هر حرکت را ثبت کنید.</p></div><button className="member-secondary-button" onClick={() => router.push("/user/workouts")}>خروج</button></header>
     {resumed && <p className="member-resume-note"><Icon name="bolt" size={14} /> تمرین نیمه‌تمام قبلی ادامه پیدا کرد.</p>}
     {savedAt && <p className="member-autosave" role="status"><Icon name="check" size={13} /> {savedAt}</p>}
     <RestTimer defaultSeconds={restFor ?? 90} key={restFor ?? "default"} />
-    <div className="member-exercise-log"><div className="member-exercise-log__head"><span>Done</span><span>Exercise</span><span>Sets</span><span>Reps</span><span>Weight</span><span>RPE</span></div>
+    <div className="member-exercise-log"><div className="member-exercise-log__head"><span>انجام شد</span><span>حرکت</span><span>ست</span><span>تکرار</span><span>وزن</span><span>RPE</span></div>
       {exercises.map((exercise, index) => {
         const prev = prevById.get(exercise.exerciseId);
         return <article className={exercise.completed ? "is-done" : ""} key={exercise.exerciseId}>
@@ -116,8 +117,8 @@ export function WorkoutLogForm({ logId, initial, title, previous, resumed }: {
         </article>;
       })}
     </div>
-    <div className="member-log-summary"><label><span>Overall effort (1–10)</span><input min="1" max="10" type="number" value={effort ?? ""} onChange={(event) => setEffort(event.target.value ? Number(event.target.value) : null)} /></label><label><span>Workout notes</span><textarea rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} /></label></div>
+    <div className="member-log-summary"><label><span>تلاش کلی (۱ تا ۱۰)</span><input min="1" max="10" type="number" value={effort ?? ""} onChange={(event) => setEffort(event.target.value ? Number(event.target.value) : null)} /></label><label><span>یادداشت‌های تمرین</span><textarea rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} /></label></div>
     {error && <p className="member-form-error">{error}</p>}
-    <footer><button className="member-secondary-button" disabled={Boolean(pending)} onClick={() => save("IN_PROGRESS")}>Save for later</button><button className="member-primary-button" disabled={Boolean(pending)} onClick={() => save("COMPLETED")}>{pending === "COMPLETED" ? "Completing…" : "Complete workout"}</button></footer>
+    <footer><button className="member-secondary-button" disabled={Boolean(pending)} onClick={() => save("IN_PROGRESS")}>ذخیره برای بعداً</button><button className="member-primary-button" disabled={Boolean(pending)} onClick={() => save("COMPLETED")}>{pending === "COMPLETED" ? "در حال تکمیل…" : "اتمام تمرین"}</button></footer>
   </section>;
 }

@@ -3,11 +3,12 @@ import { Icon } from "@/components/icon";
 import { StartWorkout, WorkoutLogForm } from "@/components/user/workout-execution";
 import { requireCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import { faStatus } from "@/components/fa";
 
 type PageProps = { searchParams: Promise<{ log?: string; resumed?: string }> };
 
 function date(value: Date) {
-  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(value);
+  return new Intl.DateTimeFormat("fa-IR", { month: "short", day: "numeric", year: "numeric" }).format(value);
 }
 
 export default async function UserWorkoutsPage({ searchParams }: PageProps) {
@@ -73,7 +74,7 @@ export default async function UserWorkoutsPage({ searchParams }: PageProps) {
 
   return (
     <div className="member-page">
-      <header className="member-page__heading"><div><span>TRAINING</span><h1>Your workout plan</h1><p>Follow the prescription, record your performance, and build momentum.</p></div></header>
+      <header className="member-page__heading"><div><span>تمرین</span><h1>برنامه تمرینی شما</h1><p>برنامه را اجرا کنید، عملکردتان را ثبت کنید و روند را حفظ کنید.</p></div></header>
       {unfinished.length > 0 && (
         <section className="member-panel member-resume-banner">
           <Icon name="bolt" size={18} />
@@ -83,7 +84,7 @@ export default async function UserWorkoutsPage({ searchParams }: PageProps) {
       )}
       {assignment ? (
         <>
-          <section className="member-plan-hero"><span><Icon name="dumbbell" size={25} /></span><div><small>ACTIVE PLAN · VERSION {assignment.plan.version}</small><h2>{assignment.plan.title}</h2><p>Coach {assignment.plan.trainer.user.name} · Started {assignment.startDate ? date(assignment.startDate) : "recently"}</p></div><div><strong>{assignment.plan.days.length}</strong><span>training days</span></div></section>
+          <section className="member-plan-hero"><span><Icon name="dumbbell" size={25} /></span><div><small>طرح فعال · نسخه {assignment.plan.version}</small><h2>{assignment.plan.title}</h2><p>مربی {assignment.plan.trainer.user.name} · شروع {assignment.startDate ? date(assignment.startDate) : "اخیراً"}</p></div><div><strong>{assignment.plan.days.length}</strong><span>روز تمرینی</span></div></section>
           <div className="member-workout-grid">
             {assignment.plan.days.map((day: any) => (
               <article key={day.id}>
@@ -95,16 +96,16 @@ export default async function UserWorkoutsPage({ searchParams }: PageProps) {
           </div>
         </>
       ) : (
-        <div className="member-panel member-empty"><Icon name="clipboard" size={27} /><h2>No active workout plan</h2><p>Your trainer hasn&apos;t assigned a workout plan yet.</p></div>
+        <div className="member-panel member-empty"><Icon name="clipboard" size={27} /><h2>برنامه تمرین فعالی وجود ندارد</h2><p>مربی شما هنوز برنامه تمرین تخصیص نداده است.</p></div>
       )}
       <section className="member-panel member-history">
-        <div className="member-panel__heading"><div><h2>Workout history</h2><p>{completed} completed sessions</p></div></div>
+        <div className="member-panel__heading"><div><h2>سوابق تمرین</h2><p>{completed} completed sessions</p></div></div>
         {recent.length ? (
           <div>{recent.map((item: any) => {
             const done = item.exerciseLogs.filter((entry: any) => entry.completed).length;
-            return <article key={item.id}><span className={`member-status member-status--${item.status.toLowerCase()}`}>{item.status}</span><div><strong>{item.workoutDay.name}</strong><small>{item.workoutDay.plan.title} · {date(item.startedAt)}</small></div><b>{done}/{item.exerciseLogs.length} exercises</b><small>RPE {item.perceivedEffort || "—"}</small></article>;
+            return <article key={item.id}><span className={`member-status member-status--${item.status.toLowerCase()}`}>{faStatus(item.status)}</span><div><strong>{item.workoutDay.name}</strong><small>{item.workoutDay.plan.title} · {date(item.startedAt)}</small></div><b>{done}/{item.exerciseLogs.length} exercises</b><small>RPE {item.perceivedEffort || "—"}</small></article>;
           })}</div>
-        ) : <p className="member-empty-line">Your completed workouts will appear here.</p>}
+        ) : <p className="member-empty-line">تمرین‌های تمام‌شده شما اینجا نمایش داده می‌شوند.</p>}
       </section>
     </div>
   );
