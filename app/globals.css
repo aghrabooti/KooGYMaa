@@ -2681,3 +2681,192 @@ html.locale-fa body {
 .theme-dark :is(.trainer-main, .member-main) :is([class*="form"], [class*="editor"], [class*="summary"], [class*="day"], [class*="grid"] > article) { background: #121a14; border-color: var(--line); box-shadow: none; }
 .theme-dark .trainer-main :is(input, select, textarea) { background: #0d130f; border-color: #344036; color: var(--ink); }
 .theme-dark :is(.trainer-main, .member-main) :is([class*="list"] > article, [class*="list"] > a, [class*="row"] > button, [class*="actions"] > button) { background-color: #182119; border-color: #344036; }
+
+/* ══ KooGYMaa upgrade pack (items 1–16): unified components, new features, responsive ══ */
+
+/* ── Unified form feedback (item 2) ── */
+.form-error, .member-form-error, .trainer-form-error {
+  align-items: center;
+  background: #fdecea;
+  border: 1px solid #f3c1b8;
+  border-radius: 10px;
+  color: #a93226;
+  display: flex;
+  font-size: 13.5px;
+  gap: 8px;
+  line-height: 1.7;
+  margin: 10px 0;
+  padding: 10px 12px;
+}
+.form-success, .trainer-form-success {
+  align-items: center;
+  background: #ecf7dc;
+  border: 1px solid #cde79b;
+  border-radius: 10px;
+  color: #4a6b1d;
+  display: flex;
+  font-size: 13.5px;
+  gap: 8px;
+  margin: 10px 0;
+  padding: 10px 12px;
+}
+.field { display: grid; gap: 6px; }
+.field__label { font-size: 13px; font-weight: 700; }
+.field__hint { color: var(--muted); font-size: 12px; }
+
+/* ── Account panels (item 1) ── */
+.account-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 20px; }
+.account-panel { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.account-panel h2 { font-size: 16px; margin: 0 0 12px; }
+.account-panel label { display: grid; gap: 6px; margin-bottom: 10px; }
+.account-panel input { border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; width: 100%; }
+.account-panel__head { align-items: center; display: flex; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.account-panel__head h2 { margin: 0; }
+.session-row { align-items: center; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: space-between; padding: 10px 0; }
+.session-row small { color: var(--muted); display: block; font-size: 12px; }
+.auth-recovery-form { display: grid; gap: 12px; }
+.auth-recovery-form label { display: grid; gap: 6px; }
+.auth-recovery-form input { border: 1px solid var(--line); border-radius: 9px; padding: 11px 12px; }
+.auth-alt { margin-top: 12px; font-size: 13.5px; }
+
+/* ── Member onboarding + today strip (item 7) ── */
+.member-onboarding ol { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.member-onboarding li { align-items: center; display: flex; gap: 10px; font-size: 14px; }
+.member-onboarding li.done { color: var(--muted); text-decoration: line-through; }
+.member-today-strip { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin: 16px 0; }
+.member-today-card { align-items: center; background: var(--white); border: 1px solid var(--line); border-radius: 14px; display: flex; gap: 12px; padding: 14px 16px; }
+.member-today-card small { color: var(--muted); display: block; font-size: 12px; }
+.member-actions-card { background: #fff8e6; border: 1px solid #f0dfae; border-radius: 14px; padding: 14px 16px; }
+.member-actions-card ul { margin: 6px 0 0; padding-inline-start: 18px; font-size: 13.5px; }
+.member-resume-banner { align-items: center; border-inline-start: 4px solid var(--orange); display: flex; gap: 12px; }
+.member-resume-note { align-items: center; background: #fff4e0; border-radius: 10px; display: flex; gap: 8px; padding: 10px 12px; }
+.member-autosave { color: var(--muted); font-size: 12.5px; }
+.member-prev { color: #6b4fd8; display: block; }
+.member-rest-link { background: none; border: 0; cursor: pointer; font-size: 16px; }
+
+/* ── Rest timer (item 8) ── */
+.rest-timer { background: var(--white); border: 1px dashed var(--line); border-radius: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 0; padding: 10px 14px; }
+.rest-timer__label { align-items: center; display: flex; gap: 6px; font-weight: 700; }
+.rest-timer__presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.rest-timer__presets button { border: 1px solid var(--line); border-radius: 999px; cursor: pointer; padding: 6px 12px; }
+.rest-timer__presets button.active { background: var(--lime); border-color: var(--lime); font-weight: 700; }
+.rest-timer__custom { display: flex; gap: 6px; }
+.rest-timer__custom input { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; width: 90px; }
+.rest-timer__count { align-items: center; display: flex; gap: 10px; }
+.rest-timer__count strong { font-size: 22px; font-variant-numeric: tabular-nums; }
+.rest-timer__count.done strong { color: #2e7d32; }
+
+/* ── Progress chart, goals, photos (item 9) ── */
+.progress-chart { background: var(--white); border: 1px solid var(--line); border-radius: 14px; margin: 16px 0; padding: 16px; }
+.progress-chart__filters { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; margin-bottom: 10px; }
+.progress-chart__filters div { display: flex; flex-wrap: wrap; gap: 6px; }
+.progress-chart__filters button { border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-size: 12.5px; padding: 5px 12px; }
+.progress-chart__filters button.active { background: var(--ink); color: var(--paper-2); }
+.progress-chart svg { width: 100%; height: auto; }
+.goals-form { display: grid; gap: 8px; grid-template-columns: 1fr 1fr 1fr auto; margin-bottom: 10px; }
+.goals-form select, .goals-form input { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.goals-list { display: grid; gap: 8px; }
+.goals-list article { align-items: center; border: 1px solid var(--line); border-radius: 10px; display: flex; justify-content: space-between; padding: 8px 12px; }
+.member-photo-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); margin-top: 10px; }
+.member-photo-grid a { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: block; }
+.member-photo-grid img { aspect-ratio: 1; display: block; object-fit: cover; width: 100%; }
+.member-photo-grid small { display: block; padding: 4px 8px; font-size: 11.5px; }
+.photo-upload { align-items: center; display: flex; gap: 8px; }
+.photo-upload select { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+
+/* ── Exercise library (item 10) ── */
+.exercise-picker { border: 1px dashed var(--line); border-radius: 12px; margin-top: 10px; padding: 12px; }
+.exercise-picker__filters { display: flex; gap: 8px; margin-bottom: 10px; }
+.exercise-picker__filters label { align-items: center; display: flex; flex: 1; gap: 6px; }
+.exercise-picker__filters input, .exercise-picker__filters select { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.exercise-picker__results { display: grid; gap: 8px; max-height: 300px; overflow: auto; }
+.exercise-picker__results article { align-items: center; border: 1px solid var(--line); border-radius: 10px; display: flex; justify-content: space-between; gap: 8px; padding: 8px 12px; }
+.exercise-picker__results small { color: var(--muted); display: block; }
+.exercise-picker__actions { align-items: center; display: flex; gap: 8px; }
+.trainer-day-tools { display: flex; gap: 4px; }
+.trainer-day-tools button { border: 1px solid var(--line); border-radius: 7px; cursor: pointer; padding: 2px 8px; }
+.trainer-dirty { color: var(--orange); font-weight: 700; }
+
+/* ── Session calendar (item 11) ── */
+.session-calendar { margin-top: 6px; }
+.session-calendar__bar { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.session-calendar__bar [role="tablist"] { display: flex; gap: 6px; }
+.session-calendar__bar button { border: 1px solid var(--line); border-radius: 999px; cursor: pointer; padding: 6px 14px; }
+.session-calendar__bar button.active { background: var(--ink); color: var(--paper-2); }
+.session-calendar__grid { display: grid; gap: 8px; }
+.session-calendar__grid--week { grid-template-columns: repeat(7, 1fr); }
+.session-calendar__grid--month { grid-template-columns: repeat(7, 1fr); }
+.session-calendar__grid article { border: 1px solid var(--line); border-radius: 10px; min-height: 90px; padding: 8px; }
+.session-calendar__grid article.is-today { border-color: var(--lime-strong); box-shadow: 0 0 0 1px var(--lime-strong); }
+.session-calendar__grid header { display: flex; flex-direction: column; font-size: 12px; margin-bottom: 6px; }
+.cal-event { background: #eef3e4; border-radius: 8px; font-size: 12px; margin-bottom: 6px; padding: 6px 8px; }
+.cal-event--cancelled { opacity: .55; }
+.cal-event--completed { background: #e6f4ea; }
+.cal-event__actions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.cal-event__actions button { border: 1px solid var(--line); border-radius: 6px; cursor: pointer; font-size: 11px; padding: 2px 7px; }
+
+/* ── Admin tools (item 13) + finance (item 3) ── */
+.admin-toolbar { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.admin-toolbar form { align-items: center; display: flex; flex: 1; gap: 8px; min-width: 220px; }
+.admin-toolbar input { border: 1px solid var(--line); border-radius: 8px; flex: 1; padding: 8px 10px; }
+.admin-filter-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.admin-filter-links a { border: 1px solid var(--line); border-radius: 999px; font-size: 12.5px; padding: 5px 12px; }
+.admin-filter-links a.active { background: var(--ink); color: var(--paper-2); }
+.admin-bulkbar { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.admin-bulkbar select, .admin-bulkbar button { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+.admin-pagination { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+.admin-pagination a, .admin-pagination button { border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; }
+.admin-pagination a.active, .admin-pagination [aria-current="page"] { background: var(--ink); color: var(--paper-2); }
+.admin-note { color: var(--muted); font-size: 13px; margin: 8px 0; }
+.admin-secondary-button { border: 1px solid var(--line); border-radius: 9px; font-size: 13px; padding: 8px 12px; }
+.admin-currency-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.admin-currency-grid article { border: 1px solid var(--line); border-radius: 10px; display: grid; gap: 4px; padding: 10px 12px; }
+.trainer-attention article { border-inline-start: 3px solid var(--orange); padding: 8px 12px; margin-bottom: 8px; }
+.trainer-low-active { color: #a35b12; font-size: 13px; }
+.trainer-nudge-done { color: #2e7d32; }
+.trainer-trainer-card__foot, .admin-trainer-card__foot { align-items: center; display: flex; gap: 8px; justify-content: space-between; }
+.reminder-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin: 10px 0; }
+.reminder-grid label { display: grid; gap: 6px; }
+.reminder-grid input { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+
+/* ── Public & trust pages (item 14) ── */
+.public-page { max-width: 960px; padding: 32px 24px 80px; }
+.public-nav { align-items: center; display: flex; justify-content: space-between; margin-bottom: 24px; }
+.public-page header { margin-bottom: 24px; }
+.public-page h1 { font-size: clamp(28px, 5vw, 44px); letter-spacing: -.5px; }
+.public-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin: 14px 0 28px; }
+.public-grid article { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.public-grid article small { color: var(--muted); display: block; margin: 6px 0 10px; }
+.public-page blockquote { border-inline-start: 3px solid var(--lime-strong); margin: 12px 0; padding: 6px 14px; }
+.site-footer__main > div { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+
+/* ── Mobile polish: responsive forms + grids (item 6) ── */
+@media (max-width: 760px) {
+  .goals-form { grid-template-columns: 1fr 1fr; }
+  .session-calendar__grid--week, .session-calendar__grid--month { grid-template-columns: 1fr 1fr; }
+  .admin-toolbar form { min-width: 100%; }
+  .member-exercise-log article { grid-template-columns: 34px 1fr 52px 52px 64px 44px 30px; }
+  .photo-upload { flex-wrap: wrap; }
+  .trainer-exercise-row { grid-template-columns: 1fr 52px 64px 64px 60px 52px 26px; overflow-x: auto; }
+  .account-grid { grid-template-columns: 1fr; }
+  .public-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .session-calendar__grid--week, .session-calendar__grid--month { grid-template-columns: 1fr; }
+  .goals-form { grid-template-columns: 1fr; }
+  .member-today-strip { grid-template-columns: 1fr; }
+}
+
+/* ── Dark mode for new components (item 6) ── */
+.theme-dark :is(.account-panel, .progress-chart, .rest-timer, .member-today-card, .exercise-picker, .session-calendar__grid article, .cal-event, .public-grid article, .goals-list article, .exercise-picker__results article) { background: #121a14; border-color: var(--line); box-shadow: none; }
+.theme-dark :is(.member-actions-card, .member-resume-note) { background: #241d0e; border-color: #4d3f1e; color: var(--ink); }
+.theme-dark .cal-event { background: #1a241c; }
+.theme-dark .cal-event--completed { background: #14231a; }
+.theme-dark :is(.account-panel input, .goals-form input, .goals-form select, .exercise-picker input, .exercise-picker select, .admin-toolbar input, .reminder-grid input, .auth-recovery-form input, .rest-timer__custom input, .photo-upload select) { background: #0d130f; border-color: #344036; color: var(--ink); }
+.theme-dark :is(.progress-chart__filters button, .session-calendar__bar button, .admin-filter-links a, .admin-pagination a, .rest-timer__presets button) { border-color: #3b473d; color: var(--ink); }
+.theme-dark :is(.progress-chart__filters button.active, .session-calendar__bar button.active, .admin-filter-links a.active, .admin-pagination a.active) { background: var(--lime); color: #16200f; }
+.theme-dark .form-error, .theme-dark .member-form-error, .theme-dark .trainer-form-error { background: #2a1410; border-color: #5a2b22; color: #f2a99c; }
+.theme-dark .form-success, .theme-dark .trainer-form-success { background: #16240f; border-color: #3f5a22; color: #c4e69a; }
+
+/* ── Readable Persian numerals + tabular figures (item 5) ── */
+html.locale-fa :is(strong, b, time, .member-dashboard-metrics strong) { font-variant-numeric: tabular-nums; }

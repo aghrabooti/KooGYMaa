@@ -43,3 +43,29 @@ Before production scale, configure a scheduled worker to:
 - trigger provider renewals for opted-in subscriptions;
 - prune old read notifications and rate-limit state;
 - verify payment reconciliation.
+
+## Subscription lifecycle automation (new)
+
+- `POST /api/cron/subscriptions` (and `GET` for schedulers without POST support)
+  expires past-due `ACTIVE` subscriptions, extends `autoRenew` ones, and sends
+  expiring-soon reminders. Protect with `CRON_SECRET` (`Authorization: Bearer …`).
+- Recommended schedule: daily, e.g. Vercel Cron `0 2 * * *` → `/api/cron/subscriptions`.
+- Reminder cadence is per-user configurable at `/api/user/notifications/settings`
+  (`sessionReminderHours`, `expiryReminderDays`, `inactivityNudgeDays`, `enabled`).
+- Health: `/api/health` reports `subscriptionsPastDue` (should return to 0 after
+  each sweep) plus the 5 most recent monitored errors.
+
+## Backups (script)
+
+- `npm run db:backup` snapshots the database (`file:` copy, or JSON table dumps
+  for hosted libSQL) plus `data/uploads/`, writes `backups/<timestamp>/manifest.json`,
+  and runs a restore dry-run (every manifest entry must be readable).
+- `.gitignore`d `data/` and `backups/` never enter Git; copy them to separate storage.
+- Restore test procedure from the runbook above still applies quarterly.
+
+## Rate limiting & monitoring
+
+- Auth routes keep key-based limits; general write endpoints (`/api/user/checkout`,
+  photo upload, trainer session booking) use `checkGeneralRateLimit` (30–120 req/min/IP).
+- `lib/monitoring.ts` keeps a 50-entry server error ring buffer surfaced via
+  `/api/health` (`recentErrors`). Wire alerts on `recentErrors` growth in production.

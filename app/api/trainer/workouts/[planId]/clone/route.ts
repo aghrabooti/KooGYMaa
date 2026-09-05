@@ -37,7 +37,7 @@ export async function POST(request: NextRequest, { params }: Context) {
         status: "DRAFT",
         version: nextVersion,
         isTemplate: source.isTemplate,
-        days: { create: source.days.map((day, dayIndex) => ({ dayNumber: dayIndex + 1, name: day.name, notes: day.notes, exercises: { create: day.exercises.map((exercise, exerciseIndex) => ({ ...exercise, order: exerciseIndex + 1 })) } })) },
+        days: { create: source.days.map((day: any, dayIndex: any) => ({ dayNumber: dayIndex + 1, name: day.name, notes: day.notes, exercises: { create: day.exercises.map((exercise: any, exerciseIndex: any) => ({ ...exercise, order: exerciseIndex + 1 })) } })) },
       },
       select: { id: true, title: true, version: true, status: true },
     });

@@ -20,3 +20,13 @@ The demo provider generates deterministic signed checkout tokens and supports su
 ## Adding a provider
 
 Implement `PaymentProvider.createCheckout` in `lib/payments/provider.ts`, map provider statuses to the internal `PaymentStatus` enum, and add raw-body signature verification in the webhook route. Provider event IDs must remain unique for idempotency. Do not trust amount, currency, user, or plan values sent by the browser; load them from the database.
+
+## Financial reporting rules
+
+- Revenue counts **only `SUCCEEDED` payments**. `PENDING`/`FAILED` never inflate totals.
+- Totals are split **per currency** (`summarizePayments` in `lib/finance.ts`); the admin
+  overview and `/api/admin/gyms/[gymId]/reports` show gross, refunds, and net per currency.
+- `RENEWAL` payments are tracked separately (`renewalsSucceeded`, `renewalsRevenue`).
+- `REFUNDED` payments subtract from net and are listed explicitly.
+- Members can download a printable receipt per subscription:
+  `GET /api/user/subscriptions/[subscriptionId]/receipt`.

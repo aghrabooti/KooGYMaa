@@ -207,6 +207,62 @@ export const translations: Record<Locale, Dict> = {
     "dash.visitsToTarget": "You’re 1,140 visits away from this month’s target.",
     "dash.todaysSchedule": "Today’s schedule",
     "dash.privacy": "Privacy",
+
+    // ── Footer / public & trust pages ─────────────────────────────────
+    "footer.gyms": "Gyms",
+    "footer.trainers": "Trainers",
+    "footer.about": "About",
+    "footer.contact": "Contact",
+    "footer.help": "Help",
+    "footer.terms": "Terms",
+    "footer.privacy": "Privacy",
+    "landing.statLiveGyms": "active gyms on the platform",
+    "landing.statLiveTrainers": "available trainers",
+    "landing.statLiveMembers": "active members",
+    "landing.statLiveReviews": "verified reviews",
+    "landing.statLiveNote": "live count",
+    "public.gymsTitle": "Discover gyms",
+    "public.gymsDesc": "Browse active gyms, compare plans and trainers, and request membership.",
+    "public.trainersTitle": "Meet the trainers",
+    "public.trainersDesc": "Certified coaches with verified reviews and transparent pricing.",
+    "public.viewGym": "View gym",
+    "public.viewTrainer": "View profile",
+    "public.plans": "Plans",
+    "public.trainers": "Trainers",
+    "public.reviews": "Reviews",
+    "public.noGyms": "No active gyms yet — check back soon.",
+    "public.noTrainers": "No available trainers yet — check back soon.",
+    "public.requestMembership": "Request membership",
+    "public.requestCoaching": "Request coaching",
+    "public.aboutTitle": "About KooGYMaa",
+    "public.contactTitle": "Contact us",
+    "public.helpTitle": "Help center",
+    "public.termsTitle": "Terms of service",
+    "public.privacyTitle": "Privacy policy",
+
+    // ── Account ───────────────────────────────────────────────────────
+    "account.title": "Account & security",
+    "account.changePassword": "Change password",
+    "account.verifyEmail": "Verify email",
+    "account.sessions": "Active sessions",
+    "account.forgot": "Forgot password?",
+    "account.resetTitle": "Set a new password",
+
+    // ── Subscriptions ─────────────────────────────────────────────────
+    "subs.pause": "Pause",
+    "subs.receipt": "Receipt",
+    "subs.autoRenewOn": "Auto-renew: on",
+    "subs.autoRenewOff": "Auto-renew: off",
+
+    // ── Progress ──────────────────────────────────────────────────────
+    "progress.goals": "My goals",
+    "progress.photos": "Progress photos",
+    "progress.chart": "Progress chart",
+
+    // ── Schedule ──────────────────────────────────────────────────────
+    "schedule.calendar": "Sessions calendar",
+    "schedule.week": "Weekly",
+    "schedule.month": "Monthly",
   },
 
   fa: {
@@ -396,6 +452,62 @@ export const translations: Record<Locale, Dict> = {
     "dash.visitsToTarget": "تا رسیدن به هدف این ماه، ۱٬۱۴۰ حضور دیگر فاصله داری.",
     "dash.todaysSchedule": "برنامه امروز",
     "dash.privacy": "حریم خصوصی",
+
+    // ── پانوشت / صفحات عمومی و اعتماد ────────────────────────────────
+    "footer.gyms": "باشگاه‌ها",
+    "footer.trainers": "مربی‌ها",
+    "footer.about": "درباره ما",
+    "footer.contact": "تماس",
+    "footer.help": "راهنما",
+    "footer.terms": "قوانین",
+    "footer.privacy": "حریم خصوصی",
+    "landing.statLiveGyms": "باشگاه فعال در پلتفرم",
+    "landing.statLiveTrainers": "مربی آماده همکاری",
+    "landing.statLiveMembers": "عضو فعال",
+    "landing.statLiveReviews": "نظر تأییدشده",
+    "landing.statLiveNote": "آمار زنده",
+    "public.gymsTitle": "کشف باشگاه‌ها",
+    "public.gymsDesc": "باشگاه‌های فعال را ببینید، برنامه‌ها و مربیان را مقایسه کنید و درخواست عضویت بدهید.",
+    "public.trainersTitle": "آشنایی با مربیان",
+    "public.trainersDesc": "مربیان با نظرات تأییدشده و قیمت شفاف.",
+    "public.viewGym": "مشاهده باشگاه",
+    "public.viewTrainer": "مشاهده پروفایل",
+    "public.plans": "برنامه‌ها",
+    "public.trainers": "مربی‌ها",
+    "public.reviews": "نظرها",
+    "public.noGyms": "هنوز باشگاه فعالی ثبت نشده — به‌زودی برگردید.",
+    "public.noTrainers": "هنوز مربی فعالی ثبت نشده — به‌زودی برگردید.",
+    "public.requestMembership": "درخواست عضویت",
+    "public.requestCoaching": "درخواست مربی‌گری",
+    "public.aboutTitle": "درباره کوگیما",
+    "public.contactTitle": "تماس با ما",
+    "public.helpTitle": "مرکز راهنمایی",
+    "public.termsTitle": "قوانین استفاده",
+    "public.privacyTitle": "سیاست حفظ حریم خصوصی",
+
+    // ── حساب کاربری ───────────────────────────────────────────────────
+    "account.title": "حساب و امنیت",
+    "account.changePassword": "تغییر گذرواژه",
+    "account.verifyEmail": "تأیید ایمیل",
+    "account.sessions": "نشست‌های فعال",
+    "account.forgot": "گذرواژه را فراموش کردی؟",
+    "account.resetTitle": "تعیین گذرواژه جدید",
+
+    // ── اشتراک‌ها ─────────────────────────────────────────────────────
+    "subs.pause": "توقف موقت",
+    "subs.receipt": "رسید",
+    "subs.autoRenewOn": "تمدید خودکار: روشن",
+    "subs.autoRenewOff": "تمدید خودکار: خاموش",
+
+    // ── پیشرفت ────────────────────────────────────────────────────────
+    "progress.goals": "هدف‌های من",
+    "progress.photos": "تصاویر پیشرفت",
+    "progress.chart": "نمودار پیشرفت",
+
+    // ── برنامه زمانی ──────────────────────────────────────────────────
+    "schedule.calendar": "تقویم جلسات",
+    "schedule.week": "هفتگی",
+    "schedule.month": "ماهانه",
   },
 };
 

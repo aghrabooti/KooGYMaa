@@ -14,6 +14,7 @@ import {
   getClientIp,
 } from "@/lib/rate-limit";
 import { setSessionCookie } from "@/lib/session-cookie";
+import { createUserSession, touchUserSession } from "@/lib/user-sessions";
 
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
@@ -87,7 +88,16 @@ export async function POST(request: NextRequest) {
     });
 
     const maxAge = remember ? LONG_SESSION_SECONDS : SHORT_SESSION_SECONDS;
-    const token = signToken(user.id, user.role, maxAge);
+    let sessionId: string | undefined;
+    try {
+      sessionId = await createUserSession(user.id, getClientIp(request), request.headers.get("user-agent"));
+    } catch {
+      sessionId = undefined;
+    }
+    const token = signToken(user.id, user.role, maxAge, sessionId);
+    if (sessionId) {
+      touchUserSession(sessionId).catch(() => undefined);
+    }
     const response = NextResponse.json({
       user: {
         email: user.email,

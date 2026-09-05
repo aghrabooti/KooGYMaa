@@ -49,6 +49,8 @@ export function UserNav({ name, unread }: { name: string; unread: number }) {
         <Brand compact />
         <div><strong>{name}</strong><small>{t("nav.memberWorkspace")}</small></div>
         <Link href="/user/notifications"><Icon name="bell" size={18} />{unread > 0 && <b>{unread}</b>}</Link>
+        <Link href="/user/profile" aria-label={t("nav.profile")}><Icon name="user" size={18} /></Link>
+        <LogoutButton />
       </header>
       <nav className="member-mobile-nav">
         {items.map((item) => (

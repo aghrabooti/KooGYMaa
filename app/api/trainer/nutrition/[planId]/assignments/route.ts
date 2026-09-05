@@ -18,7 +18,7 @@ export async function POST(request: NextRequest, { params }: Context) {
   if (!plan) return NextResponse.json({ error: "Publish this nutrition plan before assigning it." }, { status: 409 });
   if (!client) return NextResponse.json({ error: "Choose one of your active students." }, { status: 404 });
 
-  const assignment = await prisma.$transaction(async (transaction) => {
+  const assignment = await prisma.$transaction(async (transaction: any) => {
     await transaction.dietAssignment.updateMany({ where: { trainerClientId: client.id, status: { in: ["ASSIGNED", "ACTIVE"] } }, data: { status: "CANCELLED" } });
     const created = await transaction.dietAssignment.upsert({
       where: { planId_userId: { planId: plan.id, userId: client.userId } },

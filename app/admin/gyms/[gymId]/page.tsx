@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Icon, type IconName } from "@/components/icon";
 import { requireGymAdminAccess } from "@/lib/admin-access";
 import { prisma } from "@/lib/prisma";
+import { summarizePayments, monthlyRevenue as monthlyRevenueSeries } from "@/lib/finance";
+import { formatMoney as formatMoneyFa } from "@/lib/fa";
 
 type PageProps = { params: Promise<{ gymId: string }> };
 
@@ -27,7 +29,6 @@ export default async function GymOverviewPage({ params }: PageProps) {
   const { gym, user } = await requireGymAdminAccess(gymId);
   const now = new Date();
   const inSevenDays = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-  const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
   const [
     activeMembers,
@@ -35,27 +36,19 @@ export default async function GymOverviewPage({ params }: PageProps) {
     pendingMembers,
     pendingTrainers,
     activeSubscriptions,
-    revenueGroups,
-    recentSubscriptions,
+    paymentRows,
     recentMembers,
     recentTrainers,
     expiringSubscriptions,
-    rating,
   ] = await Promise.all([
     prisma.gymMembership.count({ where: { gymId, status: "ACTIVE" } }),
     prisma.gymTrainer.count({ where: { gymId, status: "ACTIVE" } }),
     prisma.gymMembership.count({ where: { gymId, status: "PENDING" } }),
     prisma.gymTrainer.count({ where: { gymId, status: "PENDING" } }),
     prisma.subscription.count({ where: { gymId, status: "ACTIVE", endDate: { gt: now } } }),
-    prisma.subscription.groupBy({
-      by: ["currency"],
-      where: { gymId, status: { in: ["ACTIVE", "EXPIRED"] } },
-      _sum: { pricePaid: true },
-      _count: true,
-    }),
-    prisma.subscription.findMany({
-      where: { gymId, createdAt: { gte: sixMonthsAgo } },
-      select: { createdAt: true, pricePaid: true, currency: true },
+    prisma.payment.findMany({
+      where: { gymId },
+      select: { status: true, type: true, amount: true, currency: true, paidAt: true, createdAt: true },
     }),
     prisma.gymMembership.findMany({
       where: { gymId, status: "PENDING" },
@@ -83,19 +76,16 @@ export default async function GymOverviewPage({ params }: PageProps) {
     prisma.gymReview.aggregate({ where: { gymId }, _avg: { score: true }, _count: true }),
   ]);
 
-  const primaryRevenue = [...revenueGroups].sort((a, b) => b._count - a._count)[0];
-  const currency = primaryRevenue?.currency || "IRR";
-  const totalRevenue = primaryRevenue?._sum.pricePaid || 0;
-  const monthlyRevenue = Array.from({ length: 6 }, (_, index) => {
-    const date = new Date(now.getFullYear(), now.getMonth() - 5 + index, 1);
-    const total = recentSubscriptions
-      .filter((subscription) => subscription.currency === currency && subscription.createdAt.getMonth() === date.getMonth() && subscription.createdAt.getFullYear() === date.getFullYear())
-      .reduce((sum, subscription) => sum + subscription.pricePaid, 0);
-    return { label: date.toLocaleString("en", { month: "short" }), total };
-  });
-  const maxRevenue = Math.max(...monthlyRevenue.map((month) => month.total), 1);
+  // Item 3: revenue counts ONLY SUCCEEDED payments, split by currency, renewals + refunds included.
+  const finance = summarizePayments(paymentRows as any[]);
+  const currency = finance.currency;
+  const totalRevenue = finance.net;
+  const revenueTrend: Array<{ key: string; total: number; count: number }> = monthlyRevenueSeries(paymentRows as any[], 6, now);
+  const monthlyRevenue = revenueTrend.map((row: { key: string; total: number }) => ({ label: new Date(`${row.key}-01T00:00:00Z`).toLocaleString("en", { month: "short" }), total: row.total }));
+  const maxRevenue = Math.max(...monthlyRevenue.map((month: { total: number }) => month.total), 1);
+  const revenueNote = finance.refunded > 0 ? `net of ${formatMoneyFa(finance.refunded, currency)} refunds` : `${finance.counts.succeeded} successful payments`;
   const pending = [
-    ...recentMembers.map((membership) => ({
+    ...recentMembers.map((membership: any) => ({
       id: membership.id,
       href: `/admin/gyms/${gymId}/members`,
       name: membership.user.name,
@@ -103,7 +93,7 @@ export default async function GymOverviewPage({ params }: PageProps) {
       requestedAt: membership.requestedAt,
       type: "Member",
     })),
-    ...recentTrainers.map((membership) => ({
+    ...recentTrainers.map((membership: any) => ({
       id: membership.id,
       href: `/admin/gyms/${gymId}/trainers`,
       name: membership.trainer.user.name,
@@ -117,7 +107,7 @@ export default async function GymOverviewPage({ params }: PageProps) {
     { label: "Active members", value: activeMembers.toLocaleString(), change: `${pendingMembers} awaiting review`, icon: "users", tone: "lime" },
     { label: "Active trainers", value: activeTrainers.toLocaleString(), change: `${pendingTrainers} awaiting review`, icon: "dumbbell", tone: "orange" },
     { label: "Active subscriptions", value: activeSubscriptions.toLocaleString(), change: `${expiringSubscriptions.length} expire this week`, icon: "credit-card", tone: "violet" },
-    { label: "Recorded revenue", value: formatMoney(totalRevenue, currency), change: rating._count ? `${rating._avg.score?.toFixed(1)} average rating` : "No ratings yet", icon: "trend", tone: "blue" },
+    { label: "Net revenue (paid)", value: formatMoneyFa(totalRevenue, currency), change: revenueNote, icon: "trend", tone: "blue" },
   ];
 
   return (
@@ -138,8 +128,8 @@ export default async function GymOverviewPage({ params }: PageProps) {
 
       <div className="admin-overview-grid">
         <section className="admin-panel admin-revenue-panel">
-          <div className="admin-panel__heading"><div><h2>Revenue overview</h2><p>Subscriptions created in the last six months</p></div><span>{currency}</span></div>
-          <div className="admin-revenue-total"><strong>{formatMoney(totalRevenue, currency)}</strong><span>all recorded revenue</span></div>
+          <div className="admin-panel__heading"><div><h2>Revenue overview</h2><p>Successful payments · last six months · net of refunds</p></div><span>{currency}</span></div>
+          <div className="admin-revenue-total"><strong>{formatMoneyFa(totalRevenue, currency)}</strong><span>net paid revenue</span></div><p className="admin-note">تمدیدها: {finance.renewalsSucceeded} · بازپرداخت: {formatMoneyFa(finance.refunded, currency)}</p>
           <div className="admin-bar-chart">
             {monthlyRevenue.map((month) => (
               <div key={month.label}><span title={formatMoney(month.total, currency)} style={{ height: `${Math.max(8, (month.total / maxRevenue) * 100)}%` }} /><small>{month.label}</small></div>
@@ -162,7 +152,7 @@ export default async function GymOverviewPage({ params }: PageProps) {
       <div className="admin-bottom-grid">
         <section className="admin-panel">
           <div className="admin-panel__heading"><div><h2>Expiring soon</h2><p>Subscriptions ending in the next 7 days</p></div><Link href={`/admin/gyms/${gymId}/subscriptions`}>View all <Icon name="arrow" size={14} /></Link></div>
-          {expiringSubscriptions.length ? <div className="admin-expiring-list">{expiringSubscriptions.map((subscription) => (
+          {expiringSubscriptions.length ? <div className="admin-expiring-list">{expiringSubscriptions.map((subscription: any) => (
             <div key={subscription.id}><span><Icon name="clock" size={16} /></span><div><strong>{subscription.subscriber.name}</strong><small>{subscription.plan.name}</small></div><b>{formatDate(subscription.endDate)}</b></div>
           ))}</div> : <div className="admin-empty-row"><Icon name="shield" size={18} /> No subscriptions expire this week.</div>}
         </section>

@@ -18,4 +18,44 @@ export function ReviewEditor({ existing, targetId, type, verified }: { existing?
   return <div className="review-editor"><div className="review-stars" aria-label={`${score} out of 5 stars`}>{[1,2,3,4,5].map(value=><button aria-label={`${value} stars`} className={value<=score?"active":""} key={value} onClick={()=>setScore(value)}>★</button>)}</div><textarea maxLength={1000} placeholder="Share a useful, respectful review…" rows={3} value={comment} onChange={event=>setComment(event.target.value)}/><div><button className="member-primary-button" disabled={Boolean(pending)} onClick={save}>{pending==="save"?"Saving…":existing?"Update review":"Publish review"}</button>{existing&&<button className="member-secondary-button" disabled={Boolean(pending)} onClick={remove}>{pending==="delete"?"Removing…":"Delete"}</button>}</div>{(message||error)&&<small className={error?"is-error":""}>{error||message}</small>}</div>;
 }
 
-export function CancelSubscriptionButton({ subscriptionId }: { subscriptionId: string }) { const[pending,setPending]=useState(false);const router=useRouter();async function cancel(){if(!confirm("Cancel this subscription and its pending payments?"))return;setPending(true);try{const response=await fetch(`/api/user/subscriptions/${subscriptionId}/cancel`,{method:"POST"});if(response.ok)router.refresh()}finally{setPending(false)}}return <button className="member-secondary-button" disabled={pending} onClick={cancel}>{pending?"Cancelling…":"Cancel subscription"}</button> }
+export function CancelSubscriptionButton({ subscriptionId }: { subscriptionId: string }) {
+  const[pending,setPending]=useState(false);const[message,setMessage]=useState("");const router=useRouter();
+  async function cancel(){
+    // Item 4: transparent cancellation — the user sees exactly what happens.
+    if(!confirm("اشتراک بلافاصله لغو می‌شود، دسترسی باشگاه قطع و پرداخت‌های در انتظار لغو می‌شوند.\nپرداخت‌های موفق طبق قوانین بازپرداخت قابل بازگشت‌اند. ادامه می‌دهی؟"))return;
+    setPending(true);setMessage("");
+    try{
+      const response=await fetch(`/api/user/subscriptions/${subscriptionId}/cancel`,{method:"POST"});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok){setMessage(data.error||"لغو ناموفق بود.");return;}
+      setMessage(data.message||"اشتراک لغو شد.");router.refresh();
+    } finally{setPending(false)}
+  }
+  return <span className="commerce-action"><button className="member-secondary-button" disabled={pending} onClick={cancel}>{pending?"Cancelling…":"Cancel subscription"}</button>{message&&<small>{message}</small>}</span>;
+}
+
+export function PauseSubscriptionButton({ subscriptionId }: { subscriptionId: string }) {
+  const[pending,setPending]=useState(false);const router=useRouter();
+  async function pause(){
+    const days=Number(prompt("توقف موقت چند روزه؟ (۱ تا ۶۰)","7")||"0");
+    if(!days||days<1||days>60)return;setPending(true);
+    try{const response=await fetch(`/api/user/subscriptions/${subscriptionId}/pause`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({days})});if(response.ok)router.refresh()}finally{setPending(false)}
+  }
+  return <button className="member-secondary-button" disabled={pending} onClick={pause}>{pending?"…":"⏸ توقف موقت"}</button>;
+}
+
+export function AutoRenewToggle({ subscriptionId, autoRenew }: { subscriptionId: string; autoRenew: boolean }) {
+  const[pending,setPending]=useState(false);const[on,setOn]=useState(autoRenew);const router=useRouter();
+  async function toggle(){
+    setPending(true);
+    try{
+      const response=await fetch(`/api/user/subscriptions/${subscriptionId}/resume`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({autoRenew:!on})});
+      if(response.ok){setOn(!on);router.refresh()}
+    }finally{setPending(false)}
+  }
+  return <button className="member-secondary-button" disabled={pending} onClick={toggle} title="تمدید خودکار">🔁 {on?"تمدید خودکار: روشن":"تمدید خودکار: خاموش"}</button>;
+}
+
+export function ReceiptLink({ subscriptionId }: { subscriptionId: string }) {
+  return <a className="member-secondary-button" href={`/api/user/subscriptions/${subscriptionId}/receipt`}>🧾 رسید</a>;
+}

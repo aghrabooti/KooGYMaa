@@ -18,14 +18,33 @@ const features: Array<{
   { icon: "trend", number: "03", titleKey: "landing.feature3Title", descKey: "landing.feature3Desc", tone: "violet" },
 ];
 
-const roles = [
-  { labelKey: "landing.roleOwners", titleKey: "landing.ownersTitle", icon: "bar-chart" as IconName, stat: "24h", statLabelKey: "landing.statSavedMonth" },
-  { labelKey: "landing.roleTrainers", titleKey: "landing.trainersTitle", icon: "users" as IconName, stat: "3.2×", statLabelKey: "landing.statFasterPlans" },
-  { labelKey: "landing.roleMembers", titleKey: "landing.membersTitle", icon: "flame" as IconName, stat: "82%", statLabelKey: "landing.statStayOnTrack" },
-];
+export const dynamic = "force-dynamic";
+
+async function platformStats() {
+  // Item 14: honest, live platform numbers instead of invented marketing claims.
+  try {
+    const { prisma } = await import("@/lib/prisma");
+    const [gyms, trainers, members, reviews] = await Promise.all([
+      prisma.gym.count({ where: { status: "ACTIVE" } }),
+      prisma.trainerProfile.count({ where: { isAvailable: true } }),
+      prisma.user.count({ where: { role: "USER", status: "ACTIVE" } }),
+      prisma.gymReview.aggregate({ _avg: { score: true }, _count: true }),
+    ]);
+    return { gyms, trainers, members, rating: reviews._avg.score, ratings: reviews._count };
+  } catch {
+    return { gyms: 0, trainers: 0, members: 0, rating: null as number | null, ratings: 0 };
+  }
+}
 
 export default async function Home() {
   const t = createT(await getLocale());
+  const stats = await platformStats();
+  const fmt = new Intl.NumberFormat("en");
+  const roles = [
+    { labelKey: "landing.roleOwners", titleKey: "landing.ownersTitle", icon: "bar-chart" as IconName, stat: stats.gyms > 0 ? fmt.format(stats.gyms) : "—", statLabelKey: "landing.statLiveGyms" },
+    { labelKey: "landing.roleTrainers", titleKey: "landing.trainersTitle", icon: "users" as IconName, stat: stats.trainers > 0 ? fmt.format(stats.trainers) : "—", statLabelKey: "landing.statLiveTrainers" },
+    { labelKey: "landing.roleMembers", titleKey: "landing.membersTitle", icon: "flame" as IconName, stat: stats.members > 0 ? fmt.format(stats.members) : "—", statLabelKey: "landing.statLiveMembers" },
+  ];
 
   return (
     <main className="landing-page">
@@ -75,7 +94,7 @@ export default async function Home() {
                 <span>AM</span><span>JR</span><span>KL</span><span>+2k</span>
               </div>
               <div>
-                <div className="hero__stars">★★★★★ <strong>4.9</strong></div>
+                <div className="hero__stars">★★★★★ <strong>{stats.rating ? stats.rating.toFixed(1) : "—"}</strong><small> ({stats.ratings > 0 ? fmt.format(stats.ratings) : "—"} {t("landing.statLiveReviews")})</small></div>
                 <p>{t("authShell.trustedBy")}</p>
               </div>
             </div>
@@ -96,8 +115,8 @@ export default async function Home() {
                 <div className="mini-avatars"><span>KA</span><span>NO</span></div>
               </div>
               <div className="mini-stats">
-                <div><span>Active members</span><strong>1,248</strong><small>↗ 8.4%</small></div>
-                <div><span>Today&apos;s sessions</span><strong>32</strong><small>6 upcoming</small></div>
+                <div><span>{t("landing.statLiveMembers")}</span><strong>{stats.members > 0 ? fmt.format(stats.members) : "—"}</strong><small>{t("landing.statLiveNote")}</small></div>
+                <div><span>{t("landing.statLiveGyms")}</span><strong>{stats.gyms > 0 ? fmt.format(stats.gyms) : "—"}</strong><small>{t("landing.statLiveNote")}</small></div>
               </div>
               <div className="chart-card">
                 <div className="chart-card__heading">
@@ -210,7 +229,7 @@ export default async function Home() {
         <div className="container site-footer__main">
           <Brand light />
           <p>{t("landing.movementManaged")}</p>
-          <div><a href="#platform">{t("landing.platform")}</a><a href="#for-you">{t("landing.forYou")}</a><Link href="/login">{t("landing.logIn")}</Link></div>
+          <div><a href="#platform">{t("landing.platform")}</a><a href="#for-you">{t("landing.forYou")}</a><Link href="/gyms">{t("footer.gyms")}</Link><Link href="/trainers">{t("footer.trainers")}</Link><Link href="/about">{t("footer.about")}</Link><Link href="/contact">{t("footer.contact")}</Link><Link href="/help">{t("footer.help")}</Link><Link href="/terms">{t("footer.terms")}</Link><Link href="/privacy">{t("footer.privacy")}</Link><Link href="/login">{t("landing.logIn")}</Link></div>
         </div>
         <div className="container site-footer__bottom"><span>© 2026 KooGYMaa</span><span>{t("landing.madeForPeople")}</span></div>
       </footer>

@@ -52,7 +52,7 @@ export default async function AdminGymsPage() {
           </div>
         ) : (
           <div className="workspace-grid">
-            {workspaces.map(({ gym, role }) => (
+            {workspaces.map(({ gym, role }: any) => (
               <Link className="workspace-card" href={`/admin/gyms/${gym.id}`} key={gym.id}>
                 <div className="workspace-card__top">
                   <span><Icon name="building" size={23} /></span>

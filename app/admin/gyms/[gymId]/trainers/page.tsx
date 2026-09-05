@@ -1,10 +1,11 @@
 import { AddPersonForm } from "@/components/admin/add-person-form";
 import { StatusActions } from "@/components/admin/status-actions";
+import { BulkBar, Pagination } from "@/components/admin/data-table";
 import { Icon } from "@/components/icon";
 import { requireGymAdminAccess } from "@/lib/admin-access";
 import { prisma } from "@/lib/prisma";
 
-type PageProps = { params: Promise<{ gymId: string }> };
+type PageProps = { params: Promise<{ gymId: string }>; searchParams: Promise<{ q?: string; status?: string; page?: string }> };
 
 function formatMoney(value: number | null, currency: string) {
   if (value === null) return "Rate not set";
@@ -15,13 +16,21 @@ function formatMoney(value: number | null, currency: string) {
   }
 }
 
-export default async function TrainersPage({ params }: PageProps) {
-  const { gymId } = await params;
-  await requireGymAdminAccess(gymId);
+const PAGE_SIZE = 20;
 
-  const [trainers, grouped] = await Promise.all([
+export default async function TrainersPage({ params, searchParams }: PageProps) {
+  const { gymId } = await params;
+  const access = await requireGymAdminAccess(gymId);
+  const filters = await searchParams;
+  const query = filters.q?.trim();
+  const validStatuses = new Set(["PENDING", "ACTIVE", "REJECTED", "SUSPENDED", "EXPIRED", "CANCELLED"]);
+  const status = filters.status && validStatuses.has(filters.status) ? filters.status : undefined;
+  const page = Math.max(1, Number(filters.page) || 1);
+  const where = { gymId, ...(status ? { status: status as "PENDING" | "ACTIVE" | "REJECTED" | "SUSPENDED" | "EXPIRED" | "CANCELLED" } : {}), ...(query ? { trainer: { user: { OR: [{ name: { contains: query } }, { email: { contains: query } }] } } } : {}) };
+
+  const [trainers, grouped, total] = await Promise.all([
     prisma.gymTrainer.findMany({
-      where: { gymId },
+      where,
       select: {
         id: true,
         status: true,
@@ -40,10 +49,15 @@ export default async function TrainersPage({ params }: PageProps) {
         },
       },
       orderBy: [{ status: "asc" }, { requestedAt: "desc" }],
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
     }),
     prisma.gymTrainer.groupBy({ by: ["status"], where: { gymId }, _count: true }),
+    prisma.gymTrainer.count({ where }),
   ]);
-  const counts = Object.fromEntries(grouped.map((item) => [item.status, item._count]));
+  const counts: Record<string, number> = Object.fromEntries(grouped.map((item: any) => [item.status, item._count]));
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const baseQuery = `?${[status ? `status=${status}` : "", query ? `q=${encodeURIComponent(query)}` : ""].filter(Boolean).join("&")}`;
 
   return (
     <div className="admin-page">
@@ -56,10 +70,22 @@ export default async function TrainersPage({ params }: PageProps) {
         <div><span>Active</span><strong>{counts.ACTIVE || 0}</strong></div>
         <div><span>Pending</span><strong>{counts.PENDING || 0}</strong></div>
         <div><span>Suspended</span><strong>{counts.SUSPENDED || 0}</strong></div>
-        <div><span>Total records</span><strong>{grouped.reduce((sum, item) => sum + item._count, 0)}</strong></div>
+        <div><span>Matching filters</span><strong>{total}</strong></div>
       </section>
 
-      {trainers.length ? <div className="admin-trainer-grid">{trainers.map((membership) => {
+      <section className="admin-panel admin-table-panel">
+        <div className="admin-toolbar">
+          <form><Icon name="search" size={17} /><input defaultValue={query} name="q" placeholder="Search trainers by name or email" /><button type="submit">Search</button></form>
+          <div className="admin-filter-links">
+            {["ALL", "PENDING", "ACTIVE", "SUSPENDED"].map((item) => (
+              <a className={(item === "ALL" ? !status : status === item) ? "active" : ""} href={item === "ALL" ? `?${query ? `q=${encodeURIComponent(query)}` : ""}` : `?status=${item}${query ? `&q=${encodeURIComponent(query)}` : ""}`} key={item}>{item}</a>
+            ))}
+          </div>
+        </div>
+        {access.staffRole !== "OWNER" && <p className="admin-note">Final approval of new trainers requires the gym OWNER — managers can review but approvals are audited.</p>}
+        <BulkBar endpoint={`/api/admin/gyms/${gymId}/trainers/bulk`} label="عملیات گروهی مربیان" actions={[{ value: "ACTIVE", label: "تأیید گروهی" }, { value: "SUSPENDED", label: "تعلیق گروهی" }, { value: "REJECTED", label: "رد گروهی" }]} />
+
+      {trainers.length ? <div className="admin-trainer-grid">{trainers.map((membership: any) => {
         const trainer = membership.trainer;
         return (
           <article className="admin-trainer-card" key={membership.id}>
@@ -71,10 +97,12 @@ export default async function TrainersPage({ params }: PageProps) {
               <span><Icon name="credit-card" size={15} /><strong>{formatMoney(trainer.hourlyRate, trainer.currency)}</strong><small>hourly rate</small></span>
             </div>
             <div className="admin-trainer-card__contact"><span>{trainer.user.email}</span><span>{trainer.user.phone || "No phone"}</span></div>
-            <StatusActions endpoint={`/api/admin/gyms/${gymId}/trainers/${membership.id}`} status={membership.status} />
+            <div className="admin-trainer-card__foot"><input type="checkbox" data-bulk-id={membership.id} aria-label={`Select ${trainer.user.name}`} /><StatusActions endpoint={`/api/admin/gyms/${gymId}/trainers/${membership.id}`} status={membership.status} /></div>
           </article>
         );
       })}</div> : <div className="admin-panel admin-empty-table"><span><Icon name="dumbbell" size={27} /></span><h2>No trainers yet</h2><p>Add a trainer by email or wait for applications.</p></div>}
+        <Pagination page={page} totalPages={totalPages} base={baseQuery || "?"} />
+      </section>
     </div>
   );
 }

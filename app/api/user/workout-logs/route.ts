@@ -27,8 +27,16 @@ export async function POST(request: NextRequest) {
   const day = assignment?.plan.days[0];
   if (!assignment || !day) return NextResponse.json({ error: "Active workout assignment or day not found." }, { status: 404 });
 
+  // Item 8: continue the unfinished session when one exists for this day.
+  const unfinished = await prisma.workoutLog.findFirst({
+    where: { assignmentId: assignment.id, userId: authorization.user.id, workoutDayId: day.id, status: "IN_PROGRESS" },
+    select: { id: true, status: true, startedAt: true },
+    orderBy: { startedAt: "desc" },
+  });
+  if (unfinished) return NextResponse.json({ log: unfinished, resumed: true }, { status: 200 });
+
   const log = await prisma.workoutLog.create({
-    data: { assignmentId: assignment.id, userId: authorization.user.id, workoutDayId: day.id, status: "IN_PROGRESS", exerciseLogs: { create: day.exercises.map((exercise) => ({ exerciseId: exercise.id })) } },
+    data: { assignmentId: assignment.id, userId: authorization.user.id, workoutDayId: day.id, status: "IN_PROGRESS", exerciseLogs: { create: day.exercises.map((exercise: any) => ({ exerciseId: exercise.id })) } },
     select: { id: true, status: true, startedAt: true },
   });
   return NextResponse.json({ log }, { status: 201 });

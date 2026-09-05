@@ -48,3 +48,8 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+data/
+
+# local backups (never commit)
+backups/

@@ -16,3 +16,20 @@ export function StudentStatusActions({ clientId, status }: { clientId: string; s
   async function update(nextStatus: string) { setPending(nextStatus); setError(""); try { const response = await fetch(`/api/trainer/clients/${clientId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: nextStatus }) }); const data = await response.json(); if (!response.ok) { setError(data.error || "Update failed."); return; } router.refresh(); } catch { setError("Unable to connect."); } finally { setPending(""); } }
   return <div className="trainer-row-actions">{status === "PENDING" && <><button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")}>Accept</button><button disabled={Boolean(pending)} onClick={() => update("REJECTED")}>Decline</button></>}{status === "ACTIVE" && <><button disabled={Boolean(pending)} onClick={() => update("PAUSED")}>Pause</button><button disabled={Boolean(pending)} onClick={() => update("ENDED")}>End coaching</button></>}{status === "PAUSED" && <><button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")}>Resume</button><button disabled={Boolean(pending)} onClick={() => update("ENDED")}>End</button></>}{(status === "REJECTED" || status === "ENDED") && <button className="approve" disabled={Boolean(pending)} onClick={() => update("ACTIVE")}>Restore</button>}{error && <small>{error}</small>}</div>;
 }
+
+// Item 12: one-click nudge for low-active students.
+export function NudgeButton({ clientId }: { clientId: string }) {
+  const [pending, setPending] = useState(false);
+  const [done, setDone] = useState(false);
+  async function nudge() {
+    setPending(true);
+    try {
+      const res = await fetch(`/api/trainer/clients/${clientId}/nudge`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) });
+      if (res.ok) setDone(true);
+    } finally {
+      setPending(false);
+    }
+  }
+  if (done) return <small className="trainer-nudge-done">یادآوری ارسال شد ✓</small>;
+  return <button className="trainer-secondary-button" disabled={pending} onClick={nudge}>{pending ? "…" : "یادآوری انگیزشی"}</button>;
+}

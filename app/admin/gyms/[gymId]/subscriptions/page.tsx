@@ -1,9 +1,11 @@
 import { CreateSubscription, SubscriptionActions } from "@/components/admin/subscription-controls";
+import { BulkBar, Pagination } from "@/components/admin/data-table";
 import { Icon } from "@/components/icon";
+import { summarizePayments } from "@/lib/finance";
 import { requireGymAdminAccess } from "@/lib/admin-access";
 import { prisma } from "@/lib/prisma";
 
-type PageProps = { params: Promise<{ gymId: string }> };
+type PageProps = { params: Promise<{ gymId: string }>; searchParams: Promise<{ q?: string; status?: string; page?: string }> };
 
 function money(value: number, currency: string) {
   try {
@@ -17,15 +19,23 @@ function date(value: Date) {
   return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(value);
 }
 
-export default async function SubscriptionsPage({ params }: PageProps) {
+const PAGE_SIZE = 20;
+
+export default async function SubscriptionsPage({ params, searchParams }: PageProps) {
   const { gymId } = await params;
   await requireGymAdminAccess(gymId);
   const now = new Date();
   const soon = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const filters = await searchParams;
+  const query = filters.q?.trim();
+  const validStatuses = new Set(["PENDING", "ACTIVE", "PAST_DUE", "EXPIRED", "CANCELLED"]);
+  const status = filters.status && validStatuses.has(filters.status) ? filters.status : undefined;
+  const page = Math.max(1, Number(filters.page) || 1);
+  const where = { gymId, ...(status ? { status: status as "PENDING" | "ACTIVE" | "PAST_DUE" | "EXPIRED" | "CANCELLED" } : {}), ...(query ? { subscriber: { OR: [{ name: { contains: query } }, { email: { contains: query } }] } } : {}) };
 
-  const [subscriptions, plans] = await Promise.all([
+  const [subscriptions, plans, total, payments] = await Promise.all([
     prisma.subscription.findMany({
-      where: { gymId },
+      where,
       select: {
         id: true,
         status: true,
@@ -38,18 +48,25 @@ export default async function SubscriptionsPage({ params }: PageProps) {
         plan: { select: { name: true, audience: true } },
       },
       orderBy: [{ status: "asc" }, { endDate: "asc" }],
-      take: 250,
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
     }),
     prisma.subscriptionPlan.findMany({
       where: { gymId, isActive: true },
       select: { id: true, name: true, audience: true },
       orderBy: [{ audience: "asc" }, { price: "asc" }],
     }),
+    prisma.subscription.count({ where }),
+    prisma.payment.findMany({ where: { gymId }, select: { status: true, type: true, amount: true, currency: true, paidAt: true, createdAt: true } }),
   ]);
-  const active = subscriptions.filter((item) => item.status === "ACTIVE" && item.endDate > now);
-  const expiring = active.filter((item) => item.endDate <= soon);
-  const revenue = subscriptions.reduce((sum, item) => sum + item.pricePaid, 0);
-  const currency = subscriptions[0]?.currency || "IRR";
+  const active = subscriptions.filter((item: any) => item.status === "ACTIVE" && item.endDate > now);
+  const expiring = active.filter((item: any) => item.endDate <= soon);
+  // Item 3: revenue from SUCCEEDED payments (per currency, renewals + refunds).
+  const finance = summarizePayments(payments as any[]);
+  const currency = finance.currency;
+  const revenue = finance.net;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const baseQuery = `?${[status ? `status=${status}` : "", query ? `q=${encodeURIComponent(query)}` : ""].filter(Boolean).join("&")}`;
 
   return (
     <div className="admin-page">
@@ -61,14 +78,27 @@ export default async function SubscriptionsPage({ params }: PageProps) {
       <section className="admin-summary-strip">
         <div><span>Active</span><strong>{active.length}</strong></div>
         <div><span>Expiring this week</span><strong>{expiring.length}</strong></div>
-        <div><span>Auto-renew</span><strong>{active.filter((item) => item.autoRenew).length}</strong></div>
-        <div><span>Recorded revenue</span><strong>{money(revenue, currency)}</strong></div>
+        <div><span>Auto-renew</span><strong>{active.filter((item: any) => item.autoRenew).length}</strong></div>
+        <div><span>Net paid revenue</span><strong>{money(revenue, currency)}</strong></div>
       </section>
+      {Object.keys(finance.byCurrency).length > 1 && <p className="admin-note">تفکیک ارز: {Object.entries(finance.byCurrency).map(([code, b]) => `${code}: خالص ${money(b.net, code)}`).join(" · ")}</p>}
+      <p className="admin-note">تمدیدهای موفق: {finance.renewalsSucceeded} ({money(finance.renewalsRevenue, currency)}) · بازپرداخت‌ها: {money(finance.refunded, currency)}</p>
 
       <section className="admin-panel admin-table-panel">
+        <div className="admin-toolbar">
+          <form><Icon name="search" size={17} /><input defaultValue={query} name="q" placeholder="Search by subscriber" /><button type="submit">Search</button></form>
+          <div className="admin-filter-links">
+            {["ALL", "ACTIVE", "PAST_DUE", "EXPIRED", "CANCELLED"].map((item) => (
+              <a className={(item === "ALL" ? !status : status === item) ? "active" : ""} href={item === "ALL" ? `?${query ? `q=${encodeURIComponent(query)}` : ""}` : `?status=${item}${query ? `&q=${encodeURIComponent(query)}` : ""}`} key={item}>{item}</a>
+            ))}
+          </div>
+          <a className="admin-secondary-button" href={`/api/admin/gyms/${gymId}/export?kind=subscriptions`}>⬇ CSV</a>
+        </div>
+        <BulkBar endpoint={`/api/admin/gyms/${gymId}/subscriptions/bulk`} label="لغو گروهی اشتراک‌ها" actions={[{ value: "CANCELLED", label: "لغو گروهی" }]} />
         {subscriptions.length ? <div className="admin-table-wrap"><table className="admin-table">
-          <thead><tr><th>Subscriber</th><th>Plan</th><th>Status</th><th>Paid</th><th>Period</th><th>Renewal</th><th><span className="sr-only">Actions</span></th></tr></thead>
-          <tbody>{subscriptions.map((subscription) => <tr key={subscription.id}>
+          <thead><tr><th><span className="sr-only">Select</span></th><th>Subscriber</th><th>Plan</th><th>Status</th><th>Paid</th><th>Period</th><th>Renewal</th><th><span className="sr-only">Actions</span></th></tr></thead>
+          <tbody>{subscriptions.map((subscription: any) => <tr key={subscription.id}>
+            <td><input type="checkbox" data-bulk-id={subscription.id} aria-label={`Select ${subscription.subscriber.name}`} /></td>
             <td><div className="admin-person"><span>{subscription.subscriber.name.slice(0, 2).toUpperCase()}</span><div><strong>{subscription.subscriber.name}</strong><small>{subscription.subscriber.email} · {subscription.subscriber.role}</small></div></div></td>
             <td><div className="admin-table-stack"><strong>{subscription.plan.name}</strong><small>{subscription.plan.audience}</small></div></td>
             <td><span className={`admin-status admin-status--${subscription.status.toLowerCase().replace("_", "-")}`}>{subscription.status}</span></td>
@@ -78,6 +108,7 @@ export default async function SubscriptionsPage({ params }: PageProps) {
             <td><SubscriptionActions autoRenew={subscription.autoRenew} endpoint={`/api/admin/gyms/${gymId}/subscriptions/${subscription.id}`} status={subscription.status} /></td>
           </tr>)}</tbody>
         </table></div> : <div className="admin-empty-table"><span><Icon name="credit-card" size={27} /></span><h2>No subscriptions yet</h2><p>Create a subscription after adding at least one plan.</p></div>}
+        <Pagination page={page} totalPages={totalPages} base={baseQuery || "?"} />
       </section>
     </div>
   );

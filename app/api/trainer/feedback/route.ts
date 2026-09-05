@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     if (!log) return NextResponse.json({ error: "Nutrition log does not belong to this student." }, { status: 403 });
   }
 
-  const feedback = await prisma.$transaction(async (transaction) => {
+  const feedback = await prisma.$transaction(async (transaction: any) => {
     const created = await transaction.feedback.create({ data: { authorId: authorization.access.user.id, recipientId: client.userId, trainerClientId: client.id, workoutLogId: validation.data.workoutLogId, nutritionLogId: validation.data.nutritionLogId, type: validation.data.type, content: validation.data.content }, select: { id: true, type: true, content: true, createdAt: true } });
     await transaction.notification.create({ data: { userId: client.userId, type: "FEEDBACK", title: "New trainer feedback", message: validation.data.content.slice(0, 160), href: "/user/progress" } });
     return created;

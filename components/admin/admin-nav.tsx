@@ -74,6 +74,8 @@ export function AdminNav({ gym, pendingCount, user }: AdminNavProps) {
         <Brand compact />
         <div><strong>{gym.name}</strong><small>{t("nav.gymAdministrator")}</small></div>
         <Link href="/admin/gyms"><Icon name="building" size={19} /></Link>
+        <Link href={`${base}/settings`} aria-label={t("nav.gymSettings")}><Icon name="settings" size={19} /></Link>
+        <LogoutButton />
       </header>
       <nav className="admin-mobile-nav" aria-label="Mobile gym administration">
         {items.map((item) => {

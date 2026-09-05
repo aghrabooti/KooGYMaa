@@ -71,7 +71,7 @@ export default function LoginPage() {
         <label className="field">
           <span className="field__label-row">
             {t("auth.password")}
-            <a href="#">{t("auth.forgotPassword")}</a>
+            <Link href="/forgot-password">{t("auth.forgotPassword")}</Link>
           </span>
           <div className="field__control">
             <Icon name="lock" size={19} />

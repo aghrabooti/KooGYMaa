@@ -21,7 +21,7 @@ export async function PUT(request: NextRequest) {
   const validation = validateAvailability(body);
   if (!validation.ok) return NextResponse.json({ error: validation.error }, { status: 400 });
 
-  await prisma.$transaction(async (transaction) => {
+  await prisma.$transaction(async (transaction: any) => {
     await transaction.trainerAvailability.deleteMany({
       where: { trainerId: authorization.access.profile.id },
     });

@@ -29,7 +29,7 @@ export async function POST(request: NextRequest, { params }: Context) {
         familyId: validation.data.mode === "version" ? source.familyId : randomUUID(), sourcePlanId: source.id,
         title: validation.data.mode === "version" ? source.title : `${source.title} Copy`, description: source.description,
         dietaryRestrictions: source.dietaryRestrictions, dailyCalories: source.dailyCalories, status: "DRAFT", version: nextVersion, isTemplate: source.isTemplate,
-        days: { create: source.days.map((day, dayIndex) => ({ dayNumber: dayIndex + 1, name: day.name, notes: day.notes, targetCalories: day.targetCalories, targetProtein: day.targetProtein, targetCarbs: day.targetCarbs, targetFat: day.targetFat, meals: { create: day.meals.map((meal, mealIndex) => ({ name: meal.name, order: mealIndex + 1, scheduledTime: meal.scheduledTime, notes: meal.notes, foodItems: { create: meal.foodItems.map((food, foodIndex) => ({ ...food, order: foodIndex + 1 })) } })) } })) },
+        days: { create: source.days.map((day: any, dayIndex: any) => ({ dayNumber: dayIndex + 1, name: day.name, notes: day.notes, targetCalories: day.targetCalories, targetProtein: day.targetProtein, targetCarbs: day.targetCarbs, targetFat: day.targetFat, meals: { create: day.meals.map((meal: any, mealIndex: any) => ({ name: meal.name, order: mealIndex + 1, scheduledTime: meal.scheduledTime, notes: meal.notes, foodItems: { create: meal.foodItems.map((food: any, foodIndex: any) => ({ ...food, order: foodIndex + 1 })) } })) } })) },
       },
       select: { id: true, title: true, version: true, status: true },
     });

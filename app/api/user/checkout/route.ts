@@ -1,8 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { authorizeApiRequest } from "@/lib/api-auth";
 import { createSubscriptionCheckout } from "@/lib/payments/service";
+import { checkGeneralRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const throttle = checkGeneralRateLimit(request, 30);
+  if (!throttle.allowed) return rateLimitResponse(throttle);
   const authorization = await authorizeApiRequest(request, ["USER"]);
   if (!authorization.ok) return authorization.response;
   const body = await request.json().catch(() => null) as { planId?: unknown; renewalSubscriptionId?: unknown; idempotencyKey?: unknown } | null;

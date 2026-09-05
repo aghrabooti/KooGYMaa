@@ -23,6 +23,7 @@ type SessionPayload = JwtPayload & {
 export type SessionClaims = {
   userId: string;
   role: AppRole;
+  sessionId?: string;
 };
 
 // Demo project: a secret is embedded so sessions work with no environment
@@ -70,9 +71,10 @@ export function signToken(
   userId: string,
   role: AppRole,
   expiresInSeconds = LONG_SESSION_SECONDS,
+  sessionId?: string,
 ): string {
   return jwt.sign(
-    { role },
+    { role, ...(sessionId ? { jti: sessionId } : {}) },
     getJwtSecret(),
     {
       algorithm: "HS256",
@@ -101,6 +103,7 @@ export function verifyToken(token: string | null | undefined): SessionClaims | n
     return {
       userId: payload.sub,
       role: payload.role,
+      ...(typeof payload.jti === "string" ? { sessionId: payload.jti } : {}),
     };
   } catch {
     return null;
