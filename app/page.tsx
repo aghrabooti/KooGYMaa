@@ -55,6 +55,8 @@ export default async function Home() {
       : locale === "fa"
         ? toFaDigits(stats.rating.toFixed(1))
         : stats.rating.toFixed(1);
+  const RING_C = 2 * Math.PI * 34;
+  const ringOffset = stats.rating == null ? RING_C : RING_C * (1 - stats.rating / 5);
   const roles = [
     { labelKey: "landing.roleOwners", titleKey: "landing.ownersTitle", icon: "bar-chart" as IconName, statValue: stats.gyms, statLabelKey: "landing.statLiveGyms" },
     { labelKey: "landing.roleTrainers", titleKey: "landing.trainersTitle", icon: "users" as IconName, statValue: stats.trainers, statLabelKey: "landing.statLiveTrainers" },
@@ -139,11 +141,21 @@ export default async function Home() {
             <Tilt className="product-stage" >
               <div aria-label="KooGYMaa dashboard preview">
                 <div className="product-stage__mesh" />
+                <div className="emblem" role="img" aria-label={t("landing.demoEmblem")}>
+                  <span className="emblem__halo" aria-hidden="true" />
+                  <span className="emblem__orbit" aria-hidden="true" />
+                  <span className="emblem__core"><Icon name="dumbbell" size={36} /></span>
+                </div>
                 <div className="float-pill float-pill--top">
                   <span><Icon name="flame" size={16} /></span>
                   <div><strong>{t("landing.demoStreak")}</strong><small>{t("landing.demoStreakSub")}</small></div>
                 </div>
+                <div className="float-pill float-pill--mid">
+                  <span><Icon name="users" size={16} /></span>
+                  <div><strong><CountUp value={stats.trainers} locale={locale} /></strong><small>{t("landing.demoActiveTrainers")}</small></div>
+                </div>
                 <div className="product-card">
+                  <div className="product-card__dumbbell" aria-hidden="true"><Icon name="dumbbell" size={190} /></div>
                   <div className="product-card__header">
                     <div>
                       <small>{t("landing.demoLive")}</small>
@@ -155,9 +167,27 @@ export default async function Home() {
                     <div><span>{t("landing.statLiveMembers")}</span><strong><CountUp value={stats.members} locale={locale} /></strong><small>{t("landing.statLiveNote")}</small></div>
                     <div><span>{t("landing.statLiveGyms")}</span><strong><CountUp value={stats.gyms} locale={locale} /></strong><small>{t("landing.statLiveNote")}</small></div>
                   </div>
+                  <div className="rating-panel">
+                    <svg className="rating-ring" viewBox="0 0 84 84" role="img" aria-label={t("landing.demoRating")}>
+                      <defs>
+                        <linearGradient id="ratingGrad" x1="0" x2="1" y1="0" y2="1">
+                          <stop offset="0" stopColor="#9ede5a" />
+                          <stop offset="1" stopColor="#4d7c0f" />
+                        </linearGradient>
+                      </defs>
+                      <circle className="rating-ring__track" cx="42" cy="42" r="34" />
+                      <circle className="rating-ring__fill" cx="42" cy="42" r="34" stroke="url(#ratingGrad)" style={{ strokeDasharray: RING_C, strokeDashoffset: ringOffset }} />
+                      <text className="rating-ring__star" x="42" y="50" textAnchor="middle">★</text>
+                    </svg>
+                    <div>
+                      <small>{t("landing.demoRating")}</small>
+                      <strong>{rating} <span>/ 5</span></strong>
+                      <p>{stats.ratings > 0 ? fmt.format(stats.ratings) : "—"} {t("landing.demoReviews")}</p>
+                    </div>
+                  </div>
                   <div className="chart-card">
                     <div className="chart-card__heading">
-                      <div><small>{t("landing.demoWeek")}</small><strong className="chart-card__live">★ {rating} <span>({stats.ratings > 0 ? fmt.format(stats.ratings) : "—"} {t("landing.statLiveReviews")})</span></strong></div>
+                      <div><small>{t("landing.demoWeek")}</small></div>
                       <span>{t("landing.demoRange")} ▾</span>
                     </div>
                     <svg className="hero-chart" viewBox="0 0 460 145" role="img" aria-label="Weekly activity trending upward">

@@ -3049,3 +3049,54 @@ html.locale-fa .role-card::before { transform-origin: right; }
   .hero-chart .chart-area { opacity: 1; }
   .ecg path { stroke-dashoffset: 0; }
 }
+
+/* ── Hero product card: masterpiece ──────────────────────────────── */
+
+/* Dumbbell emblem */
+.emblem { height: 104px; position: absolute; top: -36px; inset-inline-start: 5%; width: 104px; z-index: 5; transform: translateZ(90px); }
+.emblem__core { align-items: center; background: linear-gradient(145deg, #e2fa9e, var(--lime) 60%, #a4d64b); border-radius: 50%; box-shadow: 0 14px 42px rgba(201,243,107,.4), inset 0 2px 6px rgba(255,255,255,.65); color: #17210f; display: flex; inset: 13px; justify-content: center; position: absolute; }
+.emblem__orbit { animation: emblem-spin 16s linear infinite; border: 2px dashed rgba(201,243,107,.75); border-radius: 50%; inset: 0; position: absolute; }
+.emblem__orbit::after { background: var(--orange); border-radius: 50%; box-shadow: 0 0 14px var(--orange); content: ""; height: 10px; left: 50%; margin-left: -5px; position: absolute; top: -6px; width: 10px; }
+@keyframes emblem-spin { to { transform: rotate(360deg); } }
+.emblem__halo { animation: halo-breathe 3.2s ease-in-out infinite; background: radial-gradient(circle, rgba(201,243,107,.3), transparent 65%); border-radius: 50%; inset: -15px; position: absolute; }
+@keyframes halo-breathe {
+  0%, 100% { opacity: .7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.09); }
+}
+
+/* Third floating chip: coaching crew */
+.float-pill--mid { animation: floaty-a 6s ease-in-out 1.4s infinite; right: -14px; top: 46%; }
+.float-pill--mid > span { background: #dcd4ed; color: #4d435c; }
+
+/* Card sheen + dumbbell watermark */
+.product-card::after { background: linear-gradient(180deg, rgba(255,255,255,.55), transparent); content: ""; height: 130px; inset: 0 0 auto 0; pointer-events: none; position: absolute; }
+.product-card > *:not(.product-card__dumbbell) { position: relative; z-index: 1; }
+.product-card__dumbbell { color: #16210f; opacity: .05; pointer-events: none; position: absolute; right: -48px; top: -48px; transform: rotate(24deg); z-index: 0; }
+
+/* Live rating panel */
+.rating-panel { align-items: center; background: rgba(23,27,23,.03); border: 1px solid #e6ebe5; border-radius: 14px; display: flex; gap: 14px; margin-top: 12px; padding: 12px 14px; }
+.rating-ring { flex-shrink: 0; height: 78px; width: 78px; }
+.rating-ring__track { fill: none; stroke: rgba(23,27,23,.1); stroke-width: 9; }
+.rating-ring__fill { animation: ring-draw 1.8s cubic-bezier(.4,0,.2,1) .9s backwards; fill: none; stroke-linecap: round; stroke-width: 9; transform: rotate(-90deg); transform-origin: center; }
+@keyframes ring-draw { from { stroke-dashoffset: 213.63; } }
+.rating-ring__star { fill: #e9b852; font-size: 23px; }
+.rating-panel small { color: #899188; display: block; font-size: 12.5px; font-weight: 800; letter-spacing: 1.25px; }
+.rating-panel strong { display: block; font-size: 23px; letter-spacing: -.5px; margin-top: 3px; }
+.rating-panel strong span { color: #899188; font-size: 13px; font-weight: 700; }
+.rating-panel p { color: #899188; font-size: 12.5px; margin: 2px 0 0; }
+
+/* Dark mode */
+.theme-dark .product-card::after { background: linear-gradient(180deg, rgba(255,255,255,.06), transparent); }
+.theme-dark .product-card__dumbbell { color: #e8f5d0; opacity: .06; }
+.theme-dark .rating-panel { background: rgba(255,255,255,.03); border-color: #2a342c; }
+.theme-dark .rating-ring__track { stroke: rgba(255,255,255,.12); }
+
+/* RTL */
+html.locale-fa .rating-panel :is(small, strong) { letter-spacing: 0; }
+html.locale-fa .product-card__dumbbell { left: -48px; right: auto; transform: rotate(-24deg); }
+
+@media (max-width: 640px) {
+  .emblem { transform: translateZ(90px) scale(.78); top: -30px; }
+  .rating-panel { padding: 10px 12px; }
+  .rating-ring { height: 66px; width: 66px; }
+}
