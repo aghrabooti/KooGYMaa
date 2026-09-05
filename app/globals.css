@@ -2682,6 +2682,22 @@ html.locale-fa .auth-back span { display: inline-block; transform: scaleX(-1); }
 .theme-dark .admin-table td { border-color: var(--line); }
 .theme-dark .admin-table tbody tr:hover { background: #131a14; }
 .theme-dark :is(.admin-quick-grid > a, .trainer-location-list > a, .member-today > div:last-child > a, .trainer-student-context, .member-feedback-reply, .trainer-feedback-history article > div, .member-exercise-log__head, .admin-toolbar form, .member-actions-card, .member-resume-note, .trainer-plan-notice) { background: #131a14; border-color: var(--line); }
+
+/* ── RTL (Persian) card fixes ─────────────────────────────────────── */
+/* In RTL the card text starts at the right, so corner icons pinned with
+   physical `right` would sit on top of it. Mirror them to the left. */
+html.locale-fa .dashboard-stat__icon,
+html.locale-fa .trainer-metric-icon,
+html.locale-fa .member-dashboard-icon,
+html.locale-fa .member-progress-metrics article > span { left: 15px; right: auto; }
+html.locale-fa .admin-metric-card__icon { left: 16px; right: auto; }
+html.locale-fa .trainer-profile-hero > i { left: 14px; right: auto; }
+html.locale-fa :is(.market-trainer-avatar, .trainer-detail-avatar) i { left: -2px; right: auto; }
+html.locale-fa .trainer-profile-hero::after { left: -80px; right: auto; }
+html.locale-fa .admin-nav__item b { left: 3px; right: auto; }
+html.locale-fa .trainer-nav > a b { left: 2px; right: auto; }
+html.locale-fa .member-mobile-header > a b { left: -3px; right: auto; }
+html.locale-fa .admin-table :is(th, td) { text-align: right; }
 .theme-dark :is(.admin-primary-button, .trainer-primary-button, .member-primary-button) { background: var(--lime); color: #16200f; }
 .theme-dark :is(.admin-secondary-button, .trainer-secondary-button, .member-secondary-button) { background: #202b21; border-color: #3b473d; color: var(--ink); }
 .theme-dark :is(.admin-sidebar, .trainer-sidebar, .member-sidebar) { background: #0c110d; border-color: var(--line); }
