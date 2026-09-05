@@ -38,7 +38,7 @@ export default async function UserProgressPage() {
       <header className="member-page__heading"><div><span>پیشرفت</span><h1>داستان پیشرفت شما</h1><p>اندازه‌گیری‌ها، پایبندی به برنامه و بازخورد در یک‌جا.</p></div><MeasurementForm /></header>
       <section className="member-progress-metrics">
         <article><span><Icon name="trend" size={19} /></span><small>وزن فعلی</small><strong>{latest?.weightKg ? `${latest.weightKg} کیلوگرم` : "—"}</strong><p>{weightChange === null ? "نخستین حضور خود را ثبت کنید" : `${weightChange > 0 ? "+" : ""}${toFaDigits(weightChange.toFixed(1))} کیلوگرم در مجموع`}</p></article>
-        <article><span><Icon name="dumbbell" size={19} /></span><small>پایبندی تمرین</small><strong>{workoutCompliance}%</strong><p>{exerciseDone} of {exerciseTotal} exercises</p></article>
+        <article><span><Icon name="dumbbell" size={19} /></span><small>پایبندی تمرین</small><strong>{workoutCompliance}%</strong><p>{exerciseDone} از {exerciseTotal} حرکت</p></article>
         <article><span><Icon name="heart" size={19} /></span><small>پایبندی تغذیه</small><strong>{mealCompliance}%</strong><p>{mealDone} of {mealTotal} وعده</p></article>
         <article><span><Icon name="clipboard" size={19} /></span><small>بازخورد مربی</small><strong>{feedback.length}</strong><p>رشته‌های بازخورد</p></article>
       </section>

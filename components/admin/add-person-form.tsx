@@ -29,7 +29,7 @@ export function AddPersonForm({ endpoint, kind }: AddPersonFormProps) {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || `Unable to add ${kind}.`);
+        setError(data.error || `${kind === "member" ? "عضو" : "مربی"} افزوده نشد.`);
         return;
       }
       event.currentTarget.reset();
@@ -43,7 +43,7 @@ export function AddPersonForm({ endpoint, kind }: AddPersonFormProps) {
   }
 
   if (!open) {
-    return <button className="admin-primary-button" onClick={() => setOpen(true)} type="button"><Icon name="plus" size={16} /> Add {kind}</button>;
+    return <button className="admin-primary-button" onClick={() => setOpen(true)} type="button"><Icon name="plus" size={16} /> افزودن {kind === "member" ? "عضو" : "مربی"}</button>;
   }
 
   return (

@@ -107,7 +107,7 @@ export function WorkoutLogForm({ logId, initial, title, previous, resumed }: {
         const prev = prevById.get(exercise.exerciseId);
         return <article className={exercise.completed ? "is-done" : ""} key={exercise.exerciseId}>
           <label><input checked={exercise.completed} type="checkbox" onChange={(event) => patch(index, { completed: event.target.checked })} /><span><Icon name="check" size={13} /></span></label>
-          <div><strong>{exercise.name}</strong><small>{exercise.prescribedSets || "—"} sets · {exercise.prescribedReps || "—"} reps · {exercise.prescribedWeight || "bodyweight"}</small>
+          <div><strong>{exercise.name}</strong><small>{exercise.prescribedSets || "—"} ست · {exercise.prescribedReps || "—"} تکرار · {exercise.prescribedWeight || "وزن بدن"}</small>
             {prev && (prev.actualSets || prev.actualReps || prev.actualWeight) && <small className="member-prev">جلسه قبل: {prev.actualSets ?? "—"}×{prev.actualReps ?? "—"} · {prev.actualWeight ?? "—"}</small>}</div>
           <input min="0" type="number" value={exercise.actualSets ?? ""} aria-label="ست‌ها" onChange={(event) => patch(index, { actualSets: event.target.value ? Number(event.target.value) : null })} />
           <input value={exercise.actualReps} aria-label="تکرارها" onChange={(event) => patch(index, { actualReps: event.target.value })} />

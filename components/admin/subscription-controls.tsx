@@ -94,7 +94,7 @@ export function SubscriptionActions({
     <div className="admin-subscription-actions">
       <button disabled={Boolean(pending)} onClick={() => update({ extendDays: 30 }, "extend")} type="button">{pending === "extend" ? "در حال تمدید…" : "تمدید ۳۰ روزه"}</button>
       {status === "ACTIVE" ? <button disabled={Boolean(pending)} onClick={() => update({ status: "CANCELLED" }, "cancel")} type="button">انصراف</button> : <button className="approve" disabled={Boolean(pending)} onClick={() => update({ status: "ACTIVE" }, "activate")} type="button">فعال‌سازی</button>}
-      <button disabled={Boolean(pending)} onClick={() => update({ autoRenew: !autoRenew }, "renew")} type="button">Auto-renew {autoRenew ? "off" : "on"}</button>
+      <button disabled={Boolean(pending)} onClick={() => update({ autoRenew: !autoRenew }, "renew")} type="button">تمدید خودکار {autoRenew ? "روشن" : "خاموش"}</button>
       {error && <small>{error}</small>}
     </div>
   );

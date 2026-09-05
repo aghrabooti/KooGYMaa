@@ -88,8 +88,8 @@ export default async function UserWorkoutsPage({ searchParams }: PageProps) {
           <div className="member-workout-grid">
             {assignment.plan.days.map((day: any) => (
               <article key={day.id}>
-                <header><span>{day.dayNumber}</span><div><h2>{day.name}</h2><p>{day.notes || `${day.exercises.length} exercises`}</p></div></header>
-                <div>{day.exercises.map((exercise: any) => <div key={exercise.id}><span><Icon name="dumbbell" size={14} /></span><strong>{exercise.name}</strong><small>{exercise.sets || "—"} × {exercise.reps || "—"}{exercise.restSeconds ? ` · ${exercise.restSeconds}s rest` : ""}</small></div>)}</div>
+                <header><span>{day.dayNumber}</span><div><h2>{day.name}</h2><p>{day.notes || `${day.exercises.length} حرکت`}</p></div></header>
+                <div>{day.exercises.map((exercise: any) => <div key={exercise.id}><span><Icon name="dumbbell" size={14} /></span><strong>{exercise.name}</strong><small>{exercise.sets || "—"} × {exercise.reps || "—"}{exercise.restSeconds ? ` · ${exercise.restSeconds} ثانیه استراحت` : ""}</small></div>)}</div>
                 <StartWorkout assignmentId={assignment.id} dayId={day.id} hasUnfinished={unfinishedKeys.has(`${assignment.id}:${day.id}`)} />
               </article>
             ))}
@@ -99,11 +99,11 @@ export default async function UserWorkoutsPage({ searchParams }: PageProps) {
         <div className="member-panel member-empty"><Icon name="clipboard" size={27} /><h2>برنامه تمرین فعالی وجود ندارد</h2><p>مربی شما هنوز برنامه تمرین تخصیص نداده است.</p></div>
       )}
       <section className="member-panel member-history">
-        <div className="member-panel__heading"><div><h2>سوابق تمرین</h2><p>{completed} completed sessions</p></div></div>
+        <div className="member-panel__heading"><div><h2>سوابق تمرین</h2><p>{completed} جلسه تکمیل‌شده</p></div></div>
         {recent.length ? (
           <div>{recent.map((item: any) => {
             const done = item.exerciseLogs.filter((entry: any) => entry.completed).length;
-            return <article key={item.id}><span className={`member-status member-status--${item.status.toLowerCase()}`}>{faStatus(item.status)}</span><div><strong>{item.workoutDay.name}</strong><small>{item.workoutDay.plan.title} · {date(item.startedAt)}</small></div><b>{done}/{item.exerciseLogs.length} exercises</b><small>RPE {item.perceivedEffort || "—"}</small></article>;
+            return <article key={item.id}><span className={`member-status member-status--${item.status.toLowerCase()}`}>{faStatus(item.status)}</span><div><strong>{item.workoutDay.name}</strong><small>{item.workoutDay.plan.title} · {date(item.startedAt)}</small></div><b>{done}/{item.exerciseLogs.length} حرکت</b><small>RPE {item.perceivedEffort || "—"}</small></article>;
           })}</div>
         ) : <p className="member-empty-line">تمرین‌های تمام‌شده شما اینجا نمایش داده می‌شوند.</p>}
       </section>

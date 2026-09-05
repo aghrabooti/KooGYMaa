@@ -104,7 +104,7 @@ export default async function SubscriptionsPage({ params, searchParams }: PagePr
             <td><div className="admin-table-stack"><strong>{subscription.plan.name}</strong><small>{subscription.plan.audience}</small></div></td>
             <td><span className={`admin-status admin-status--${subscription.status.toLowerCase().replace("_", "-")}`}>{faStatus(subscription.status)}</span></td>
             <td>{money(subscription.pricePaid, subscription.currency)}</td>
-            <td><div className="admin-table-stack"><strong>{date(subscription.endDate)}</strong><small>From {date(subscription.startDate)}</small></div></td>
+            <td><div className="admin-table-stack"><strong>{date(subscription.endDate)}</strong><small>از {date(subscription.startDate)}</small></div></td>
             <td>{subscription.autoRenew ? <span className="admin-renew"><Icon name="check" size={13} /> روشن</span> : <span className="admin-muted">خاموش</span>}</td>
             <td><SubscriptionActions autoRenew={subscription.autoRenew} endpoint={`/api/admin/gyms/${gymId}/subscriptions/${subscription.id}`} status={subscription.status} /></td>
           </tr>)}</tbody>

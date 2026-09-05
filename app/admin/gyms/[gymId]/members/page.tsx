@@ -92,7 +92,7 @@ export default async function MembersPage({ params, searchParams }: PageProps) {
                 <td><input type="checkbox" data-bulk-id={membership.id} aria-label={`انتخاب ${membership.user.name}`} /></td>
                 <td><div className="admin-person"><span>{membership.user.name.slice(0, 2).toUpperCase()}</span><div><strong>{membership.user.name}</strong><small>{membership.user.email}{membership.user.phone ? ` · ${membership.user.phone}` : ""}</small></div></div></td>
                 <td><span className={`admin-status admin-status--${membership.status.toLowerCase()}`}>{faStatus(membership.status)}</span></td>
-                <td>{subscription ? <div className="admin-table-stack"><strong>{subscription.plan.name}</strong><small>Until {formatDate(subscription.endDate)}</small></div> : <span className="admin-muted">برنامه فعالی وجود ندارد</span>}</td>
+                <td>{subscription ? <div className="admin-table-stack"><strong>{subscription.plan.name}</strong><small>تا {formatDate(subscription.endDate)}</small></div> : <span className="admin-muted">برنامه فعالی وجود ندارد</span>}</td>
                 <td>{formatDate(membership.startedAt)}</td>
                 <td>{formatDate(membership.expiresAt)}</td>
                 <td><StatusActions endpoint={`/api/admin/gyms/${gymId}/members/${membership.id}`} status={membership.status} /></td>

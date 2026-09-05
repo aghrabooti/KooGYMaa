@@ -93,7 +93,7 @@ export default async function TrainersPage({ params, searchParams }: PageProps) 
             <div className="admin-trainer-card__top"><span className="admin-avatar admin-avatar--large">{trainer.user.name.slice(0, 2).toUpperCase()}</span><span className={`admin-status admin-status--${membership.status.toLowerCase()}`}>{faStatus(membership.status)}</span></div>
             <h2>{trainer.user.name}</h2><p>{trainer.specialty || "مربی تناسب‌اندام عمومی"}</p>
             <div className="admin-trainer-card__meta">
-              <span><Icon name="clock" size={15} /><strong>{trainer.experienceYears ?? 0} yrs</strong><small>سابقه</small></span>
+              <span><Icon name="clock" size={15} /><strong>{trainer.experienceYears ?? 0} سال</strong><small>سابقه</small></span>
               <span><Icon name="users" size={15} /><strong>{trainer._count.clients}</strong><small>مراجعان فعال</small></span>
               <span><Icon name="credit-card" size={15} /><strong>{formatMoney(trainer.hourlyRate, trainer.currency)}</strong><small>نرخ ساعتی</small></span>
             </div>

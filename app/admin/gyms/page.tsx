@@ -58,7 +58,7 @@ export default async function AdminGymsPage() {
               <Link className="workspace-card" href={`/admin/gyms/${gym.id}`} key={gym.id}>
                 <div className="workspace-card__top">
                   <span><Icon name="building" size={23} /></span>
-                  <small>{role}</small>
+                  <small>{faStatus(role)}</small>
                 </div>
                 <h2>{gym.name}</h2>
                 <p><Icon name="location" size={13} /> {gym.city || "مکان ثبت نشده"}, {faCountry(gym.country)}</p>

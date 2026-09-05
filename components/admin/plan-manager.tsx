@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
+import { faStatus } from "@/components/fa";
 
 type Plan = {
   id: string;
@@ -107,9 +108,9 @@ export function PlanManager({ gymId, plans }: { gymId: string; plans: Plan[] }) 
 
       {plans.length ? <div className="admin-plan-grid">{plans.map((plan) => (
         <article className={`admin-plan-card ${plan.isActive ? "" : "is-inactive"}`} key={plan.id}>
-          <div className="admin-plan-card__top"><span className={`admin-plan-icon admin-plan-icon--${plan.audience.toLowerCase()}`}><Icon name={plan.audience === "MEMBER" ? "users" : "dumbbell"} size={21} /></span><span className={`admin-status ${plan.isActive ? "admin-status--active" : "admin-status--cancelled"}`}>{plan.isActive ? "ACTIVE" : "INACTIVE"}</span></div>
-          <small>{plan.audience} PLAN</small><h2>{plan.name}</h2><p>{plan.description || "توضیحی ثبت نشده است."}</p>
-          <div className="admin-plan-price"><strong>{money(plan.price, plan.currency)}</strong><span>every {plan.durationDays} روز</span></div>
+          <div className="admin-plan-card__top"><span className={`admin-plan-icon admin-plan-icon--${plan.audience.toLowerCase()}`}><Icon name={plan.audience === "MEMBER" ? "users" : "dumbbell"} size={21} /></span><span className={`admin-status ${plan.isActive ? "admin-status--active" : "admin-status--cancelled"}`}>{faStatus(plan.isActive ? "ACTIVE" : "INACTIVE")}</span></div>
+          <small>طرح {faStatus(plan.audience)}</small><h2>{plan.name}</h2><p>{plan.description || "توضیحی ثبت نشده است."}</p>
+          <div className="admin-plan-price"><strong>{money(plan.price, plan.currency)}</strong><span>هر {plan.durationDays} روز</span></div>
           <div className="admin-plan-card__footer"><span>{plan.subscriptionCount} اشتراک</span><button disabled={pending === plan.id} onClick={() => toggle(plan)} type="button">{pending === plan.id ? "در حال ذخیره…" : plan.isActive ? "غیرفعال‌سازی" : "فعال‌سازی"}</button></div>
         </article>
       ))}</div> : <div className="admin-panel admin-empty-table"><span><Icon name="clipboard" size={27} /></span><h2>هنوز طرحی ساخته نشده است</h2><p>نخستین طرح اشتراک عضو یا مربی را بسازید.</p></div>}

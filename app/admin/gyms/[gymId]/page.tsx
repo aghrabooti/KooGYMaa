@@ -82,9 +82,9 @@ export default async function GymOverviewPage({ params }: PageProps) {
   const currency = finance.currency;
   const totalRevenue = finance.net;
   const revenueTrend: Array<{ key: string; total: number; count: number }> = monthlyRevenueSeries(paymentRows as any[], 6, now);
-  const monthlyRevenue = revenueTrend.map((row: { key: string; total: number }) => ({ label: new Date(`${row.key}-01T00:00:00Z`).toLocaleString("en", { month: "short" }), total: row.total }));
+  const monthlyRevenue = revenueTrend.map((row: { key: string; total: number }) => ({ label: new Date(`${row.key}-01T00:00:00Z`).toLocaleString("fa-IR", { month: "short" }), total: row.total }));
   const maxRevenue = Math.max(...monthlyRevenue.map((month: { total: number }) => month.total), 1);
-  const revenueNote = finance.refunded > 0 ? `net of ${formatMoneyFa(finance.refunded, currency)} refunds` : `${finance.counts.succeeded} successful payments`;
+  const revenueNote = finance.refunded > 0 ? `خالص بازپرداخت‌ها: ${formatMoneyFa(finance.refunded, currency)}` : `${finance.counts.succeeded} پرداخت موفق`;
   const pending = [
     ...recentMembers.map((membership: any) => ({
       id: membership.id,
@@ -114,7 +114,7 @@ export default async function GymOverviewPage({ params }: PageProps) {
   return (
     <div className="admin-page">
       <header className="admin-page__heading">
-        <div><span>{now.toLocaleDateString("fa-IR", { weekday: "long", month: "long", day: "numeric" }).toUpperCase()}</span><h1>Good to see you, {user.name.split(" ")[0]}.</h1><p>Here&apos;s the latest from {gym.name}.</p></div>
+        <div><span>{now.toLocaleDateString("fa-IR", { weekday: "long", month: "long", day: "numeric" }).toUpperCase()}</span><h1>{user.name.split(" ")[0]}، خوش برگشتی.</h1><p>تازه‌ترین‌های {gym.name}.</p></div>
         <Link className="admin-primary-button" href={`/admin/gyms/${gymId}/members`}><Icon name="plus" size={17} /> مدیریت اعضا</Link>
       </header>
 

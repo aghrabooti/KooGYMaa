@@ -32,15 +32,15 @@ export default async function TrainerOverviewPage() {
   ]);
 
   const stats: Array<{ icon: IconName; label: string; note: string; tone: string; value: string }> = [
-    { label: "شاگردان فعال", value: String(activeStudents), note: `${pendingStudents} pending requests`, icon: "users", tone: "lime" },
-    { label: "جلسات این هفته", value: String(upcoming.length), note: `${completedThisMonth} completed this month`, icon: "calendar", tone: "orange" },
+    { label: "شاگردان فعال", value: String(activeStudents), note: `${pendingStudents} درخواست در انتظار`, icon: "users", tone: "lime" },
+    { label: "جلسات این هفته", value: String(upcoming.length), note: `${completedThisMonth} تکمیل‌شده این ماه`, icon: "calendar", tone: "orange" },
     { label: "باشگاه‌های فعال", value: String(activeGyms), note: "در سراسر شبکه مربی‌گری شما", icon: "building", tone: "violet" },
-    { label: "امتیاز مربی", value: rating._count ? toFaDigits(rating._avg.score?.toFixed(1)) || "—" : "—", note: rating._count ? `${rating._count} دیدگاه اعضا` : "هنوز دیدگاهی ثبت نشده است", icon: "sparkles", tone: "blue" },
+    { label: "امتیاز مربی", value: rating._count ? toFaDigits(rating._avg.score?.toFixed(1) ?? "—") : "—", note: rating._count ? `${rating._count} دیدگاه اعضا` : "هنوز دیدگاهی ثبت نشده است", icon: "sparkles", tone: "blue" },
   ];
 
   return (
     <div className="trainer-page">
-      <header className="trainer-page__heading"><div><span>نمای کلی مربی‌گری</span><h1>Let&apos;s make today count, {user.name.split(" ")[0]}.</h1><p>شاگردان، جلسات و شبکه مربی‌گری شما در یک نگاه.</p></div><Link className="trainer-primary-button" href="/trainer/schedule"><Icon name="plus" size={16} /> زمان‌بندی جلسه</Link></header>
+      <header className="trainer-page__heading"><div><span>نمای کلی مربی‌گری</span><h1>{user.name.split(" ")[0]}، امروز روز توست.</h1><p>شاگردان، جلسات و شبکه مربی‌گری شما در یک نگاه.</p></div><Link className="trainer-primary-button" href="/trainer/schedule"><Icon name="plus" size={16} /> زمان‌بندی جلسه</Link></header>
       <section className="trainer-metric-grid">{stats.map((stat) => <article key={stat.label}><span className={`trainer-metric-icon trainer-tone--${stat.tone}`}><Icon name={stat.icon} size={20} /></span><small>{stat.label}</small><strong>{stat.value}</strong><p>{stat.note}</p></article>)}</section>
 
       <div className="trainer-dashboard-grid">
@@ -49,7 +49,7 @@ export default async function TrainerOverviewPage() {
           {upcoming.length ? <div className="trainer-session-list">{upcoming.map((session: any) => <Link href="/trainer/schedule" key={session.id}><div className="trainer-session-date"><strong>{time(session.startsAt)}</strong><small>{day(session.startsAt)}</small></div><span /><div><strong>{session.title}</strong><small>{session.trainerClient.user.name} · {session.gym?.name || "جلسه خصوصی"}</small></div><b>{Math.round((session.endsAt.getTime() - session.startsAt.getTime()) / 60000)} دقیقه</b><Icon name="chevron" size={15} /></Link>)}</div> : <div className="trainer-empty"><Icon name="calendar" size={24} /><strong>جلسه‌ای زمان‌بندی نشده است</strong><span>هفته شما خالی است.</span></div>}
         </section>
 
-        <section className="trainer-panel trainer-focus-card"><div className="trainer-panel__heading"><div><h2>جعبه‌ابزار مربی‌گری</h2><p>نتایج بهتری برای مراجعان بسازید</p></div></div><div className="trainer-tool-list"><Link href="/trainer/students"><span><Icon name="users" size={18} /></span><div><strong>فهرست شاگردان</strong><small>{activeStudents} active relationships</small></div><Icon name="chevron" size={14} /></Link><Link href="/trainer/profile"><span><Icon name="user" size={18} /></span><div><strong>پروفایل عمومی</strong><small>{profile.specialty || "تخصص خود را اضافه کنید"}</small></div><Icon name="chevron" size={14} /></Link><Link href="/trainer/workouts"><span><Icon name="clipboard" size={18} /></span><div><strong>برنامه‌های تمرین</strong><small>{planCount} structured plans</small></div><Icon name="chevron" size={14} /></Link><Link href="/trainer/nutrition"><span><Icon name="heart" size={18} /></span><div><strong>برنامه‌های تغذیه</strong><small>وعده‌ها، درشت‌مغذی‌ها و تکالیف</small></div><Icon name="chevron" size={14} /></Link></div></section>
+        <section className="trainer-panel trainer-focus-card"><div className="trainer-panel__heading"><div><h2>جعبه‌ابزار مربی‌گری</h2><p>نتایج بهتری برای مراجعان بسازید</p></div></div><div className="trainer-tool-list"><Link href="/trainer/students"><span><Icon name="users" size={18} /></span><div><strong>فهرست شاگردان</strong><small>{activeStudents} رابطه فعال</small></div><Icon name="chevron" size={14} /></Link><Link href="/trainer/profile"><span><Icon name="user" size={18} /></span><div><strong>پروفایل عمومی</strong><small>{profile.specialty || "تخصص خود را اضافه کنید"}</small></div><Icon name="chevron" size={14} /></Link><Link href="/trainer/workouts"><span><Icon name="clipboard" size={18} /></span><div><strong>برنامه‌های تمرین</strong><small>{planCount} طرح ساخت‌یافته</small></div><Icon name="chevron" size={14} /></Link><Link href="/trainer/nutrition"><span><Icon name="heart" size={18} /></span><div><strong>برنامه‌های تغذیه</strong><small>وعده‌ها، درشت‌مغذی‌ها و تکالیف</small></div><Icon name="chevron" size={14} /></Link></div></section>
       </div>
     </div>
   );

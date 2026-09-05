@@ -41,18 +41,18 @@ export default async function AdminPaymentsPage({ params, searchParams }: PagePr
         <div><span>موفق</span><strong>{finance.counts.succeeded}</strong></div>
         <div><span>در انتظار</span><strong>{finance.counts.pending}</strong></div>
         <div><span>بازپرداخت‌شده</span><strong>{finance.counts.refunded}</strong></div>
-        <div><span>درآمد خالص (پرداخت‌شده)</span><strong>{formatMoney(finance.net, finance.currency, "en")}</strong></div>
+        <div><span>درآمد خالص (پرداخت‌شده)</span><strong>{formatMoney(finance.net, finance.currency)}</strong></div>
       </section>
 
       <section className="admin-panel">
         <div className="admin-panel__heading"><div><h2>درآمد بر اساس ارز</h2><p>فقط پرداخت‌های موفق · خالص پس از بازپرداخت · شامل تمدیدها</p></div></div>
         <div className="admin-currency-grid">
           {Object.entries(finance.byCurrency).map(([code, b]) => (
-            <article key={code}><strong>{code}</strong><span>Gross {formatMoney(b.gross, code, "en")}</span><span>Refunded {formatMoney(b.refunded, code, "en")}</span><b>Net {formatMoney(b.net, code, "en")}</b></article>
+            <article key={code}><strong>{code}</strong><span>ناخالص {formatMoney(b.gross, code)}</span><span>بازپرداخت‌شده {formatMoney(b.refunded, code)}</span><b>خالص {formatMoney(b.net, code)}</b></article>
           ))}
           {!Object.keys(finance.byCurrency).length && <p className="admin-muted">هنوز سابقه پرداختی ثبت نشده است.</p>}
         </div>
-        <p className="admin-note">تمدیدها: {finance.renewalsSucceeded} پرداخت موفق ({formatMoney(finance.renewalsRevenue, finance.currency, "en")}) · بازپرداخت‌ها: {formatMoney(finance.refunded, finance.currency, "en")} · روند ۶ ماهه: {trend.map((r) => `${r.key}: ${r.count}`).join(" · ")}</p>
+        <p className="admin-note">تمدیدها: {finance.renewalsSucceeded} پرداخت موفق ({formatMoney(finance.renewalsRevenue, finance.currency)}) · بازپرداخت‌ها: {formatMoney(finance.refunded, finance.currency)} · روند ۶ ماهه: {trend.map((r) => `${r.key}: ${r.count}`).join(" · ")}</p>
       </section>
 
       <section className="admin-panel admin-table-panel">
@@ -62,7 +62,7 @@ export default async function AdminPaymentsPage({ params, searchParams }: PagePr
             <a className={(item === "ALL" ? !status : status === item) ? "active" : ""} href={item === "ALL" ? "?" : `?status=${item}`} key={item}>{item === "ALL" ? "همه" : faStatus(item)}</a>
           ))}
         </div>
-        {payments.length ? <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>مشتری</th><th>طرح</th><th>وضعیت</th><th>مبلغ</th><th>ارائه‌دهنده</th><th>تاریخ</th><th>اقدام</th></tr></thead><tbody>{payments.map((payment: any) => <tr key={payment.id}><td><div className="admin-person"><span>{payment.user.name.slice(0, 2).toUpperCase()}</span><div><strong>{payment.user.name}</strong><small>{payment.user.email}</small></div></div></td><td><div className="admin-table-stack"><strong>{payment.plan.name}</strong><small>{faStatus(payment.type)}</small></div></td><td><span className={`admin-status admin-status--${payment.status.toLowerCase()}`}>{faStatus(payment.status)}</span></td><td>{formatMoney(payment.amount, payment.currency, "en")}</td><td>{payment.provider.toUpperCase()}</td><td>{(payment.paidAt || payment.createdAt).toLocaleDateString("fa-IR")}</td><td>{payment.status === "SUCCEEDED" && access.staffRole === "OWNER" ? <RefundButton gymId={gymId} paymentId={payment.id} /> : <span className="admin-muted">—</span>}</td></tr>)}</tbody></table></div> : <div className="admin-empty-table"><span><Icon name="credit-card" size={27} /></span><h2>هنوز پرداختی ثبت نشده است</h2><p>تراکنش‌های پرداخت اینجا نمایش داده می‌شوند.</p></div>}
+        {payments.length ? <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>مشتری</th><th>طرح</th><th>وضعیت</th><th>مبلغ</th><th>ارائه‌دهنده</th><th>تاریخ</th><th>اقدام</th></tr></thead><tbody>{payments.map((payment: any) => <tr key={payment.id}><td><div className="admin-person"><span>{payment.user.name.slice(0, 2).toUpperCase()}</span><div><strong>{payment.user.name}</strong><small>{payment.user.email}</small></div></div></td><td><div className="admin-table-stack"><strong>{payment.plan.name}</strong><small>{faStatus(payment.type)}</small></div></td><td><span className={`admin-status admin-status--${payment.status.toLowerCase()}`}>{faStatus(payment.status)}</span></td><td>{formatMoney(payment.amount, payment.currency)}</td><td>{payment.provider.toUpperCase()}</td><td>{(payment.paidAt || payment.createdAt).toLocaleDateString("fa-IR")}</td><td>{payment.status === "SUCCEEDED" && access.staffRole === "OWNER" ? <RefundButton gymId={gymId} paymentId={payment.id} /> : <span className="admin-muted">—</span>}</td></tr>)}</tbody></table></div> : <div className="admin-empty-table"><span><Icon name="credit-card" size={27} /></span><h2>هنوز پرداختی ثبت نشده است</h2><p>تراکنش‌های پرداخت اینجا نمایش داده می‌شوند.</p></div>}
         <nav className="admin-pagination" aria-label="صفحه‌بندی">
           {page > 1 && <a href={`${baseQuery}${baseQuery.includes("?") && baseQuery.length > 1 ? "&" : ""}page=${page - 1}`}>→ قبلی</a>}
           <span>صفحه {page} از {totalPages}</span>

@@ -28,6 +28,7 @@ const FA_STATUS: Record<string, string> = {
   PAST_DUE: "سررسید گذشته",
   DRAFT: "پیش‌نویس",
   ARCHIVED: "بایگانی‌شده",
+  INACTIVE: "غیرفعال",
   ASSIGNED: "تخصیص‌یافته",
   COMPLETED: "تکمیل‌شده",
   SCHEDULED: "زمان‌بندی‌شده",
