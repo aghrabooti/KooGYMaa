@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Brand } from "@/components/brand";
+import { PublicNav } from "@/components/public-nav";
 import { FaDate, Money } from "@/components/fa";
 import { getLocale } from "@/lib/i18n/server";
 import { createT } from "@/lib/i18n/translations";
@@ -37,7 +37,7 @@ export default async function PublicGymPage({ params }: { params: Promise<{ gymI
   const rating = gym.reviews.length ? gym.reviews.reduce((s: number, r: any) => s + r.score, 0) / gym.reviews.length : null;
   return (
     <main className="container public-page">
-      <nav className="public-nav"><Brand /><Link href="/gyms">← {t("public.gymsTitle")}</Link></nav>
+      <PublicNav backHref="/gyms" backLabel={t("public.gymsTitle")} />
       <header><h1>{gym.name}</h1><p>{gym.city || ""} {rating ? `· ★ ${rating.toFixed(1)} (${gym.reviews.length} ${t("public.reviews")})` : ""}</p>{gym.description && <p>{gym.description}</p>}</header>
       <section><h2>{t("public.plans")}</h2><div className="public-grid">{gym.subscriptionPlans.map((p: any) => <article key={p.id}><h3>{p.name}</h3><p><Money amount={p.price} currency={p.currency} /> · {p.durationDays} days</p></article>)}</div></section>
       <section><h2>{t("public.trainers")}</h2><div className="public-grid">{gym.trainers.map((x: any) => <article key={x.trainer.id}><h3>{x.trainer.user.name}</h3><p>{x.trainer.specialty || ""}</p></article>)}</div></section>

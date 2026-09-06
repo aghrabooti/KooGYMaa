@@ -1,6 +1,5 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { Brand } from "@/components/brand";
+import { PublicNav } from "@/components/public-nav";
 import { getLocale } from "@/lib/i18n/server";
 import { createT } from "@/lib/i18n/translations";
 
@@ -18,7 +17,7 @@ export default async function HelpPage() {
   const t = createT(await getLocale());
   return (
     <main className="container public-page">
-      <nav className="public-nav"><Brand /><Link href="/">← KooGYMaa</Link></nav>
+      <PublicNav />
       <h1>{t("public.helpTitle")}</h1>
       {QA.map(([q, a]) => <section key={q}><h2>{q}</h2><p>{a}</p></section>)}
     </main>

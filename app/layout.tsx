@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter, Vazirmatn } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/language-provider";
 import { getLocale } from "@/lib/i18n/server";
@@ -14,10 +15,14 @@ const inter = Inter({
   display: "swap",
 });
 
-const vazirmatn = Vazirmatn({
-  subsets: ["arabic", "latin"],
-  variable: "--font-vazirmatn",
+// Estedad — modern Persian/Arabic sans (OFL, https://github.com/aminabedi68/Estedad).
+// Self-hosted single variable file (wght 100–900) so it loads without Google Fonts.
+const estedad = localFont({
+  src: "../public/fonts/Estedad-Variable.woff2",
+  weight: "100 900",
+  variable: "--font-estedad",
   display: "swap",
+  fallback: ["Vazirmatn", "Tahoma", "Segoe UI", "system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -44,7 +49,7 @@ export default async function RootLayout({
       dir={dir}
       className={[
         inter.variable,
-        vazirmatn.variable,
+        estedad.variable,
         locale === "fa" ? "locale-fa" : "",
         theme === "dark" ? "theme-dark" : "",
       ]

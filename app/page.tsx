@@ -7,6 +7,7 @@ import { toFaDigits } from "@/lib/fa";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { CountUp, Reveal, Tilt } from "@/components/landing/motion";
+import { MobileMenu } from "@/components/mobile-menu";
 
 const features: Array<{
   icon: IconName;
@@ -90,6 +91,23 @@ export default async function Home() {
             <Link className="button button--lime button--small button--shine" href="/register">
               {t("landing.getStarted")} <Icon name="arrow" size={16} />
             </Link>
+            <MobileMenu
+              className="landing-hamburger"
+              identity={<Brand className="mobile-drawer__brand" />}
+              items={[
+                { href: "#platform", label: t("landing.platform"), icon: "grid" },
+                { href: "#for-you", label: t("landing.forYou"), icon: "users" },
+                { href: "#why-us", label: t("landing.whyUs"), icon: "sparkles" },
+                { href: "/gyms", label: t("nav.discoverGyms"), icon: "building" },
+                { href: "/trainers", label: t("nav.findTrainers"), icon: "dumbbell" },
+              ]}
+              footer={
+                <div className="mobile-drawer__cta">
+                  <Link className="button button--lime" href="/register">{t("landing.getStarted")} <Icon name="arrow" size={16} /></Link>
+                  <Link className="button button--ghost" href="/login">{t("landing.logIn")}</Link>
+                </div>
+              }
+            />
           </div>
         </nav>
 

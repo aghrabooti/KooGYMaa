@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Brand } from "@/components/brand";
+import { PublicNav } from "@/components/public-nav";
 import { getLocale } from "@/lib/i18n/server";
 import { createT } from "@/lib/i18n/translations";
 
@@ -30,7 +30,7 @@ export default async function PublicGymsPage() {
   } catch { /* offline build — show empty state */ }
   return (
     <main className="container public-page">
-      <nav className="public-nav"><Brand /><Link href="/">← KooGYMaa</Link></nav>
+      <PublicNav />
       <header><h1>{t("public.gymsTitle")}</h1><p>{t("public.gymsDesc")}</p></header>
       {gyms.length ? (
         <div className="public-grid">

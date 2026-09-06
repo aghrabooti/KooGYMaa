@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
+import { useT } from "@/lib/i18n/language-provider";
 
 export function LogoutButton() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const t = useT();
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -21,7 +23,7 @@ export function LogoutButton() {
   return (
     <button className="dashboard-nav__item dashboard-nav__logout" disabled={isLoading} onClick={handleLogout} type="button">
       <Icon name="logout" size={19} />
-      <span>{isLoading ? "Signing out…" : "Sign out"}</span>
+      <span>{isLoading ? t("nav.signingOut") : t("nav.signOut")}</span>
     </button>
   );
 }

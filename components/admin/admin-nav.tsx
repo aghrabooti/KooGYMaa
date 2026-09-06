@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { Icon, type IconName } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
+import { MobileMenu } from "@/components/mobile-menu";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useT } from "@/lib/i18n/language-provider";
@@ -73,9 +74,12 @@ export function AdminNav({ gym, pendingCount, user }: AdminNavProps) {
       <header className="admin-mobile-header">
         <Brand compact />
         <div><strong>{gym.name}</strong><small>{t("nav.gymAdministrator")}</small></div>
-        <Link href="/admin/gyms"><Icon name="building" size={19} /></Link>
-        <Link href={`${base}/settings`} aria-label={t("nav.gymSettings")}><Icon name="settings" size={19} /></Link>
-        <LogoutButton />
+        <Link href="/admin/gyms" aria-label={t("nav.switchGym")}><Icon name="building" size={19} /></Link>
+        <MobileMenu
+          identity={<><span className="mobile-drawer__avatar">{initials(user.name)}</span><div><strong>{gym.name}</strong><small>{user.name} · {t("nav.gymAdministrator")}</small></div></>}
+          items={items.map((item) => { const href = `${base}${item.href}`; return { href, icon: item.icon, label: t(item.labelKey), active: item.href ? pathname.startsWith(href) : pathname === base, badge: item.labelKey === "nav.members" ? pendingCount : 0 }; })}
+          showLogout
+        />
       </header>
       <nav className="admin-mobile-nav" aria-label="مدیریت باشگاه">
         {items.map((item) => {
