@@ -3100,3 +3100,179 @@ html.locale-fa .product-card__dumbbell { left: -48px; right: auto; transform: ro
   .rating-panel { padding: 10px 12px; }
   .rating-ring { height: 66px; width: 66px; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   PANELS — dark-mode icon fix + dynamic design (admin / trainer / member)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Dark mode: tonal icon chips, avatars, and status badges ────────
+   These kept their pastel light-theme backgrounds while a blanket dark rule
+   pushed the icon colour to near-white → white-on-pastel = shapeless blob.
+   Give every tone a translucent dark surface + a bright matching glyph. */
+.theme-dark :is(.admin-tone--lime, .trainer-tone--lime, .member-dashboard-icon--lime, .dashboard-stat__icon--lime, .schedule-icon--lime,
+  .admin-plan-icon--member, .member-subscription-icon, .member-today > div > a > span, .member-subscription-mini > span,
+  .member-dashboard-notifications > div > a > span, .member-notifications > a > span, .member-notifications > div > span,
+  .workspace-card__top > span, .admin-avatar, .member-progress-metrics article > span) { background: rgba(201,243,107,.14); color: #cdf07a; }
+.theme-dark :is(.admin-tone--orange, .trainer-tone--orange, .member-dashboard-icon--orange, .dashboard-stat__icon--orange, .schedule-icon--orange,
+  .admin-plan-icon--trainer, .trainer-tool-list > a > span, .trainer-tool-disabled > span, .trainer-avatar, .member-feedback-avatar,
+  .market-trainer-avatar, .market-trainer-strip a > span, .trainer-execution-feed article > span, .member-next-session > div:last-child > span) { background: rgba(255,130,91,.16); color: #ffa585; }
+.theme-dark :is(.admin-tone--violet, .trainer-tone--violet, .member-dashboard-icon--violet, .dashboard-stat__icon--violet, .schedule-icon--violet) { background: rgba(158,140,246,.18); color: #c3b6ff; }
+.theme-dark :is(.admin-tone--blue, .trainer-tone--blue, .member-dashboard-icon--blue, .dashboard-stat__icon--blue) { background: rgba(94,170,235,.16); color: #9fd0ff; }
+/* Keep glyph colour authoritative — the generic ink override must not win. */
+.theme-dark :is(.admin-main, .trainer-main, .member-main, .dashboard-main) :is([class*="tone--"], [class*="-icon--"], [class*="avatar"]) svg { color: inherit; }
+
+/* Solid lime chips: dark glyph on the bright surface */
+.theme-dark :is(.admin-workspace__mark, .market-detail-mark, .trainer-detail-avatar, .member-profile-avatar, .admin-primary-button, .trainer-primary-button, .member-primary-button) { color: #16200f; }
+.theme-dark :is(.admin-workspace__mark, .market-detail-mark, .trainer-detail-avatar) svg { color: #16200f; }
+.theme-dark .trainer-nav > a.active { color: #1e211e; }
+.theme-dark .trainer-nav > a.active svg { color: #1e211e; }
+
+/* Status badges — cover every Prisma status enum value (lower-cased, `_`→`_`/`-`) */
+.theme-dark [class*="status--"] { background: rgba(255,255,255,.08); color: var(--ink-2); }
+.theme-dark :is([class*="status--active"], [class*="status--completed"], [class*="status--paid"], [class*="status--succeeded"], [class*="status--published"]) { background: rgba(201,243,107,.16); color: #cdf07a; }
+.theme-dark :is([class*="status--pending"], [class*="status--scheduled"], [class*="status--assigned"], [class*="status--in_progress"], [class*="status--in-progress"], [class*="status--past_due"], [class*="status--past-due"], [class*="status--paused"], [class*="status--draft"]) { background: rgba(255,200,80,.16); color: #ffd27a; }
+.theme-dark :is([class*="status--suspended"], [class*="status--cancelled"], [class*="status--canceled"], [class*="status--rejected"], [class*="status--expired"], [class*="status--no_show"], [class*="status--no-show"], [class*="status--failed"], [class*="status--refunded"], [class*="status--ended"], [class*="status--deactivated"], [class*="status--archived"]) { background: rgba(255,130,91,.16); color: #ffa585; }
+.theme-dark .member-subscription-mini > b { background: rgba(255,200,80,.16); color: #ffd27a; }
+
+/* Pale surfaces missed by the dark theme */
+.theme-dark :is(.workspace-page, .system-state) { background: var(--paper-2); }
+.theme-dark .workspace-page__header { background: #0d120e; border-color: var(--line); }
+.theme-dark :is(.workspace-page__header, .workspace-page__header .dashboard-nav__item) { color: var(--ink); }
+.theme-dark :is(.workspace-card, .workspace-empty) { background: #121a14; border-color: var(--line); color: var(--ink); }
+.theme-dark .workspace-card:hover { box-shadow: 0 22px 50px rgba(0,0,0,.45); }
+.theme-dark :is(.workspace-card__stats, .member-schedule article, .member-subscription-list > article, .trainer-progress-card__meta, .market-card-stats, .market-card-action) { border-color: var(--line); }
+.theme-dark :is(.workspace-card__top small, .workspace-card > p, .workspace-card__stats span, .workspace-heading p) { color: var(--muted); }
+.theme-dark :is(.workspace-heading h1, .workspace-card h2, .workspace-card__stats strong) { color: var(--ink); }
+.theme-dark :is(.admin-summary-strip, .trainer-summary, .trainer-search, .trainer-progress-grid > a, .trainer-client-metrics article, .trainer-feedback-form, .market-gym-grid > article, .market-trainer-grid > article, .progress-chart, .member-progress-metrics article) { background: #121a14; border-color: var(--line); }
+.theme-dark :is(.admin-summary-strip > div, .trainer-summary > div, .member-profile-summary > div) { border-color: var(--line); }
+.theme-dark :is(.member-notifications .is-unread) { background: rgba(201,243,107,.06); }
+.theme-dark .market-filters label { background: #0d130f; border-color: #344036; color: var(--muted); }
+.theme-dark .trainer-nav > a > b, .theme-dark .admin-nav__item b { background: var(--orange); color: #1e211e; }
+.theme-dark .trainer-progress-rings > span::after { background: #121a14; }
+.theme-dark .trainer-progress-rings > span { background: conic-gradient(#ff825b var(--value), #253027 0); }
+.theme-dark .trainer-schedule-line, .theme-dark .member-schedule article > span { background: var(--lime); }
+.theme-dark :is(.market-reviews blockquote, .trainer-feedback-history article > div, .market-plan-list article, .member-feedback-reply) { background: #182119; }
+.theme-dark :is(.admin-quick-grid > a, .trainer-tool-list > a) > svg:last-child { color: var(--muted); }
+.theme-dark .dashboard-search kbd { background: #1c231c; border-color: #344036; color: var(--muted); }
+.theme-dark .icon-button { color: var(--muted); }
+.theme-dark .icon-button > span { border-color: #0d120e; }
+
+/* ── 2. Dynamic panel design ──────────────────────────────────────────── */
+
+/* Metric cards: lift, accent glow, tonal top rule */
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat) {
+  overflow: hidden;
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1), box-shadow 260ms ease, border-color 260ms ease;
+}
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat)::before {
+  background: linear-gradient(90deg, var(--card-accent, var(--lime)), transparent 70%);
+  content: "";
+  height: 3px;
+  inset: 0 0 auto 0;
+  opacity: .9;
+  position: absolute;
+}
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat)::after {
+  background: radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--card-accent, var(--lime)) 22%, transparent), transparent 55%);
+  content: "";
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: opacity 300ms ease;
+}
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat):hover { border-color: color-mix(in srgb, var(--card-accent, var(--lime)) 45%, transparent); box-shadow: 0 16px 40px rgba(20,28,20,.10); transform: translateY(-3px); }
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat):hover::after { opacity: 1; }
+.theme-dark :is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat):hover { box-shadow: 0 18px 44px rgba(0,0,0,.5); }
+/* Accent per tone — derived from the icon chip each card already carries */
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat):has([class*="--lime"]) { --card-accent: #c9f36b; }
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat):has([class*="--orange"]) { --card-accent: #ff825b; }
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat):has([class*="--violet"]) { --card-accent: #9e8cf6; }
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat):has([class*="--blue"]) { --card-accent: #5eaaeb; }
+/* Icon chip pops on hover */
+:is(.admin-metric-card__icon, .trainer-metric-icon, .member-dashboard-icon, .dashboard-stat__icon) { transition: transform 300ms cubic-bezier(.34,1.56,.64,1), box-shadow 300ms ease; }
+:is(.admin-metric-card, .trainer-metric-grid article, .member-dashboard-metrics article, .dashboard-stat):hover :is(.admin-metric-card__icon, .trainer-metric-icon, .member-dashboard-icon, .dashboard-stat__icon) { box-shadow: 0 8px 20px color-mix(in srgb, var(--card-accent, var(--lime)) 35%, transparent); transform: scale(1.12) rotate(-6deg); }
+/* Big numbers: tighter, heavier */
+:is(.admin-metric-card > strong, .trainer-metric-grid article > strong, .member-dashboard-metrics strong, .dashboard-stat__value strong) { font-variant-numeric: tabular-nums; font-weight: 850; }
+
+/* Panels: soft lift + subtle heading rule */
+:is(.admin-panel, .trainer-panel, .member-panel) { position: relative; transition: box-shadow 260ms ease, border-color 260ms ease; }
+:is(.admin-panel, .trainer-panel, .member-panel):hover { box-shadow: 0 14px 36px rgba(20,28,20,.08); }
+.theme-dark :is(.admin-panel, .trainer-panel, .member-panel):hover { box-shadow: 0 14px 36px rgba(0,0,0,.4); border-color: #34412f; }
+:is(.admin-panel__heading, .trainer-panel__heading, .member-panel__heading, .dashboard-panel__header) h2 { position: relative; padding-inline-start: 12px; }
+:is(.admin-panel__heading, .trainer-panel__heading, .member-panel__heading, .dashboard-panel__header) h2::before { background: var(--lime); border-radius: 3px; content: ""; height: 70%; inset-inline-start: 0; position: absolute; top: 15%; width: 3px; }
+
+/* List rows / quick links: slide + arrow nudge */
+:is(.admin-quick-grid > a, .trainer-tool-list > a, .member-today > div > a, .member-dashboard-notifications > div > a, .member-notifications > a, .market-trainer-strip > div > a) { transition: transform 200ms ease, background 200ms ease, border-color 200ms ease; }
+:is(.admin-quick-grid > a, .trainer-tool-list > a, .member-today > div > a, .member-dashboard-notifications > div > a, .member-notifications > a, .market-trainer-strip > div > a):hover { border-color: rgba(201,243,107,.6); transform: translateX(-3px); }
+html:not(.locale-fa) :is(.admin-quick-grid > a, .trainer-tool-list > a, .member-today > div > a, .member-dashboard-notifications > div > a, .member-notifications > a, .market-trainer-strip > div > a):hover { transform: translateX(3px); }
+:is(.admin-quick-grid > a, .trainer-tool-list > a, .member-today > div > a) > svg:last-child { transition: transform 200ms ease; }
+:is(.admin-quick-grid > a, .trainer-tool-list > a, .member-today > div > a):hover > svg:last-child { transform: translateX(3px); }
+html.locale-fa :is(.admin-quick-grid > a, .trainer-tool-list > a, .member-today > div > a):hover > svg:last-child { transform: translateX(-3px); }
+.theme-dark :is(.admin-quick-grid > a, .trainer-tool-list > a, .member-today > div > a, .member-dashboard-notifications > div > a):hover { background: #1a241b; }
+
+/* Sidebar nav: active glow + hover shift */
+:is(.admin-nav__item, .trainer-nav > a, .member-sidebar > nav a, .dashboard-nav__item) { transition: background 180ms ease, color 180ms ease, transform 180ms ease; }
+:is(.admin-nav__item, .trainer-nav > a, .member-sidebar > nav a, .dashboard-nav__item):not(.active):hover { background: rgba(255,255,255,.06); color: var(--ink); }
+html:not(.theme-dark) :is(.admin-nav__item, .trainer-nav > a, .member-sidebar > nav a, .dashboard-nav__item):not(.active):hover { background: rgba(23,27,23,.06); }
+:is(.admin-nav__item.active, .member-sidebar > nav a.active, .dashboard-nav__item.active) { box-shadow: 0 8px 22px rgba(201,243,107,.28); }
+.trainer-nav > a.active { box-shadow: 0 8px 22px rgba(255,130,91,.3); }
+:is(.admin-nav__item, .trainer-nav > a, .member-sidebar > nav a) svg { transition: transform 200ms ease; }
+:is(.admin-nav__item, .trainer-nav > a, .member-sidebar > nav a):hover svg { transform: scale(1.12); }
+
+/* Primary buttons: shine sweep */
+:is(.admin-primary-button, .trainer-primary-button, .member-primary-button, .dashboard-primary-action) { overflow: hidden; position: relative; transition: transform 180ms ease, box-shadow 180ms ease; }
+:is(.admin-primary-button, .trainer-primary-button, .member-primary-button, .dashboard-primary-action)::after { background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%); content: ""; inset: 0; position: absolute; transform: translateX(-120%); transition: transform 500ms ease; }
+:is(.admin-primary-button, .trainer-primary-button, .member-primary-button, .dashboard-primary-action):hover { box-shadow: 0 10px 26px rgba(201,243,107,.32); transform: translateY(-1px); }
+:is(.admin-primary-button, .trainer-primary-button, .member-primary-button, .dashboard-primary-action):hover::after { transform: translateX(120%); }
+
+/* Page entrance: staggered rise */
+@keyframes panel-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+:is(.admin-main, .trainer-main, .member-main, .dashboard-content) > * > :is(header, .admin-metric-grid, .trainer-metric-grid, .member-dashboard-metrics, .admin-summary-strip, .trainer-summary, section, .admin-overview-grid, .admin-bottom-grid, .member-dashboard-grid, .member-dashboard-bottom, .trainer-schedule-layout, .dashboard-stat-grid, .dashboard-grid) { animation: panel-rise 520ms cubic-bezier(.2,.8,.2,1) both; }
+:is(.admin-main, .trainer-main, .member-main, .dashboard-content) > * > :nth-child(2) { animation-delay: 70ms; }
+:is(.admin-main, .trainer-main, .member-main, .dashboard-content) > * > :nth-child(3) { animation-delay: 140ms; }
+:is(.admin-main, .trainer-main, .member-main, .dashboard-content) > * > :nth-child(4) { animation-delay: 210ms; }
+:is(.admin-main, .trainer-main, .member-main, .dashboard-content) > * > :nth-child(n+5) { animation-delay: 280ms; }
+:is(.admin-metric-grid, .trainer-metric-grid, .member-dashboard-metrics, .dashboard-stat-grid) > :nth-child(2) { animation: panel-rise 520ms cubic-bezier(.2,.8,.2,1) 90ms both; }
+:is(.admin-metric-grid, .trainer-metric-grid, .member-dashboard-metrics, .dashboard-stat-grid) > :nth-child(3) { animation: panel-rise 520ms cubic-bezier(.2,.8,.2,1) 160ms both; }
+:is(.admin-metric-grid, .trainer-metric-grid, .member-dashboard-metrics, .dashboard-stat-grid) > :nth-child(4) { animation: panel-rise 520ms cubic-bezier(.2,.8,.2,1) 230ms both; }
+
+/* Welcome headline: animated accent gradient on the name */
+:is(.admin-page__heading, .trainer-page__heading, .member-page__heading, .dashboard-welcome) h1 { background: linear-gradient(90deg, currentColor 0 60%, #7a9a2e 80%, currentColor); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: headline-sheen 6s ease-in-out infinite; }
+.theme-dark :is(.admin-page__heading, .trainer-page__heading, .member-page__heading, .dashboard-welcome) h1 { background-image: linear-gradient(90deg, #e9ede7 0 55%, #c9f36b 75%, #e9ede7); }
+@keyframes headline-sheen { 0%, 100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
+
+/* Trainer streak / coaching hint card breathes */
+.trainer-sidebar > div:has(> svg) { position: relative; overflow: hidden; }
+
+/* Progress rings & bars animate in */
+.trainer-progress-rings > span { transition: background 600ms ease; }
+:is(.member-dashboard-metrics article, .trainer-metric-grid article) > strong { animation: panel-rise 700ms cubic-bezier(.2,.8,.2,1) 250ms both; }
+
+/* Sidebar user card: soft glow */
+:is(.admin-user-card, .dashboard-user, .member-sidebar > a:first-of-type, .trainer-sidebar > div:first-of-type) { transition: box-shadow 220ms ease; }
+
+/* Tables: row hover lift + rounded active pill */
+.admin-table tbody tr { transition: background 160ms ease; }
+.admin-table tbody tr:hover td:first-child { box-shadow: inset 3px 0 0 var(--lime); }
+html.locale-fa .admin-table tbody tr:hover td:first-child { box-shadow: inset -3px 0 0 var(--lime); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :is(.admin-main, .trainer-main, .member-main, .dashboard-content) *, :is(.admin-page__heading, .trainer-page__heading, .member-page__heading, .dashboard-welcome) h1 { animation: none !important; transition: none !important; }
+}
+.theme-dark .admin-user-card > span { background: rgba(201,243,107,.16); color: #cdf07a; }
+.theme-dark .trainer-session-list > a > b { background: #1c231c; color: var(--muted); }
+
+/* Session calendar: never overflow its panel; scroll horizontally instead */
+.session-calendar { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; padding-bottom: 4px; }
+.session-calendar__grid--week { min-width: 560px; }
+.session-calendar__grid--month { min-width: 560px; }
+.session-calendar__grid article { background: rgba(255,255,255,.55); transition: border-color 180ms ease, transform 180ms ease; }
+.session-calendar__grid article:hover { border-color: var(--lime); transform: translateY(-2px); }
+.theme-dark .session-calendar__grid article { background: #0f1611; }
+.theme-dark .session-calendar__bar button { background: #1c231c; color: var(--ink); }
+.theme-dark .session-calendar__bar button.active { background: var(--lime); color: #16200f; }
+.theme-dark .trainer-schedule-list article, .theme-dark .trainer-history article { border-color: var(--line); }
+.theme-dark .admin-panel__heading > span { background: #1c231c; color: var(--muted); }
+.theme-dark .member-feedback header b { background: #1c231c; color: var(--muted); }

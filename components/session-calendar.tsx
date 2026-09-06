@@ -14,7 +14,8 @@ function startOfWeek(d: Date) {
   return x;
 }
 
-export function SessionCalendar({ sessions, moveEndpoint }: { sessions: CalSession[]; moveEndpoint: (id: string) => string }) {
+// `endpointBase` is a plain string (not a function) so Server Components can pass it.
+export function SessionCalendar({ sessions, endpointBase }: { sessions: CalSession[]; endpointBase: string }) {
   const [mode, setMode] = useState<"week" | "month">("week");
   const [anchor, setAnchor] = useState(() => new Date().toISOString().slice(0, 10));
   const [pending, setPending] = useState("");
@@ -46,7 +47,7 @@ export function SessionCalendar({ sessions, moveEndpoint }: { sessions: CalSessi
     setPending(id + action);
     try {
       const body = action === "move" ? { startsAt, endsAt, status: "SCHEDULED" } : { status: action === "cancel" ? "CANCELLED" : "COMPLETED" };
-      const res = await fetch(moveEndpoint(id), { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const res = await fetch(`${endpointBase}/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       if (res.status === 409) {
         const data = await res.json();
         alert(data.error || "تداخل زمانی وجود دارد.");

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { toFaDigits } from "@/lib/fa";
 
 // Item 9: filterable SVG progress charts (metric + range filter, no dependency).
 export type MeasurePoint = { at: string; weightKg?: number | null; bodyFatPercent?: number | null; waistCm?: number | null; chestCm?: number | null };
@@ -35,7 +34,8 @@ export function ProgressChart({ points }: { points: MeasurePoint[] }) {
   const path = values.map((v, i) => {
     const x = PAD + (i / Math.max(1, values.length - 1)) * (W - PAD * 2);
     const y = H - PAD - ((v - min) / span) * (H - PAD * 2);
-    return `${i ? "L" : "M"}${toFaDigits(x.toFixed(1))},${toFaDigits(y.toFixed(1))}`;
+    // SVG path data must stay ASCII — Persian digits break the parser and the line never draws.
+    return `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(" ");
   return (
     <section className="progress-chart" aria-label="نمودار پیشرفت">
