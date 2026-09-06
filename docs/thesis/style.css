@@ -64,7 +64,8 @@ th, td { border: 0.6pt solid #333; padding: 0.08cm 0.22cm; vertical-align: top; 
 td[data-align-last-split-element], th[data-align-last-split-element] { text-align-last: auto !important; }
 th { background: #e8e8e8; font-weight: 700; text-align: center; }
 td.c { text-align: center; }
-td .en, th .en { font-size: 11pt; }
+td .en, th .en { font-size: 11pt; text-align: left; display: inline-block; }
+td .en:only-child { display: block; text-align: left; }
 tr { page-break-inside: avoid; break-inside: avoid; }
 thead { display: table-header-group; }
 .tbl-wrap { break-inside: auto; }
