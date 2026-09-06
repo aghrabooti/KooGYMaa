@@ -1,0 +1,167 @@
+/* ===== Semnan University thesis style (شیوه‌نامهٔ تدوین پایان‌نامه، ویرایش دوم ۱۳۸۷) ===== */
+@font-face{font-family:"Nazanin";src:url(fonts/IRNazanin.ttf);font-weight:400;font-style:normal}
+@font-face{font-family:"Nazanin";src:url(fonts/IRNazanin-Bold.ttf);font-weight:700;font-style:normal}
+@font-face{font-family:"Nazanin";src:url(fonts/IRNazanin-Italic.ttf);font-weight:400;font-style:italic}
+@font-face{font-family:"Titr";src:url(fonts/IRTitr.ttf);font-weight:400}
+@font-face{font-family:"Lotus";src:url(fonts/IRLotus.ttf);font-weight:400}
+@font-face{font-family:"Lotus";src:url(fonts/IRLotus-Bold.ttf);font-weight:700}
+@font-face{font-family:"Tinos";src:url(fonts/tinos-latin-400-normal.woff2);font-weight:400}
+@font-face{font-family:"Tinos";src:url(fonts/tinos-latin-700-normal.woff2);font-weight:700}
+@font-face{font-family:"Tinos";src:url(fonts/tinos-latin-400-italic.woff2);font-style:italic}
+
+/* A4 · right 3.5 cm, left 2.5, top 2.5, bottom 2.5 (guide §2-2-الف) */
+@page { size: A4; margin: 2.5cm 2.5cm 2.5cm 3.5cm;   /* physical: top right bottom left → right edge 3.5? no: RTL binding edge is the RIGHT side */
+  @bottom-center { content: ""; font-family: "Nazanin"; font-size: 12pt; vertical-align: top; padding-top: 0.5cm; }
+  @footnote { border-top: 0.6pt solid #000; width: 5.5cm; margin-top: 0.45cm; padding-top: 0.1cm; box-sizing: content-box; } }
+@page { margin-right: 3.5cm; margin-left: 2.5cm; }
+
+/* paged.js: root stays LTR so page boxes are laid out normally; the thesis content itself is RTL */
+html, body, .pagedjs_pages, .pagedjs_page, .pagedjs_sheet, .pagedjs_pagebox, .pagedjs_area, .pagedjs_page_content { direction: ltr; }
+.thesis, .pagedjs_page_content > div { direction: rtl; }
+body { margin: 0; font-family: "Nazanin", "Tinos", serif; font-size: 14pt; line-height: 1cm; color: #000; text-align: justify; text-justify: inter-word; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+/* Latin runs: 2 pt smaller (guide) */
+.en, code, kbd, .latin { font-family: "Tinos", serif; font-size: 12pt; direction: ltr; unicode-bidi: isolate; }
+code { font-family: "Tinos", monospace; font-size: 11.5pt; white-space: nowrap; }
+b, strong { font-weight: 700; }
+i, em { font-style: italic; }
+p { margin: 0; text-indent: 0.7cm; orphans: 2; widows: 2; }
+p.first, h1 + p, h2 + p, h3 + p, h4 + p, figure + p, table + p, .figure + p, .noindent, li p { text-indent: 0; }
+p.first { text-indent: 0; }
+ul, ol { margin: 0 0 0 0; padding-inline-start: 1.1cm; }
+li { margin: 0; }
+li::marker { font-family: "Nazanin"; }
+
+/* ---- page containers ---- */
+.page { break-before: page; position: relative; }
+.page.blank { height: 5cm; }
+.center { text-align: center; }
+.chapter-start { break-before: right; }
+.bism { display: flex; align-items: center; justify-content: center; height: 22cm; }
+.bism-inner { font-family: "Lotus"; font-size: 30pt; }
+.toc-page { break-before: page; }
+
+/* ---- headings ---- */
+/* chapter title: قلم تیتر ۲۴، ۶ سانتی‌متر از لبهٔ بالای کاغذ (= 3.5cm below the top margin); متن از ۱۳ سانتی‌متری */
+.chapter-head { padding-top: 3.5cm; height: 10.5cm; box-sizing: border-box; text-align: center; }
+.chapter-head .chapter-num { font-family: "Titr"; font-size: 24pt; line-height: 1.6; }
+.chapter-head .chapter-title { font-family: "Titr"; font-size: 24pt; line-height: 1.6; }
+h2 { font-family: "Titr"; font-size: 14pt; font-weight: 400; margin: 0.55cm 0 0.15cm; line-height: 1cm; page-break-after: avoid; break-after: avoid; text-align: right; }
+h3 { font-family: "Titr"; font-size: 12pt; font-weight: 400; margin: 0.45cm 0 0.1cm; line-height: 1cm; page-break-after: avoid; break-after: avoid; text-align: right; }
+h4 { font-family: "Nazanin"; font-size: 14pt; font-weight: 700; margin: 0.35cm 0 0; page-break-after: avoid; break-after: avoid; text-align: right; }
+h2 .en, h3 .en { font-size: 12pt; }
+.front-title { font-family: "Titr"; font-size: 16pt; text-align: center; margin: 0 0 0.6cm; }
+
+/* ---- figures & tables ---- */
+figure, .figure { margin: 0.45cm 0 0.45cm; text-align: center; page-break-inside: avoid; break-inside: avoid; }
+figure img, .figure img { max-width: 100%; height: auto; border: 0.4pt solid #bbb; }
+figure img.noborder { border: 0; }
+figure.shot img { border: 0.6pt solid #9a9a9a; border-radius: 3px; }
+figcaption, .caption { font-family: "Nazanin"; font-size: 12pt; font-weight: 700; line-height: 0.8cm; margin-top: 0.15cm; text-align: center; }
+figcaption span.n, .caption span.n { font-weight: 700; }
+table { border-collapse: collapse; width: 100%; font-size: 12pt; line-height: 0.75cm; margin: 0.2cm auto 0.45cm; page-break-inside: auto; }
+table caption { font-family: "Nazanin"; font-size: 12pt; font-weight: 700; caption-side: top; text-align: center; padding-bottom: 0.15cm; line-height: 0.8cm; break-after: avoid; }
+th, td { border: 0.6pt solid #333; padding: 0.08cm 0.22cm; vertical-align: top; text-align: right; text-align-last: auto; }
+td[data-align-last-split-element], th[data-align-last-split-element] { text-align-last: auto !important; }
+th { background: #e8e8e8; font-weight: 700; text-align: center; }
+td.c { text-align: center; }
+td .en, th .en { font-size: 11pt; }
+tr { page-break-inside: avoid; break-inside: avoid; }
+thead { display: table-header-group; }
+.tbl-wrap { break-inside: auto; }
+.tbl-wrap.keep { break-inside: avoid; }
+.h-fig { max-height: 20cm; }
+.w60 img { max-width: 60%; } .w70 img { max-width: 70%; } .w80 img { max-width: 80%; } .w90 img { max-width: 90%; } .w50 img { max-width: 50%; } .w40 img { max-width: 40%; }
+.tall { break-before: auto; break-inside: avoid; margin-top: 0.3cm; }
+.tall img { max-height: 21cm; max-width: 100%; width: auto; }
+.tall figcaption { margin-top: 0.1cm; }
+.shot-tall img { max-height: 20cm; width: auto; max-width: 100%; }
+.two-up { display: flex; gap: 0.4cm; justify-content: center; align-items: flex-start; }
+.two-up img { max-width: 48%; }
+.mobile-pair { display: flex; gap: 0.6cm; justify-content: center; }
+.mobile-pair img { width: 5.6cm; }
+
+/* ---- code / pre ---- */
+pre { direction: ltr; text-align: left; font-family: "Tinos", monospace; font-size: 10.5pt; line-height: 0.55cm; background: #f6f6f4; border: 0.5pt solid #bbb; padding: 0.25cm 0.35cm; margin: 0.25cm 0 0.35cm; white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; }
+pre .cm { color: #555; font-family: "Nazanin"; font-size: 11pt; direction: rtl; unicode-bidi: isolate; }
+
+/* ---- footnotes: paged.js moves .note to the page's @footnote area; numbering restarts per page ---- */
+.fnote { float: footnote; font-family: "Tinos", serif; font-size: 10.5pt; line-height: 0.55cm; direction: ltr; text-align: left; unicode-bidi: isolate; }
+.fnote::footnote-call { content: counter(footnote, persian); font-size: 9pt; vertical-align: super; line-height: 0; font-family: "Nazanin"; }
+.fnote::footnote-marker { content: counter(footnote-marker, persian) " "; font-family: "Nazanin"; font-size: 10.5pt; }
+.pagedjs_footnote_area { direction: ltr; }
+.pagedjs_page { counter-reset: footnote 0; }
+/* paged.js marks the deepest split element with text-align-last:justify; our .thesis wrapper is "split" on every page,
+   so restrict that behaviour to real text blocks */
+[data-align-last-split-element="justify"] { text-align-last: auto !important; }
+p[data-align-last-split-element="justify"], li[data-align-last-split-element="justify"] { text-align-last: justify !important; }
+sup.fn { font-size: 9pt; vertical-align: super; line-height: 0; }
+
+/* ---- TOC ---- */
+.toc { font-size: 12.5pt; line-height: 0.78cm; }
+.toc .hdr { display: flex; justify-content: space-between; font-weight: 700; border-bottom: 0.6pt solid #000; margin-bottom: 0.2cm; }
+.toc .row { display: flex; align-items: baseline; }
+.toc .row .t { flex: none; max-width: 85%; }
+.toc .row .dots { flex: 1; border-bottom: 1px dotted #555; margin: 0 0.15cm; transform: translateY(-0.2cm); }
+.toc .row .p { flex: none; min-width: 1cm; text-align: left; }
+.toc .l1 { font-weight: 700; margin-top: 0.15cm; }
+.toc .l2 { padding-right: 0.8cm; }
+.toc .l3 { padding-right: 1.6cm; font-size: 12pt; }
+.toc-fig .row .t { max-width: 88%; }
+
+/* ---- title pages ---- */
+.tp { text-align: center; height: 24.5cm; position: relative; }
+.tp img.logo { width: 3cm; margin-top: 0.4cm; }
+.tp .faculty { font-family: "Titr"; font-size: 18pt; margin-top: 0.25cm; }
+.tp .degree { font-family: "Titr"; font-size: 20pt; margin-top: 1.6cm; }
+.tp .title { font-family: "Titr"; font-size: 24pt; line-height: 1.5; margin-top: 1.6cm; }
+.tp .label { font-family: "Titr"; font-size: 16pt; margin-top: 1.2cm; }
+.tp .name { font-family: "Titr"; font-size: 20pt; margin-top: 0.1cm; }
+.tp .date { font-family: "Titr"; font-size: 18pt; position: absolute; bottom: 0.6cm; width: 100%; }
+.tp .blank-line { display: inline-block; border-bottom: 0.7pt dotted #000; min-width: 7cm; height: 0.8cm; vertical-align: bottom; }
+.tp-en { direction: ltr; font-family: "Tinos"; }
+.tp-en .faculty { font-family: "Tinos"; font-weight: 700; font-size: 16pt; line-height: 1.35; }
+.tp-en .degree { font-family: "Tinos"; font-weight: 700; font-size: 18pt; }
+.tp-en .title { font-family: "Tinos"; font-weight: 700; font-size: 22pt; line-height: 1.3; }
+.tp-en .label, .tp-en .name, .tp-en .date { font-family: "Tinos"; font-weight: 700; }
+.tp-en .label { font-size: 15pt; } .tp-en .name { font-size: 18pt; } .tp-en .date { font-size: 16pt; }
+
+/* ---- rights page (صفحهٔ حقوقی) ---- */
+.rights { border: 1.2pt solid #000; padding: 0.7cm 0.8cm; margin-top: 7cm; font-size: 13pt; line-height: 1cm; }
+.rights .sig { display: flex; justify-content: space-around; margin-top: 0.8cm; font-size: 12pt; }
+.rights .note { font-size: 10pt; text-align: left; margin-top: 0.4cm; direction: rtl; }
+.dot { display: inline-block; border-bottom: 0.7pt dotted #000; min-width: 4cm; }
+
+/* ---- approval page ---- */
+.approval { text-align: center; }
+.approval img.logo { width: 3cm; }
+.approval .line { margin-top: 0.55cm; }
+.approval .big { font-family: "Titr"; font-size: 18pt; line-height: 1.6; }
+.approval .signers { text-align: right; margin-top: 1.2cm; }
+.approval .signers div { display: flex; align-items: baseline; margin-top: 0.7cm; }
+.approval .signers .dots { flex: 1; border-bottom: 1px dotted #000; margin: 0 0.2cm; }
+
+/* ---- abstract ---- */
+.abstract h2 { text-align: right; font-family: "Titr"; font-size: 16pt; margin-bottom: 0.4cm; }
+.abstract p { text-indent: 0; line-height: 0.92cm; font-size: 13.5pt; }
+.abstract .kw { margin-top: 0.5cm; }
+.abstract-en { direction: ltr; text-align: justify; font-family: "Tinos"; font-size: 12pt; line-height: 0.78cm; }
+.abstract-en h2 { text-align: left; font-family: "Tinos"; font-style: italic; font-weight: 700; font-size: 15pt; }
+.abstract-en p { text-indent: 0; margin-bottom: 0.25cm; }
+
+/* ---- references ---- */
+.refs p { text-indent: -1.4cm; padding-right: 1.4cm; margin-bottom: 0.15cm; line-height: 0.85cm; font-size: 13pt; }
+.refs p.en { direction: ltr; text-align: left; text-indent: -1.4cm; padding-right: 0; padding-left: 1.4cm; font-size: 11.5pt; line-height: 0.75cm; }
+.refs .key { font-weight: 700; }
+
+/* ---- misc ---- */
+.box { border: 0.6pt solid #555; background: #fafaf7; padding: 0.2cm 0.4cm; margin: 0.3cm 0; page-break-inside: avoid; }
+.box .t { font-weight: 700; }
+.steps { padding-inline-start: 0; }
+.steps > li { list-style: none; position: relative; padding-right: 0.9cm; margin-bottom: 0.1cm; }
+.steps > li > .num { position: absolute; right: 0; top: 0; font-weight: 700; }
+.kv { display: grid; grid-template-columns: 5cm 1fr; gap: 0 0.5cm; }
+.dedication { height: 24cm; display: flex; align-items: center; justify-content: center; font-family: "Lotus"; font-size: 18pt; line-height: 1.4cm; text-align: center; }
+.small { font-size: 12pt; line-height: 0.8cm; }
+.pagedjs_margin-bottom-center .pagedjs_margin-content { font-family: "Nazanin"; font-size: 12pt; direction: rtl; }
+.avoid { page-break-inside: avoid; break-inside: avoid; }
+.spacer { height: 0.4cm; }
