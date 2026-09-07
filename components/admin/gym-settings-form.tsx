@@ -47,13 +47,13 @@ export function GymSettingsForm({ gym }: { gym: GymSettings }) {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || "Unable to update gym.");
+        setError(data.error || "باشگاه به‌روزرسانی نشد.");
         return;
       }
-      setMessage("Gym details saved.");
+      setMessage("مشخصات باشگاه saved.");
       router.refresh();
     } catch {
-      setError("Unable to connect.");
+      setError("اتصال برقرار نشد.");
     } finally {
       setPending(false);
     }
@@ -62,26 +62,26 @@ export function GymSettingsForm({ gym }: { gym: GymSettings }) {
   return (
     <form className="admin-settings-form" onSubmit={submit}>
       <section className="admin-panel">
-        <div className="admin-panel__heading"><div><h2>General information</h2><p>Shown to members and trainers browsing your gym.</p></div></div>
+        <div className="admin-panel__heading"><div><h2>اطلاعات کلی</h2><p>به اعضا و مربی‌هایی که باشگاه شما را مرور می‌کنند نشان داده می‌شود.</p></div></div>
         <div className="admin-form-grid">
-          <label><span>Gym name</span><input defaultValue={gym.name} minLength={2} name="name" required /></label>
-          <label><span>URL slug</span><input defaultValue={gym.slug} name="slug" required /></label>
-          <label><span>Email</span><input defaultValue={gym.email || ""} name="email" type="email" /></label>
-          <label><span>Phone</span><input defaultValue={gym.phone || ""} name="phone" /></label>
-          <label><span>City</span><input defaultValue={gym.city || ""} name="city" /></label>
-          <label><span>Country code</span><input defaultValue={gym.country} maxLength={2} name="country" /></label>
-          <label className="admin-form-grid__wide"><span>Address</span><input defaultValue={gym.address || ""} name="address" /></label>
-          <label className="admin-form-grid__wide"><span>Description</span><textarea defaultValue={gym.description || ""} maxLength={1000} name="description" rows={5} /></label>
+          <label><span>نام باشگاه</span><input defaultValue={gym.name} minLength={2} name="name" required /></label>
+          <label><span>نامک (slug)</span><input defaultValue={gym.slug} name="slug" required /></label>
+          <label><span>ایمیل</span><input defaultValue={gym.email || ""} name="email" type="email" /></label>
+          <label><span>تلفن</span><input defaultValue={gym.phone || ""} name="phone" /></label>
+          <label><span>شهر</span><input defaultValue={gym.city || ""} name="city" /></label>
+          <label><span>کد کشور</span><input defaultValue={gym.country} maxLength={2} name="country" /></label>
+          <label className="admin-form-grid__wide"><span>نشانی</span><input defaultValue={gym.address || ""} name="address" /></label>
+          <label className="admin-form-grid__wide"><span>توضیحات</span><textarea defaultValue={gym.description || ""} maxLength={1000} name="description" rows={5} /></label>
         </div>
       </section>
 
       <section className="admin-panel admin-visibility-panel">
-        <div><h2>Gym visibility</h2><p>Suspended gyms remain accessible to staff but cannot accept new applications.</p></div>
-        <select defaultValue={gym.status} name="status"><option value="DRAFT">Draft</option><option value="ACTIVE">Active</option><option value="SUSPENDED">Suspended</option><option value="ARCHIVED">Archived</option></select>
+        <div><h2>نمایش باشگاه</h2><p>باشگاه‌های معلق برای کارکنان در دسترس می‌مانند اما درخواست تازه نمی‌پذیرند.</p></div>
+        <select defaultValue={gym.status} name="status"><option value="DRAFT">پیش‌نویس</option><option value="ACTIVE">فعال</option><option value="SUSPENDED">معلق</option><option value="ARCHIVED">بایگانی‌شده</option></select>
       </section>
 
       {(error || message) && <p className={error ? "admin-form-error" : "admin-form-success"} role="status">{error || message}</p>}
-      <div className="admin-settings-actions"><button className="admin-primary-button" disabled={pending} type="submit">{pending ? "Saving…" : "Save changes"}</button></div>
+      <div className="admin-settings-actions"><button className="admin-primary-button" disabled={pending} type="submit">{pending ? "در حال ذخیره…" : "ذخیره تغییرات"}</button></div>
     </form>
   );
 }

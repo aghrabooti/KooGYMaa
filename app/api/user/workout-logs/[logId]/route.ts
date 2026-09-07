@@ -25,10 +25,10 @@ export async function PATCH(request: NextRequest, { params }: Context) {
 
   const existing = await prisma.workoutLog.findFirst({ where: { id: logId, userId: authorization.user.id }, select: { id: true, exerciseLogs: { select: { exerciseId: true } } } });
   if (!existing) return NextResponse.json({ error: "Workout log not found." }, { status: 404 });
-  const allowed = new Set(existing.exerciseLogs.map((item) => item.exerciseId));
+  const allowed = new Set(existing.exerciseLogs.map((item: any) => item.exerciseId));
   if (validation.data.exercises?.some((item) => !allowed.has(item.exerciseId))) return NextResponse.json({ error: "Exercise does not belong to this workout log." }, { status: 403 });
 
-  const log = await prisma.$transaction(async (transaction) => {
+  const log = await prisma.$transaction(async (transaction: any) => {
     if (validation.data.exercises) {
       for (const exercise of validation.data.exercises) {
         await transaction.exerciseLog.update({ where: { workoutLogId_exerciseId: { workoutLogId: existing.id, exerciseId: exercise.exerciseId } }, data: { completed: exercise.completed, actualSets: exercise.actualSets, actualReps: exercise.actualReps, actualWeight: exercise.actualWeight, actualDurationSeconds: exercise.actualDurationSeconds, actualDistanceMeters: exercise.actualDistanceMeters, rpe: exercise.rpe, notes: exercise.notes } });

@@ -142,7 +142,7 @@ wrapping strings in `t(...)`.
   `.theme-dark`.
 - Persian text uses **Vazirmatn** (loaded via `next/font`, self-hosted so it
   respects the CSP). It is applied automatically whenever the locale is فارسی.
-- The brand's Persian name is **کوجیما** (not کوگیما) — shown under the wordmark
+- The brand's Persian name is **کوجیما** (never کوگیما) — shown under the wordmark
   on the auth screen.
 
 ## Quality checks

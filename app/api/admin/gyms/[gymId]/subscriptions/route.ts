@@ -84,7 +84,7 @@ export async function POST(request: NextRequest, { params }: Context) {
 
   const now = new Date();
   const endDate = addDays(now, plan.durationDays);
-  const subscription = await prisma.$transaction(async (transaction) => {
+  const subscription = await prisma.$transaction(async (transaction: any) => {
     const created = await transaction.subscription.create({
       data: {
         subscriberId: subscriber.id,

@@ -41,7 +41,7 @@ export async function PATCH(request: NextRequest, { params }: Context) {
     : existing.endDate;
   const requestedStatus = validation.data.status;
 
-  const subscription = await prisma.$transaction(async (transaction) => {
+  const subscription = await prisma.$transaction(async (transaction: any) => {
     const updated = await transaction.subscription.update({
       where: { id: existing.id },
       data: {

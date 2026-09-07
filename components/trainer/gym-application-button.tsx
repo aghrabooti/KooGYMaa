@@ -13,9 +13,9 @@ export function GymApplicationButton({ gymId, membership }: { gymId: string; mem
     try {
       const response = await fetch("/api/trainer/gyms", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ gymId }) });
       const data = await response.json();
-      if (!response.ok) { setError(data.error || "Application failed."); return; }
+      if (!response.ok) { setError(data.error || "درخواست انجام نشد."); return; }
       router.refresh();
-    } catch { setError("Unable to connect."); }
+    } catch { setError("اتصال برقرار نشد."); }
     finally { setPending(false); }
   }
 
@@ -25,11 +25,11 @@ export function GymApplicationButton({ gymId, membership }: { gymId: string; mem
     try {
       const response = await fetch(`/api/trainer/gyms/${membership.id}`, { method: "DELETE" });
       const data = await response.json();
-      if (!response.ok) { setError(data.error || "Update failed."); return; }
+      if (!response.ok) { setError(data.error || "به‌روزرسانی انجام نشد."); return; }
       router.refresh();
-    } catch { setError("Unable to connect."); }
+    } catch { setError("اتصال برقرار نشد."); }
     finally { setPending(false); }
   }
 
-  return <div className="trainer-gym-action">{membership?.status === "ACTIVE" ? <button className="trainer-secondary-button" disabled={pending} onClick={leave} type="button">{pending ? "Updating…" : "Leave gym"}</button> : membership?.status === "PENDING" ? <button disabled type="button">Application pending</button> : <button className="trainer-primary-button" disabled={pending} onClick={apply} type="button">{pending ? "Applying…" : membership ? "Apply again" : "Apply to join"}</button>}{error && <small>{error}</small>}</div>;
+  return <div className="trainer-gym-action">{membership?.status === "ACTIVE" ? <button className="trainer-secondary-button" disabled={pending} onClick={leave} type="button">{pending ? "در حال به‌روزرسانی…" : "ترک باشگاه"}</button> : membership?.status === "PENDING" ? <button disabled type="button">درخواست در انتظار بررسی</button> : <button className="trainer-primary-button" disabled={pending} onClick={apply} type="button">{pending ? "در حال ارسال درخواست…" : membership ? "درخواست دوباره" : "درخواست عضویت"}</button>}{error && <small>{error}</small>}</div>;
 }

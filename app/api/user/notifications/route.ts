@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   const authorization = await authorizeApiRequest(request, ["USER"]);
   if (!authorization.ok) return authorization.response;
   const notifications = await prisma.notification.findMany({ where: { userId: authorization.user.id }, select: { id: true, type: true, title: true, message: true, href: true, readAt: true, createdAt: true }, orderBy: { createdAt: "desc" }, take: 100 });
-  return NextResponse.json({ notifications, unread: notifications.filter((item) => !item.readAt).length }, { headers: { "Cache-Control": "no-store" } });
+  return NextResponse.json({ notifications, unread: notifications.filter((item: any) => !item.readAt).length }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function PATCH(request: NextRequest) {

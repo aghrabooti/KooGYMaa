@@ -9,6 +9,7 @@ import { validateRegisterInput } from "@/lib/auth-validation";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { setSessionCookie } from "@/lib/session-cookie";
+import { createUserSession } from "@/lib/user-sessions";
 
 const REGISTER_WINDOW_MS = 60 * 60 * 1000;
 
@@ -82,7 +83,13 @@ export async function POST(request: NextRequest) {
       throw new Error("User was created with an unsupported role.");
     }
 
-    const token = signToken(user.id, user.role, LONG_SESSION_SECONDS);
+    let sessionId: string | undefined;
+    try {
+      sessionId = await createUserSession(user.id, getClientIp(request), request.headers.get("user-agent"));
+    } catch {
+      sessionId = undefined;
+    }
+    const token = signToken(user.id, user.role, LONG_SESSION_SECONDS, sessionId);
     const response = NextResponse.json(
       { user },
       { status: 201 },

@@ -68,3 +68,13 @@ npm run db:generate
 npm run db:migrate
 npm run db:seed
 ```
+
+## Runtime-created tables (no migration needed)
+
+These tables are created with `CREATE TABLE IF NOT EXISTS` on first use, so fresh
+and existing databases both work without a new migration:
+
+- `UserSession` — revocable login sessions (item: active-session management).
+- `EmailVerification` — email-verified flag per user.
+- `FitnessGoal` — member goals (`/api/user/goals`).
+- `NotificationPreference` — per-user reminder settings.

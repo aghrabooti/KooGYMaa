@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { Icon, type IconName } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
+import { MobileMenu } from "@/components/mobile-menu";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useT } from "@/lib/i18n/language-provider";
@@ -48,7 +49,12 @@ export function UserNav({ name, unread }: { name: string; unread: number }) {
       <header className="member-mobile-header">
         <Brand compact />
         <div><strong>{name}</strong><small>{t("nav.memberWorkspace")}</small></div>
-        <Link href="/user/notifications"><Icon name="bell" size={18} />{unread > 0 && <b>{unread}</b>}</Link>
+        <Link href="/user/notifications" aria-label={t("nav.notifications")}><Icon name="bell" size={18} />{unread > 0 && <b>{unread}</b>}</Link>
+        <MobileMenu
+          identity={<><span className="mobile-drawer__avatar">{name.slice(0, 2).toUpperCase()}</span><div><strong>{name}</strong><small>{t("nav.memberWorkspace")}</small></div></>}
+          items={items.map((item) => ({ href: item.href, icon: item.icon, label: t(item.labelKey), active: isActive(item.href), badge: item.labelKey === "nav.notifications" ? unread : 0 }))}
+          showLogout
+        />
       </header>
       <nav className="member-mobile-nav">
         {items.map((item) => (

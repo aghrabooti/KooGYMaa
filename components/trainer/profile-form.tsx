@@ -36,17 +36,17 @@ export function TrainerProfileForm({ profile }: { profile: Profile }) {
         }),
       });
       const data = await response.json();
-      if (!response.ok) { setError(data.error || "Unable to update profile."); return; }
-      setMessage("Trainer profile saved.");
+      if (!response.ok) { setError(data.error || "پروفایل به‌روزرسانی نشد."); return; }
+      setMessage("پروفایل مربی saved.");
       router.refresh();
-    } catch { setError("Unable to connect."); }
+    } catch { setError("اتصال برقرار نشد."); }
     finally { setPending(false); }
   }
 
   return <form className="trainer-profile-form" onSubmit={submit}>
-    <section className="trainer-panel"><div className="trainer-panel__heading"><div><h2>Professional details</h2><p>Help members understand your coaching approach.</p></div></div><div className="trainer-form-grid"><label><span>Specialty</span><input defaultValue={profile.specialty || ""} name="specialty" placeholder="Strength & Mobility" /></label><label><span>Experience (years)</span><input defaultValue={profile.experienceYears ?? ""} min="0" max="80" name="experienceYears" type="number" /></label><label><span>Hourly rate</span><input defaultValue={profile.hourlyRate ?? ""} min="0" name="hourlyRate" type="number" /></label><label><span>Currency</span><input defaultValue={profile.currency} maxLength={3} name="currency" /></label><label className="trainer-form-wide"><span>Bio</span><textarea defaultValue={profile.bio || ""} maxLength={1000} name="bio" placeholder="Describe your training philosophy and who you help…" rows={7} /></label></div></section>
-    <section className="trainer-panel trainer-availability-toggle"><div><h2>Accepting new students</h2><p>Show members that you&apos;re currently available for coaching.</p></div><label className="trainer-switch"><input defaultChecked={profile.isAvailable} name="isAvailable" type="checkbox" /><span /></label></section>
+    <section className="trainer-panel"><div className="trainer-panel__heading"><div><h2>مشخصات حرفه‌ای</h2><p>به اعضا کمک کنید سبک مربی‌گری‌تان را بشناسند.</p></div></div><div className="trainer-form-grid"><label><span>تخصص</span><input defaultValue={profile.specialty || ""} name="specialty" placeholder="قدرت و تحرک" /></label><label><span>سابقه (سال)</span><input defaultValue={profile.experienceYears ?? ""} min="0" max="80" name="experienceYears" type="number" /></label><label><span>نرخ ساعتی</span><input defaultValue={profile.hourlyRate ?? ""} min="0" name="hourlyRate" type="number" /></label><label><span>ارز</span><input defaultValue={profile.currency} maxLength={3} name="currency" /></label><label className="trainer-form-wide"><span>معرفی</span><textarea defaultValue={profile.bio || ""} maxLength={1000} name="bio" placeholder="فلسفه تمرینی و افرادی که به آن‌ها کمک می‌کنید را بنویسید…" rows={7} /></label></div></section>
+    <section className="trainer-panel trainer-availability-toggle"><div><h2>پذیرش شاگرد جدید</h2><p>به اعضا نشان دهید هم‌اکنون برای مربی‌گری در دسترس هستید.</p></div><label className="trainer-switch"><input defaultChecked={profile.isAvailable} name="isAvailable" type="checkbox" /><span /></label></section>
     {(message || error) && <p className={error ? "trainer-form-error" : "trainer-form-success"}>{error || message}</p>}
-    <div className="trainer-form-actions"><button className="trainer-primary-button" disabled={pending} type="submit">{pending ? "Saving…" : "Save profile"}</button></div>
+    <div className="trainer-form-actions"><button className="trainer-primary-button" disabled={pending} type="submit">{pending ? "در حال ذخیره…" : "ذخیره پروفایل"}</button></div>
   </form>;
 }

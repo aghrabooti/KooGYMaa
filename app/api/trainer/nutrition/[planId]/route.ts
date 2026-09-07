@@ -45,7 +45,7 @@ export async function PUT(request: NextRequest, { params }: Context) {
     if (membership?.status !== "ACTIVE") return NextResponse.json({ error: "You are not active at the selected gym." }, { status: 403 });
   }
 
-  await prisma.$transaction(async (transaction) => {
+  await prisma.$transaction(async (transaction: any) => {
     await transaction.dietDay.deleteMany({ where: { planId: current.id } });
     await transaction.dietPlan.update({
       where: { id: current.id },

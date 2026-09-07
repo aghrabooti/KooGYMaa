@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { authorizeTrainerRequest } from "@/lib/trainer-access";
 import { validateSessionInput } from "@/lib/trainer-validation";
 import { prisma } from "@/lib/prisma";
+import { checkGeneralRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
   const authorization = await authorizeTrainerRequest(request);
@@ -32,6 +33,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const throttle = checkGeneralRateLimit(request, 60);
+  if (!throttle.allowed) return rateLimitResponse(throttle);
   const authorization = await authorizeTrainerRequest(request);
   if (!authorization.ok) return authorization.response;
   const body = await request.json().catch(() => null);
@@ -53,7 +56,7 @@ export async function POST(request: NextRequest) {
     if (gym?.status !== "ACTIVE") return NextResponse.json({ error: "You are not active at the selected gym." }, { status: 403 });
   }
 
-  const conflict = await prisma.trainingSession.findFirst({
+  const trainerConflict = await prisma.trainingSession.findFirst({
     where: {
       trainerId: authorization.access.profile.id,
       status: "SCHEDULED",
@@ -62,9 +65,21 @@ export async function POST(request: NextRequest) {
     },
     select: { id: true },
   });
-  if (conflict) return NextResponse.json({ error: "This session overlaps another scheduled session." }, { status: 409 });
+  if (trainerConflict) return NextResponse.json({ error: "این جلسه با جلسه دیگری از شما تداخل دارد." }, { status: 409 });
 
-  const session = await prisma.$transaction(async (transaction) => {
+  // Item 11: athlete-side overlap — the student may train with several coaches.
+  const athleteConflict = await prisma.trainingSession.findFirst({
+    where: {
+      trainerClient: { userId: client.userId },
+      status: "SCHEDULED",
+      startsAt: { lt: endsAt! },
+      endsAt: { gt: startsAt! },
+    },
+    select: { id: true },
+  });
+  if (athleteConflict) return NextResponse.json({ error: "ورزشکار در این بازه جلسه دیگری دارد." }, { status: 409 });
+
+  const session = await prisma.$transaction(async (transaction: any) => {
     const created = await transaction.trainingSession.create({
       data: {
         trainerId: authorization.access.profile.id,

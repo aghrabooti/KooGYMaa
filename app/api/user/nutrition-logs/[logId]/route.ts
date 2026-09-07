@@ -75,12 +75,12 @@ export async function PATCH(request: NextRequest, { params }: Context) {
     select: { id: true, mealLogs: { select: { mealId: true } } },
   });
   if (!existing) return NextResponse.json({ error: "Nutrition log not found." }, { status: 404 });
-  const allowed = new Set(existing.mealLogs.map((item) => item.mealId));
+  const allowed = new Set(existing.mealLogs.map((item: any) => item.mealId));
   if (validation.data.meals.some((item) => !allowed.has(item.mealId))) {
     return NextResponse.json({ error: "Meal does not belong to this nutrition log." }, { status: 403 });
   }
 
-  const log = await prisma.$transaction(async (transaction) => {
+  const log = await prisma.$transaction(async (transaction: any) => {
     for (const meal of validation.data.meals) {
       await transaction.mealLog.update({
         where: { nutritionLogId_mealId: { nutritionLogId: existing.id, mealId: meal.mealId } },

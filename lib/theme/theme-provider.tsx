@@ -37,6 +37,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const initial = readCookieTheme();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time client mount sync (cookie has no SSR access)
     setThemeState(initial);
     applyToDocument(initial);
   }, []);

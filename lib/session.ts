@@ -24,6 +24,16 @@ export async function getUserFromSessionToken(
   const claims = verifyToken(token);
   if (!claims) return null;
 
+  // Revocable sessions (item 1): tokens carrying a jti are checked against UserSession.
+  if (claims.sessionId) {
+    try {
+      const { isSessionRevoked } = await import("@/lib/user-sessions");
+      if (await isSessionRevoked(claims.sessionId)) return null;
+    } catch {
+      // Table may not exist yet (fresh DB) — treat legacy/untracked sessions as valid.
+    }
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: claims.userId },
     select: {

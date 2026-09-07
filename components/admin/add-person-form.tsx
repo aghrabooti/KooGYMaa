@@ -29,28 +29,28 @@ export function AddPersonForm({ endpoint, kind }: AddPersonFormProps) {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || `Unable to add ${kind}.`);
+        setError(data.error || `${kind === "member" ? "عضو" : "مربی"} افزوده نشد.`);
         return;
       }
       event.currentTarget.reset();
       setOpen(false);
       router.refresh();
     } catch {
-      setError("Unable to connect. Please try again.");
+      setError("اتصال برقرار نشد. لطفاً دوباره تلاش کنید.");
     } finally {
       setPending(false);
     }
   }
 
   if (!open) {
-    return <button className="admin-primary-button" onClick={() => setOpen(true)} type="button"><Icon name="plus" size={16} /> Add {kind}</button>;
+    return <button className="admin-primary-button" onClick={() => setOpen(true)} type="button"><Icon name="plus" size={16} /> افزودن {kind === "member" ? "عضو" : "مربی"}</button>;
   }
 
   return (
     <form className="admin-inline-form" onSubmit={submit}>
-      <label><span>{kind === "member" ? "Member" : "Trainer"} account email</span><input autoFocus name="email" placeholder={`${kind}@example.com`} required type="email" /></label>
-      <button className="admin-primary-button" disabled={pending} type="submit">{pending ? "Adding…" : "Add"}</button>
-      <button className="admin-secondary-button" onClick={() => setOpen(false)} type="button">Cancel</button>
+      <label><span>{kind === "member" ? "عضو" : "مربی"} ایمیل حساب</span><input autoFocus name="email" placeholder={`${kind}@example.com`} required type="email" /></label>
+      <button className="admin-primary-button" disabled={pending} type="submit">{pending ? "در حال افزودن…" : "Add"}</button>
+      <button className="admin-secondary-button" onClick={() => setOpen(false)} type="button">انصراف</button>
       {error && <small role="alert">{error}</small>}
     </form>
   );

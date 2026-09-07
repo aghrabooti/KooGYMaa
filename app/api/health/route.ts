@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { recentErrors } from "@/lib/monitoring";
 
 // Reports which database-related environment variables are present (never
 // their values) so a misconfigured deployment can be diagnosed from the
@@ -34,13 +35,19 @@ function resolvedUrlKind() {
 
 export async function GET() {
   try {
-    const users = await prisma.user.count();
+    const [users, pendingSweep] = await Promise.all([
+      prisma.user.count(),
+      prisma.subscription.count({ where: { status: "ACTIVE", endDate: { lte: new Date() } } }),
+    ]);
     return NextResponse.json(
       {
         ok: true,
         database: "connected",
         databaseUrl: resolvedUrlKind(),
         users,
+        subscriptionsPastDue: pendingSweep,
+        recentErrors: recentErrors().slice(0, 5),
+        version: "0.1.0",
       },
       { headers: { "Cache-Control": "no-store" } }
     );

@@ -56,7 +56,7 @@ export async function PATCH(request: NextRequest, { params }: Context) {
   }
 
   if (validation.data.status === "SCHEDULED") {
-    const conflict = await prisma.trainingSession.findFirst({
+    const trainerConflict = await prisma.trainingSession.findFirst({
       where: {
         id: { not: existing.id },
         trainerId: authorization.access.profile.id,
@@ -66,7 +66,21 @@ export async function PATCH(request: NextRequest, { params }: Context) {
       },
       select: { id: true },
     });
-    if (conflict) return NextResponse.json({ error: "This session overlaps another scheduled session." }, { status: 409 });
+    if (trainerConflict) return NextResponse.json({ error: "این جلسه با جلسه دیگری از شما تداخل دارد." }, { status: 409 });
+    const owner = await prisma.trainerClient.findUnique({ where: { id: existing.trainerClientId }, select: { userId: true } });
+    if (owner) {
+      const athleteConflict = await prisma.trainingSession.findFirst({
+        where: {
+          id: { not: existing.id },
+          trainerClient: { userId: owner.userId },
+          status: "SCHEDULED",
+          startsAt: { lt: validation.data.endsAt! },
+          endsAt: { gt: validation.data.startsAt! },
+        },
+        select: { id: true },
+      });
+      if (athleteConflict) return NextResponse.json({ error: "ورزشکار در این بازه جلسه دیگری دارد." }, { status: 409 });
+    }
   }
 
   const session = await prisma.trainingSession.update({

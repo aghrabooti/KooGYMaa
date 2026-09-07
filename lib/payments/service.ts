@@ -37,7 +37,7 @@ export async function createSubscriptionCheckout(input: {
   const provider = getPaymentProvider();
   const checkout = await provider.createCheckout({ paymentId, amount: plan.price, currency: plan.currency, description: plan.name });
   const now = new Date();
-  const payment = await prisma.$transaction(async (transaction) => {
+  const payment = await prisma.$transaction(async (transaction: any) => {
     if (!input.renewalSubscriptionId) {
       await transaction.subscription.create({
         data: { id: subscriptionId, subscriberId: input.userId, gymId: plan.gymId, planId: plan.id, status: "PENDING", pricePaid: plan.price, currency: plan.currency, startDate: now, endDate: addDays(now, plan.durationDays) },
@@ -86,7 +86,7 @@ export async function finalizeSuccessfulPayment(paymentId: string, actor?: { act
   const start = current.type === "RENEWAL" && current.subscription.endDate > now ? current.subscription.endDate : now;
   const endDate = addDays(start, current.plan.durationDays);
 
-  return prisma.$transaction(async (transaction) => {
+  return prisma.$transaction(async (transaction: any) => {
     const updated = await transaction.payment.update({ where: { id: current.id }, data: { status: "SUCCEEDED", paidAt: now, failureCode: null, failureMessage: null }, select: { id: true, status: true, paidAt: true, subscriptionId: true } });
     await transaction.subscription.update({ where: { id: current.subscriptionId }, data: { status: "ACTIVE", startDate: current.type === "SUBSCRIPTION" ? now : undefined, endDate, cancelledAt: null } });
     await transaction.gymMembership.upsert({
@@ -108,7 +108,7 @@ export async function refundPayment(input: { actorId: string; actorRole: string;
   const payment = await prisma.payment.findFirst({ where: { id: input.paymentId, gymId: input.gymId, status: "SUCCEEDED" }, select: { id: true, userId: true, subscriptionId: true } });
   if (!payment) throw new Error("PAYMENT_NOT_REFUNDABLE");
   const now = new Date();
-  return prisma.$transaction(async (transaction) => {
+  return prisma.$transaction(async (transaction: any) => {
     const refunded = await transaction.payment.update({ where: { id: payment.id }, data: { status: "REFUNDED", refundedAt: now }, select: { id: true, status: true, refundedAt: true } });
     await transaction.subscription.update({ where: { id: payment.subscriptionId }, data: { status: "CANCELLED", cancelledAt: now, autoRenew: false } });
     const otherActive = await transaction.subscription.count({ where: { id: { not: payment.subscriptionId }, subscriberId: payment.userId, gymId: input.gymId, status: "ACTIVE", endDate: { gt: now } } });

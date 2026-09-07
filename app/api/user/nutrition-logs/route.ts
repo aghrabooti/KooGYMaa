@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   const log = await prisma.nutritionLog.upsert({
     where: { assignmentId_dietDayId_logDate: { assignmentId: assignment.id, dietDayId: day.id, logDate } },
     update: {},
-    create: { assignmentId: assignment.id, userId: authorization.user.id, dietDayId: day.id, logDate, mealLogs: { create: day.meals.map((meal) => ({ mealId: meal.id })) } },
+    create: { assignmentId: assignment.id, userId: authorization.user.id, dietDayId: day.id, logDate, mealLogs: { create: day.meals.map((meal: any) => ({ mealId: meal.id })) } },
     select: { id: true, logDate: true, completedAt: true },
   });
   return NextResponse.json({ log }, { status: 201 });

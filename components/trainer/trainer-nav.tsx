@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { Icon, type IconName } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
+import { MobileMenu } from "@/components/mobile-menu";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useT } from "@/lib/i18n/language-provider";
@@ -41,7 +42,7 @@ export function TrainerNav({ pendingStudents, user }: TrainerNavProps) {
           <span>{initials(user.name)}</span>
           <div><strong>{user.name}</strong><small>{t("nav.trainerWorkspace")}</small></div>
         </div>
-        <nav className="trainer-nav" aria-label="Trainer navigation">
+        <nav className="trainer-nav" aria-label="ناوبری مربی">
           <small>{t("nav.coaching")}</small>
           {items.map((item) => {
             const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href);
@@ -51,8 +52,8 @@ export function TrainerNav({ pendingStudents, user }: TrainerNavProps) {
         <div className="trainer-sidebar__tip"><Icon name="sparkles" size={17} /><strong>{t("dash.greatMomentum")}</strong><p>{t("authShell.benefit1")}</p><Link href="/trainer/profile">{t("nav.trainerProfile")} <Icon name="arrow" size={13} /></Link></div>
         <div className="trainer-sidebar__bottom"><LanguageSwitcher className="trainer-language" /><ThemeToggle className="trainer-theme" /><LogoutButton /></div>
       </aside>
-      <header className="trainer-mobile-header"><Brand compact /><div><strong>{user.name}</strong><small>{t("nav.trainerWorkspace")}</small></div><Link href="/trainer/profile"><Icon name="user" size={18} /></Link></header>
-      <nav className="trainer-mobile-nav" aria-label="Mobile trainer navigation">{items.map((item) => { const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href); return <Link aria-label={t(item.labelKey)} className={active ? "active" : ""} href={item.href} key={item.labelKey}><Icon name={item.icon} size={18} /><span>{t(item.labelKey)}</span></Link>; })}</nav>
+      <header className="trainer-mobile-header"><Brand compact /><div><strong>{user.name}</strong><small>{t("nav.trainerWorkspace")}</small></div><Link href="/trainer/students" aria-label={t("nav.myStudents")}><Icon name="users" size={18} />{pendingStudents > 0 && <b>{pendingStudents}</b>}</Link><MobileMenu tone="orange" identity={<><span className="mobile-drawer__avatar">{initials(user.name)}</span><div><strong>{user.name}</strong><small>{t("nav.trainerWorkspace")}</small></div></>} items={items.map((item) => ({ href: item.href, icon: item.icon, label: t(item.labelKey), active: item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href), badge: item.labelKey === "nav.myStudents" ? pendingStudents : 0 }))} showLogout /></header>
+      <nav className="trainer-mobile-nav" aria-label="ناوبری مربی">{items.map((item) => { const active = item.href === "/trainer" ? pathname === item.href : pathname.startsWith(item.href); return <Link aria-label={t(item.labelKey)} className={active ? "active" : ""} href={item.href} key={item.labelKey}><Icon name={item.icon} size={18} /><span>{t(item.labelKey)}</span></Link>; })}</nav>
     </>
   );
 }
