@@ -32,6 +32,19 @@ real screenshot or diagram. The detail lives in the notes, not on the wall.
 
 Fill in your name and supervisor on slide 1 (the blanks are placeholders).
 
+## Downloading the deck
+
+Start the bundled download server and open it in a browser:
+
+```bash
+python3 docs/presentation/serve.py            # → http://0.0.0.0:8000/
+python3 docs/presentation/serve.py --port 9000
+```
+
+It serves a small landing page with a direct link to `KooGYMaa.pptx`
+(correct MIME type, so browsers download rather than display it), the
+source scripts, and an `all.zip` with everything. Stop it with `Ctrl+C`.
+
 ## Rebuilding the deck
 
 ```bash
@@ -90,6 +103,7 @@ translation block in `shots-en.mjs` and the two JSON files.
 | `KooGYMaa.pptx` | The deliverable |
 | `build_deck.py` | Deck generator (layout, palette, speaker notes) |
 | `preview.py` | Rough PPTX → PNG renderer for layout checks |
+| `serve.py` | Local download server for the deliverables |
 | `shots-en.mjs` | Captures English screenshots from the running app |
 | `demo-data.mjs` | Idempotent demo data for populated dashboards |
 | `fa2en.json`, `fa2en-dict.json` | Capture-time translation tables |
