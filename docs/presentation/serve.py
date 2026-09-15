@@ -25,11 +25,18 @@ mimetypes.add_type(
 # label -> (relative path, description)
 FILES = {
     "KooGYMaa.pptx": ("KooGYMaa.pptx", "The 18-slide English deck, with speaker notes"),
+    "talk-track-fa.md": (
+        "talk-track-fa.md",
+        "متن شفاهی — ۵ دقیقه بک‌اند و ۵ دقیقه فرانت‌اند، به‌همراه سؤال‌های محتمل داور",
+    ),
     "README.md": ("README.md", "Slide outline, timings, and rebuild instructions"),
     "build_deck.py": ("build_deck.py", "Deck generator"),
     "shots-en.mjs": ("shots-en.mjs", "English screenshot capture script"),
     "demo-data.mjs": ("demo-data.mjs", "Idempotent local demo data"),
 }
+
+# Rendered as large highlighted cards rather than plain rows.
+FEATURED = ("KooGYMaa.pptx", "talk-track-fa.md")
 
 PAGE = """<!doctype html>
 <html lang="en"><head>
@@ -63,6 +70,13 @@ PAGE = """<!doctype html>
   .primary .t {{ font-size: 21px; font-weight: 700; }}
   .primary .d {{ font-size: 13.5px; opacity: .78; }}
   .primary .sz {{ margin-left: auto; font-size: 13px; font-weight: 700; opacity: .7; white-space: nowrap; }}
+  .primary.alt {{
+    background: #172018; color: #f5f7f4; border: 1px solid #4d6b2e;
+  }}
+  .primary.alt .t {{ color: #a8e063; }}
+  .primary.alt .d {{ opacity: .72; }}
+  .primary.alt .sz {{ opacity: .55; }}
+  .rtl {{ direction: rtl; text-align: right; font-size: 13.5px; }}
   .row {{
     display: flex; align-items: center; gap: 16px; text-decoration: none;
     color: inherit; border: 1px solid #27302a; background: #141a17;
@@ -139,6 +153,9 @@ class Handler(BaseHTTPRequestHandler):
             full = os.path.join(HERE, rel)
             if os.path.isfile(full):
                 ctype = mimetypes.guess_type(full)[0] or "application/octet-stream"
+                # Persian text turns into mojibake without an explicit charset.
+                if ctype.startswith("text/") or ctype == "application/json":
+                    ctype += "; charset=utf-8"
                 with open(full, "rb") as fh:
                     data = fh.read()
                 return self._send(200, data, ctype, {
@@ -161,6 +178,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def index(self):
         rows = []
+
         deck = os.path.join(HERE, "KooGYMaa.pptx")
         if os.path.isfile(deck):
             rows.append(
@@ -169,8 +187,18 @@ class Handler(BaseHTTPRequestHandler):
                 '<div class="d">18 slides · English · speaker notes with timings</div></div>'
                 f'<div class="sz">{size_of(deck)}</div></a>'
             )
+
+        track = os.path.join(HERE, "talk-track-fa.md")
+        if os.path.isfile(track):
+            rows.append(
+                '<a class="primary alt" href="/talk-track-fa.md" download>'
+                '<div><div class="t">talk-track-fa.md</div>'
+                '<div class="d rtl">متن شفاهی — ۵ دقیقه بک‌اند و ۵ دقیقه فرانت‌اند</div></div>'
+                f'<div class="sz">{size_of(track)}</div></a>'
+            )
+
         for name, (rel, desc) in FILES.items():
-            if name == "KooGYMaa.pptx":
+            if name in FEATURED:
                 continue
             full = os.path.join(HERE, rel)
             if not os.path.isfile(full):
