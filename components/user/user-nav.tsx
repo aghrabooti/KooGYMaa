@@ -12,6 +12,7 @@ import { useT } from "@/lib/i18n/language-provider";
 
 const items: Array<{ href: string; icon: IconName; labelKey: string }> = [
   { href: "/user", icon: "grid", labelKey: "nav.overview" },
+  { href: "/user/journey", icon: "clipboard", labelKey: "nav.journey" },
   { href: "/user/gyms", icon: "building", labelKey: "nav.discoverGyms" },
   { href: "/user/trainers", icon: "users", labelKey: "nav.findTrainers" },
   { href: "/user/workouts", icon: "dumbbell", labelKey: "nav.workouts" },
