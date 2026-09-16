@@ -45,6 +45,28 @@ It serves a small landing page with a direct link to `KooGYMaa.pptx`
 (correct MIME type, so browsers download rather than display it), the
 source scripts, and an `all.zip` with everything. Stop it with `Ctrl+C`.
 
+## The talk track
+
+`talk-track-fa.md` is the spoken script: five minutes on the backend, five on
+the frontend, plus likely examiner questions. `talk-track-fa.pdf` is the same
+content typeset right-to-left:
+
+```bash
+python3 docs/presentation/make_fa_fonts.py   # fetch Vazirmatn TTFs -> /tmp/fonts
+python3 docs/presentation/md2pdf_fa.py       # -> talk-track-fa.pdf
+```
+
+Persian needs glyph shaping and the bidirectional algorithm, which ReportLab
+does not do, so `md2pdf_fa.py` reshapes and reorders the text itself. Two
+things are worth knowing if you touch it:
+
+* it uses **Vazirmatn**, not the Estedad file in `public/fonts` — Estedad
+  maps the Unicode presentation forms to empty glyphs and relies on a real
+  shaping engine, so under ReportLab it renders dotless and half-blank;
+* styled spans are shaped per run and the run order is reversed, rather than
+  marking spans inline. Private-use sentinels carry Bidi class L and shatter
+  the Arabic run; bidi-transparent characters get dropped entirely.
+
 ## Rebuilding the deck
 
 ```bash
@@ -104,6 +126,9 @@ translation block in `shots-en.mjs` and the two JSON files.
 | `build_deck.py` | Deck generator (layout, palette, speaker notes) |
 | `preview.py` | Rough PPTX → PNG renderer for layout checks |
 | `serve.py` | Local download server for the deliverables |
+| `talk-track-fa.md` / `.pdf` | Spoken script: 5 min backend + 5 min frontend |
+| `md2pdf_fa.py` | Right-to-left Markdown → PDF renderer |
+| `make_fa_fonts.py` | Fetches the Persian TTFs used by the PDF renderer |
 | `shots-en.mjs` | Captures English screenshots from the running app |
 | `demo-data.mjs` | Idempotent demo data for populated dashboards |
 | `fa2en.json`, `fa2en-dict.json` | Capture-time translation tables |

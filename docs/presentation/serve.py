@@ -25,10 +25,11 @@ mimetypes.add_type(
 # label -> (relative path, description)
 FILES = {
     "KooGYMaa.pptx": ("KooGYMaa.pptx", "The 18-slide English deck, with speaker notes"),
-    "talk-track-fa.md": (
-        "talk-track-fa.md",
+    "talk-track-fa.pdf": (
+        "talk-track-fa.pdf",
         "متن شفاهی — ۵ دقیقه بک‌اند و ۵ دقیقه فرانت‌اند، به‌همراه سؤال‌های محتمل داور",
     ),
+    "talk-track-fa.md": ("talk-track-fa.md", "Same talk track, Markdown source"),
     "README.md": ("README.md", "Slide outline, timings, and rebuild instructions"),
     "build_deck.py": ("build_deck.py", "Deck generator"),
     "shots-en.mjs": ("shots-en.mjs", "English screenshot capture script"),
@@ -36,7 +37,7 @@ FILES = {
 }
 
 # Rendered as large highlighted cards rather than plain rows.
-FEATURED = ("KooGYMaa.pptx", "talk-track-fa.md")
+FEATURED = ("KooGYMaa.pptx", "talk-track-fa.pdf")
 
 PAGE = """<!doctype html>
 <html lang="en"><head>
@@ -188,11 +189,11 @@ class Handler(BaseHTTPRequestHandler):
                 f'<div class="sz">{size_of(deck)}</div></a>'
             )
 
-        track = os.path.join(HERE, "talk-track-fa.md")
+        track = os.path.join(HERE, "talk-track-fa.pdf")
         if os.path.isfile(track):
             rows.append(
-                '<a class="primary alt" href="/talk-track-fa.md" download>'
-                '<div><div class="t">talk-track-fa.md</div>'
+                '<a class="primary alt" href="/talk-track-fa.pdf" download>'
+                '<div><div class="t">talk-track-fa.pdf</div>'
                 '<div class="d rtl">متن شفاهی — ۵ دقیقه بک‌اند و ۵ دقیقه فرانت‌اند</div></div>'
                 f'<div class="sz">{size_of(track)}</div></a>'
             )

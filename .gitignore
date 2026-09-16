@@ -53,3 +53,7 @@ data/
 
 # local backups (never commit)
 backups/
+
+# Python
+__pycache__/
+*.pyc
