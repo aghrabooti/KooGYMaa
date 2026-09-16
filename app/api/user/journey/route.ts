@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireUserFromRequest } from "@/lib/api-auth";
+import { authorizeApiRequest } from "@/lib/api-auth";
 import { calculateMonthsAsStudent, calculateDaysAsStudent, formatJourneyDuration, buildNimaJourney } from "@/lib/journey";
 
 export async function GET(request: NextRequest) {
-  const auth = await requireUserFromRequest(request, ["USER"]);
+  const auth = await authorizeApiRequest(request, ["USER"]);
   if (!auth.ok) return auth.response;
 
   const userId = auth.user.id;
