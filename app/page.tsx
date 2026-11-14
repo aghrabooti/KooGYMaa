@@ -77,7 +77,7 @@ export default async function Home() {
         <div className="hero__orb hero__orb--one" aria-hidden="true" />
         <div className="hero__orb hero__orb--two" aria-hidden="true" />
         <div className="hero__ring" aria-hidden="true" />
-        <nav className="site-nav" aria-label="Main navigation">
+        <nav className="site-nav" aria-label="ناوبری اصلی">
           <Brand light />
           <div className="site-nav__links">
             <a href="#platform">{t("landing.platform")}</a>
@@ -157,7 +157,7 @@ export default async function Home() {
 
           <Reveal delay={200} className="hero__stage-reveal">
             <Tilt className="product-stage" >
-              <div aria-label="KooGYMaa dashboard preview">
+              <div aria-label="پیشنمایش پیشخوان کوجیما">
                 <div className="product-stage__mesh" />
                 <div className="emblem" role="img" aria-label={t("landing.demoEmblem")}>
                   <span className="emblem__halo" aria-hidden="true" />
@@ -208,7 +208,7 @@ export default async function Home() {
                       <div><small>{t("landing.demoWeek")}</small></div>
                       <span>{t("landing.demoRange")} ▾</span>
                     </div>
-                    <svg className="hero-chart" viewBox="0 0 460 145" role="img" aria-label="Weekly activity trending upward">
+                    <svg className="hero-chart" viewBox="0 0 460 145" role="img" aria-label="روند صعودی فعالیت هفتگی">
                       <defs>
                         <linearGradient id="area" x1="0" x2="0" y1="0" y2="1">
                           <stop offset="0" stopColor="#c8f169" stopOpacity=".42" />
@@ -236,7 +236,7 @@ export default async function Home() {
             </Tilt>
           </Reveal>
         </div>
-        <div className="hero__ticker" aria-label="Platform benefits">
+        <div className="hero__ticker" aria-label="مزیتهای سکو">
           <div className="hero__ticker__track">
             {[false, true].map((hidden) => (
               <div className="hero__ticker__group" aria-hidden={hidden || undefined} key={hidden ? "dup" : "main"}>
@@ -249,7 +249,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="grind-section" aria-label="Training disciplines">
+      <section className="grind-section" aria-label="رشتههای تمرینی">
         <div className="container">
           <Reveal>
             <div className="grind-section__heading">
@@ -371,7 +371,7 @@ export default async function Home() {
           <div><a href="#platform">{t("landing.platform")}</a><a href="#for-you">{t("landing.forYou")}</a><Link href="/gyms">{t("footer.gyms")}</Link><Link href="/trainers">{t("footer.trainers")}</Link><Link href="/about">{t("footer.about")}</Link><Link href="/contact">{t("footer.contact")}</Link><Link href="/help">{t("footer.help")}</Link><Link href="/terms">{t("footer.terms")}</Link><Link href="/privacy">{t("footer.privacy")}</Link><Link href="/login">{t("landing.logIn")}</Link></div>
         </div>
         <div className="site-footer__giant" aria-hidden="true">KooGYMaa</div>
-        <div className="container site-footer__bottom"><span>© 2026 KooGYMaa</span><span>{t("landing.madeForPeople")}</span></div>
+        <div className="container site-footer__bottom"><span>© ۱۴۰۵ کوجیما</span><span>{t("landing.madeForPeople")}</span></div>
       </footer>
     </main>
   );
