@@ -25,16 +25,17 @@ export default async function PlanPreviewPage({ searchParams }: PageProps) {
 
   const backHref =
     user.role === "TRAINER" ? `/trainer/${kind}/${planId}` : `/user/${kind}`;
-  const backLabel = user.role === "TRAINER" ? "بازگشت به طرح" : "بازگشت به برنامه";
-  const documentTitle = `${PLAN_KIND_LABEL[kind]} ${doc.title} — ${doc.studentName} — ${doc.trainerName}`;
+  const documentTitle = [doc.title, PLAN_KIND_LABEL[kind], doc.genericPreview ? null : doc.studentName, doc.trainerName]
+    .filter(Boolean)
+    .join("، ");
 
   return (
-    <main className="pdf-page">
+    <main className="pdf-page" dir="rtl" lang="fa">
       <PlanExportToolbar
         filename={pdfFilename(doc)}
         documentTitle={documentTitle}
         backHref={backHref}
-        backLabel={backLabel}
+        backLabel="بازگشت به برنامه"
         students={students}
         selectedStudentId={selectedStudentId}
         autoDownload={params.download === "1"}

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   PLAN_KIND_LABEL,
   PLAN_STATUS_LABEL,
@@ -5,7 +6,6 @@ import {
   formatPersianDate,
   planTotals,
   runningHeaderLine,
-  type NutritionDocument,
   type PlanDocumentData,
   type PlanFoodItem,
   type PlanWorkoutDay,
@@ -13,13 +13,23 @@ import {
   type PlanNutritionDay,
 } from "@/lib/plan-document";
 
-function SectionTitle({ number, title, hint }: { number: string; title: string; hint?: string }) {
+function SectionTitle({ title }: { title: string }) {
   return (
     <div className="pdf-section-title">
-      <span>{number}</span>
       <h2>{title}</h2>
-      {hint ? <small>{hint}</small> : null}
     </div>
+  );
+}
+
+const exerciseColumns = ["ردیف", "حرکت", "ست", "تکرار", "وزنه", "استراحت، مدت و مسافت", "توضیحات"] as const;
+const foodColumns = ["مادهٔ غذایی", "مقدار", "انرژی", "ارزش غذایی و توضیحات"] as const;
+
+function TableCell({ label, children, className }: { label: string; children: ReactNode; className?: string }) {
+  return (
+    <td className={className} role="cell">
+      <span className="pdf-cell-label" aria-hidden="true">{label}</span>
+      {children}
+    </td>
   );
 }
 
@@ -28,38 +38,32 @@ function ExerciseTable({ exercises }: { exercises: PlanWorkoutExercise[] }) {
     return <p className="pdf-muted">حرکتی برای این روز ثبت نشده است.</p>;
   }
   return (
-    <table className="pdf-table">
-      <thead>
-        <tr>
-          <th>ردیف</th>
-          <th>حرکت</th>
-          <th>ست</th>
-          <th>تکرار</th>
-          <th>وزن</th>
-          <th>استراحت</th>
-          <th>توضیح</th>
+    <table className="pdf-table" role="table">
+      <thead role="rowgroup">
+        <tr role="row">
+          {exerciseColumns.map((label) => <th key={label} scope="col" role="columnheader">{label}</th>)}
         </tr>
       </thead>
-      <tbody>
-        {exercises.map((exercise, index) => (
-          <tr key={`${exercise.name}-${index}`}>
-            <td>{faNumber(index + 1)}</td>
-            <td className="pdf-strong">{exercise.name}</td>
-            <td>{exercise.sets ? faNumber(exercise.sets) : "—"}</td>
-            <td>{exercise.reps || "—"}</td>
-            <td>{exercise.weight || "—"}</td>
-            <td>
-              {exercise.restSeconds
-                ? `${faNumber(exercise.restSeconds)} ثانیه`
-                : exercise.durationSeconds
-                  ? `${faNumber(exercise.durationSeconds)} ثانیه`
-                  : exercise.distanceMeters
-                    ? `${faNumber(exercise.distanceMeters)} متر`
-                    : "—"}
-            </td>
-            <td className="pdf-note">{exercise.tempo || exercise.notes || "—"}</td>
-          </tr>
-        ))}
+      <tbody role="rowgroup">
+        {exercises.map((exercise, index) => {
+          const timing = [
+            exercise.restSeconds ? `${faNumber(exercise.restSeconds)} ثانیه استراحت` : null,
+            exercise.durationSeconds ? `${faNumber(exercise.durationSeconds)} ثانیه اجرا` : null,
+            exercise.distanceMeters ? `${faNumber(exercise.distanceMeters)} متر` : null,
+          ].filter(Boolean);
+          const notes = [exercise.tempo && `ریتم حرکت ${faNumber(exercise.tempo)}`, exercise.notes].filter(Boolean);
+          return (
+            <tr key={`${exercise.name}-${index}`} role="row">
+              <TableCell label={exerciseColumns[0]}>{faNumber(index + 1)}</TableCell>
+              <TableCell label={exerciseColumns[1]} className="pdf-strong">{exercise.name}</TableCell>
+              <TableCell label={exerciseColumns[2]}>{faNumber(exercise.sets)}</TableCell>
+              <TableCell label={exerciseColumns[3]}>{faNumber(exercise.reps)}</TableCell>
+              <TableCell label={exerciseColumns[4]}>{faNumber(exercise.weight)}</TableCell>
+              <TableCell label={exerciseColumns[5]}>{timing.join("، ") || "—"}</TableCell>
+              <TableCell label={exerciseColumns[6]} className="pdf-note">{notes.join("، ") || "—"}</TableCell>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
@@ -71,7 +75,6 @@ function WorkoutDay({ day, index }: { day: PlanWorkoutDay; index: number }) {
       <div className="pdf-day__head">
         <span className="pdf-day__badge">{faNumber(day.dayNumber || index + 1)}</span>
         <div>
-          <small>روز {faNumber(index + 1)}</small>
           <h3>{day.name}</h3>
         </div>
         <b>{faNumber(day.exercises.length)} حرکت</b>
@@ -84,31 +87,29 @@ function WorkoutDay({ day, index }: { day: PlanWorkoutDay; index: number }) {
 
 function FoodTable({ foods }: { foods: PlanFoodItem[] }) {
   if (!foods.length) {
-    return <p className="pdf-muted">مادهای برای این وعده ثبت نشده است.</p>;
+    return <p className="pdf-muted">هنوز مواد غذایی این وعده مشخص نشده‌اند.</p>;
   }
   return (
-    <table className="pdf-table pdf-table--food">
-      <thead>
-        <tr>
-          <th>مادهٔ غذایی</th>
-          <th>مقدار</th>
-          <th>انرژی</th>
-          <th>درشتمغذیها</th>
+    <table className="pdf-table pdf-table--food" role="table">
+      <thead role="rowgroup">
+        <tr role="row">
+          {foodColumns.map((label) => <th key={label} scope="col" role="columnheader">{label}</th>)}
         </tr>
       </thead>
-      <tbody>
+      <tbody role="rowgroup">
         {foods.map((food, index) => {
           const macros = [
-            food.protein ? `پ ${faNumber(food.protein)}` : null,
-            food.carbs ? `ک ${faNumber(food.carbs)}` : null,
-            food.fat ? `چ ${faNumber(food.fat)}` : null,
+            food.protein === null ? null : `${faNumber(food.protein)} گرم پروتئین`,
+            food.carbs === null ? null : `${faNumber(food.carbs)} گرم کربوهیدرات`,
+            food.fat === null ? null : `${faNumber(food.fat)} گرم چربی`,
+            food.notes,
           ].filter(Boolean);
           return (
-            <tr key={`${food.name}-${index}`}>
-              <td className="pdf-strong">{food.name}</td>
-              <td>{food.quantity ? `${faNumber(food.quantity)}${food.unit ? ` ${food.unit}` : ""}` : "—"}</td>
-              <td>{food.calories ? `${faNumber(food.calories)} کیلوکالری` : "—"}</td>
-              <td className="pdf-note">{macros.length ? macros.join(" · ") : food.notes || "—"}</td>
+            <tr key={`${food.name}-${index}`} role="row">
+              <TableCell label={foodColumns[0]} className="pdf-strong">{food.name}</TableCell>
+              <TableCell label={foodColumns[1]}>{food.quantity !== null ? `${faNumber(food.quantity)}${food.unit ? ` ${food.unit}` : ""}` : "—"}</TableCell>
+              <TableCell label={foodColumns[2]}>{food.calories !== null ? `${faNumber(food.calories)} کیلوکالری` : "—"}</TableCell>
+              <TableCell label={foodColumns[3]} className="pdf-note">{macros.join("، ") || "—"}</TableCell>
             </tr>
           );
         })}
@@ -119,17 +120,16 @@ function FoodTable({ foods }: { foods: PlanFoodItem[] }) {
 
 function NutritionDay({ day, index, fallbackCalories }: { day: PlanNutritionDay; index: number; fallbackCalories: number | null }) {
   const targets = [
-    { label: "کالری", value: day.targetCalories ?? fallbackCalories },
-    { label: "پروتئین", value: day.targetProtein },
-    { label: "کربوهیدرات", value: day.targetCarbs },
-    { label: "چربی", value: day.targetFat },
+    { label: "انرژی (کیلوکالری)", value: day.targetCalories ?? fallbackCalories },
+    { label: "پروتئین (گرم)", value: day.targetProtein },
+    { label: "کربوهیدرات (گرم)", value: day.targetCarbs },
+    { label: "چربی (گرم)", value: day.targetFat },
   ];
   return (
     <section className="pdf-day" data-pdf-block>
       <div className="pdf-day__head">
         <span className="pdf-day__badge">{faNumber(day.dayNumber || index + 1)}</span>
         <div>
-          <small>روز {faNumber(index + 1)}</small>
           <h3>{day.name}</h3>
         </div>
         <b>{faNumber(day.meals.length)} وعده</b>
@@ -138,7 +138,7 @@ function NutritionDay({ day, index, fallbackCalories }: { day: PlanNutritionDay;
         {targets.map((target) => (
           <div key={target.label}>
             <small>{target.label}</small>
-            <strong>{target.value ? faNumber(target.value) : "—"}</strong>
+            <strong>{faNumber(target.value)}</strong>
           </div>
         ))}
       </div>
@@ -149,14 +149,14 @@ function NutritionDay({ day, index, fallbackCalories }: { day: PlanNutritionDay;
             <div className="pdf-meal__head">
               <span className="pdf-meal__dot" />
               <strong>{meal.name}</strong>
-              <small>{meal.scheduledTime || "زمان آزاد"}</small>
+              {meal.scheduledTime ? <small>{faNumber(meal.scheduledTime)}</small> : null}
             </div>
             {meal.notes ? <p className="pdf-day__note">{meal.notes}</p> : null}
             <FoodTable foods={meal.foodItems} />
           </div>
         ))
       ) : (
-        <p className="pdf-muted">وعدهای برای این روز ثبت نشده است.</p>
+        <p className="pdf-muted">هنوز وعده‌ای برای این روز مشخص نشده است.</p>
       )}
     </section>
   );
@@ -164,22 +164,20 @@ function NutritionDay({ day, index, fallbackCalories }: { day: PlanNutritionDay;
 
 function Overview({ doc }: { doc: PlanDocumentData }) {
   const facts: Array<{ label: string; value: string }> = [
-    { label: "باشگاه", value: doc.gymName || "مربیگری مستقل" },
-    { label: "وضعیت طرح", value: PLAN_STATUS_LABEL[doc.status] || doc.status },
-    { label: "نوع طرح", value: doc.isTemplate ? "قالب آماده" : "اختصاصی شاگرد" },
-    { label: "شروع برنامه", value: doc.startDate ? formatPersianDate(doc.startDate) : "پس از توافق با مربی" },
-    { label: "پایان برنامه", value: doc.endDate ? formatPersianDate(doc.endDate) : "نامشخص" },
+    { label: "باشگاه", value: doc.gymName || "مربی مستقل" },
+    { label: "نوع برنامه", value: doc.isTemplate ? "الگوی آماده" : "برنامهٔ اختصاصی" },
+    { label: "تاریخ شروع", value: doc.startDate ? formatPersianDate(doc.startDate) : "تعیین نشده" },
+    { label: "تاریخ پایان", value: doc.endDate ? formatPersianDate(doc.endDate) : "تعیین نشده" },
   ];
   if (doc.kind === "nutrition") {
-    const nutrition = doc as NutritionDocument;
     facts.push({
-      label: "ملاحظات غذایی",
-      value: nutrition.dietaryRestrictions || "محدودیت خاصی ثبت نشده است.",
+      label: "محدودیت‌های غذایی",
+      value: doc.dietaryRestrictions || "محدودیتی ثبت نشده است",
     });
   }
   return (
     <section className="pdf-overview" data-pdf-block>
-      <SectionTitle number="۰۱" title="خلاصهٔ برنامه" hint="نگاهی سریع به محتوای این سند" />
+      <SectionTitle title="خلاصهٔ برنامه" />
       <div className="pdf-stats">
         {planTotals(doc).map((item) => (
           <div key={item.label}>
@@ -196,17 +194,11 @@ function Overview({ doc }: { doc: PlanDocumentData }) {
           </div>
         ))}
       </div>
-      {doc.genericPreview ? (
-        <p className="pdf-hint">این سند یک پیشنمایش کلی است؛ برای درج نام شاگرد، شاگرد را از بالای صفحه انتخاب کنید.</p>
-      ) : null}
     </section>
   );
 }
 
-/**
- * The printable A4 sheet. It is also the exact source used by the client-side
- * PDF exporter, so the download and the on-screen preview are identical.
- */
+/** Shared content for the responsive preview and A4 export. */
 export function PlanDocument({ doc }: { doc: PlanDocumentData }) {
   return (
     <div className="pdf-document">
@@ -217,11 +209,10 @@ export function PlanDocument({ doc }: { doc: PlanDocumentData }) {
               <span className="pdf-brand__mark">ک</span>
               <div>
                 <strong>کوجیما</strong>
-                <small>سامانهٔ تمرین و تغذیه</small>
               </div>
             </div>
             <div className="pdf-head__issue">
-              <small>تاریخ شمسی صدور</small>
+              <small>تاریخ صدور (شمسی)</small>
               <strong>{formatPersianDate(doc.issuedAt)}</strong>
             </div>
           </div>
@@ -229,27 +220,22 @@ export function PlanDocument({ doc }: { doc: PlanDocumentData }) {
           <div className="pdf-head__title">
             <span className="pdf-kicker">{PLAN_KIND_LABEL[doc.kind]}</span>
             <h1>{doc.title}</h1>
-            <p>{doc.description || "ساختار روزبهروز این برنامه در صفحههای بعد آمده است."}</p>
+            {doc.description ? <p>{doc.description}</p> : null}
           </div>
 
           <div className="pdf-head__meta">
             <div>
               <small>شاگرد</small>
-              <strong>{doc.studentName}</strong>
-              <em>{doc.studentEmail || "—"}</em>
+              <strong>{doc.genericPreview ? "بدون نام شاگرد" : doc.studentName}</strong>
+              {doc.studentEmail ? <em dir="ltr">{doc.studentEmail}</em> : null}
             </div>
             <div>
               <small>مربی</small>
               <strong>{doc.trainerName}</strong>
-              <em>{doc.trainerSpecialty || "مربی برنامه"}</em>
+              {doc.trainerSpecialty ? <em>{doc.trainerSpecialty}</em> : null}
             </div>
             <div>
-              <small>تاریخ شمسی</small>
-              <strong>{formatPersianDate(doc.issuedAt)}</strong>
-              <em>بهوقت تهران</em>
-            </div>
-            <div>
-              <small>نسخهٔ طرح</small>
+              <small>نسخهٔ برنامه</small>
               <strong>{faNumber(doc.version)}</strong>
               <em>{PLAN_STATUS_LABEL[doc.status] || doc.status}</em>
             </div>
@@ -260,11 +246,7 @@ export function PlanDocument({ doc }: { doc: PlanDocumentData }) {
           <Overview doc={doc} />
           {doc.days.length ? (
             <section className="pdf-days-intro" data-pdf-block>
-              <SectionTitle
-                number="۰۲"
-                title={doc.kind === "workouts" ? "روزهای تمرین" : "روزهای تغذیه"}
-                hint={`${faNumber(doc.days.length)} روز در این نسخه`}
-              />
+              <SectionTitle title={doc.kind === "workouts" ? "برنامهٔ روزهای تمرین" : "برنامهٔ غذایی روزانه"} />
             </section>
           ) : null}
           {doc.kind === "workouts"
@@ -275,10 +257,7 @@ export function PlanDocument({ doc }: { doc: PlanDocumentData }) {
           <footer className="pdf-foot" data-pdf-block>
             <span className="pdf-foot__mark">ک</span>
             <div>
-              <strong>کوجیما · همراه مسیر تمرین و تغذیهٔ شما</strong>
-              <small>
-                این سند در تاریخ {formatPersianDate(doc.issuedAt)} برای {doc.studentName} توسط {doc.trainerName} صادر شده است.
-              </small>
+              <strong>کوجیما</strong>
             </div>
             <b>{PLAN_KIND_LABEL[doc.kind]}</b>
           </footer>
@@ -292,9 +271,7 @@ export function PlanDocument({ doc }: { doc: PlanDocumentData }) {
           <strong>کوجیما</strong>
           <small>{runningHeaderLine(doc)}</small>
         </div>
-        <b>{formatPersianDate(doc.issuedAt)}</b>
       </div>
-      <p className="pdf-running-note">نمونهٔ سربرگ تکرارشونده در صفحههای بعد فایل PDF</p>
     </div>
   );
 }

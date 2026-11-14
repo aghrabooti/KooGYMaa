@@ -84,7 +84,7 @@ export default async function UserWorkoutsPage({ searchParams }: PageProps) {
       )}
       {assignment ? (
         <>
-          <section className="member-plan-hero"><span><Icon name="dumbbell" size={25} /></span><div><small>طرح فعال · نسخه {assignment.plan.version}</small><h2>{assignment.plan.title}</h2><p>مربی {assignment.plan.trainer.user.name} · شروع {assignment.startDate ? date(assignment.startDate) : "اخیراً"}</p></div><div><strong>{assignment.plan.days.length}</strong><span>روز تمرینی</span></div><div className="member-plan-pdf"><a className="member-secondary-button" href={`/plans/preview?kind=workouts&planId=${assignment.plan.id}`}>پیشنمایش سند</a><a className="member-primary-button" href={`/plans/preview?kind=workouts&planId=${assignment.plan.id}&download=1`}>دانلود PDF</a></div></section>
+          <section className="member-plan-hero"><span><Icon name="dumbbell" size={25} /></span><div><small>طرح فعال · نسخه {assignment.plan.version}</small><h2>{assignment.plan.title}</h2><p>مربی {assignment.plan.trainer.user.name} · شروع {assignment.startDate ? date(assignment.startDate) : "اخیراً"}</p></div><div><strong>{assignment.plan.days.length}</strong><span>روز تمرینی</span></div><div className="member-plan-pdf"><a className="member-secondary-button" href={`/plans/preview?kind=workouts&planId=${assignment.plan.id}`}>پیش‌نمایش برنامه</a><a className="member-primary-button" href={`/plans/preview?kind=workouts&planId=${assignment.plan.id}&download=1`}>دانلود PDF</a></div></section>
           <div className="member-workout-grid">
             {assignment.plan.days.map((day: any) => (
               <article key={day.id}>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { exportPlanPdf } from "@/components/plans/export-plan-pdf";
+import { faNumber } from "@/lib/plan-document";
 
 type StudentOption = { id: string; name: string; assigned: boolean };
 
@@ -34,14 +35,14 @@ export function PlanExportToolbar({
   const download = useCallback(async () => {
     if (pending) return;
     setPending(true);
-    setStatus({ text: "در حال آمادهسازی فایل PDF…", error: false });
+    setStatus({ text: "فایل PDF در حال آماده شدن است…", error: false });
     try {
       await document.fonts.ready;
       const pages = await exportPlanPdf(filename, documentTitle);
-      setStatus({ text: `فایل PDF با ${pages} صفحه آماده و دانلود شد.`, error: false });
-    } catch (error) {
+      setStatus({ text: `فایل ${faNumber(pages)} صفحه‌ای آماده شد و دانلود آن شروع شد.`, error: false });
+    } catch {
       setStatus({
-        text: error instanceof Error ? error.message : "ساخت فایل PDF انجام نشد؛ دوباره تلاش کنید.",
+        text: "فایل PDF آماده نشد. دوباره تلاش کنید.",
         error: true,
       });
     } finally {
@@ -74,14 +75,11 @@ export function PlanExportToolbar({
     <>
       <div className="pdf-toolbar">
         <div className="pdf-toolbar__lead">
-          <span className="pdf-toolbar__badge">PDF</span>
           <div>
-            <strong>پیشنمایش و خروجی سند</strong>
-            <small>
-              {genericPreview
-                ? "پیشنمایش کلی طرح · برای درج نام شاگرد، یکی را انتخاب کنید"
-                : "سربرگ سند شامل تاریخ شمسی، نام شاگرد و نام مربی است"}
-            </small>
+            <strong>پیش‌نمایش برنامه</strong>
+            {genericPreview && students.length > 0 ? (
+              <small>برای درج نام شاگرد در فایل، او را از فهرست انتخاب کنید.</small>
+            ) : null}
           </div>
         </div>
         <div className="pdf-toolbar__actions">
@@ -93,11 +91,11 @@ export function PlanExportToolbar({
                 onChange={(event) => changeStudent(event.target.value)}
                 disabled={pending}
               >
-                <option value="">بدون شاگرد</option>
+                <option value="">بدون نام شاگرد</option>
                 {students.map((student) => (
                   <option key={student.id} value={student.id}>
                     {student.name}
-                    {student.assigned ? " · تخصیص یافته" : ""}
+                    {student.assigned ? " (دریافت‌کنندهٔ برنامه)" : ""}
                   </option>
                 ))}
               </select>
@@ -110,7 +108,7 @@ export function PlanExportToolbar({
             چاپ
           </button>
           <button className="pdf-btn pdf-btn--primary" type="button" onClick={() => void download()} disabled={pending}>
-            {pending ? "در حال ساخت فایل…" : "دانلود PDF"}
+            {pending ? "در حال آماده‌سازی…" : "دانلود PDF"}
           </button>
         </div>
       </div>

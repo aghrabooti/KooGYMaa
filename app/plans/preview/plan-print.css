@@ -11,7 +11,6 @@
   unicode-bidi: isolate;
 }
 .pdf-page .pdf-sheet { box-shadow: 0 24px 65px rgba(18, 24, 18, 0.18); }
-.pdf-page .pdf-running { box-shadow: 0 12px 28px rgba(18, 24, 18, 0.12); }
 
 .pdf-page {
   background: #eef0ea;
@@ -44,20 +43,6 @@
   color: #e9ede7;
 }
 .pdf-toolbar__lead { align-items: center; display: flex; gap: 11px; min-width: 0; }
-.pdf-toolbar__badge {
-  align-items: center;
-  background: #bde858;
-  border-radius: 10px;
-  color: #1f2a19;
-  display: inline-flex;
-  flex: none;
-  font-size: 11px;
-  font-weight: 800;
-  height: 38px;
-  justify-content: center;
-  letter-spacing: 0.5px;
-  width: 44px;
-}
 .pdf-toolbar__lead strong { display: block; font-size: 14px; }
 .pdf-toolbar__lead small { color: #6b756b; display: block; font-size: 11.5px; line-height: 1.6; }
 .theme-dark .pdf-toolbar__lead small { color: #aeb9ad; }
@@ -121,6 +106,7 @@
   line-height: 1.75;
   margin: 0 auto;
   overflow: hidden;
+  overflow-wrap: anywhere;
   width: 210mm;
 }
 .pdf-sheet :is(h1, h2, h3, p, small, strong, em, b, th, td) { color: inherit; }
@@ -147,7 +133,6 @@
   width: 34px;
 }
 .pdf-brand strong { display: block; font-size: 13pt; font-weight: 850; line-height: 1.25; }
-.pdf-brand small { color: #aebcb0; display: block; font-size: 7.5pt; }
 .pdf-head__issue { text-align: left; }
 .pdf-head__issue small { color: #aebcb0; display: block; font-size: 7.5pt; }
 .pdf-head__issue strong { color: #bde858; display: block; font-size: 11pt; font-weight: 800; }
@@ -163,7 +148,7 @@
 .pdf-head__title h1 { font-size: 22pt; font-weight: 850; line-height: 1.25; margin: 2mm 0 2mm; }
 .pdf-head__title p { color: #c8d3c8; font-size: 9pt; line-height: 1.8; margin: 0; max-width: 165mm; }
 
-.pdf-head__meta { display: grid; gap: 3mm; grid-template-columns: repeat(4, 1fr); margin-top: 9mm; }
+.pdf-head__meta { display: grid; gap: 3mm; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 9mm; }
 .pdf-head__meta > div {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(189, 232, 88, 0.22);
@@ -175,22 +160,8 @@
 .pdf-head__meta em { color: #c8d3c8; display: block; font-size: 7pt; font-style: normal; line-height: 1.5; }
 
 .pdf-body { padding: 10mm 16mm 12mm; }
-.pdf-section-title { align-items: center; border-bottom: 1px solid #e2e6dd; display: flex; gap: 3mm; padding-bottom: 3mm; }
-.pdf-section-title > span {
-  align-items: center;
-  background: #eef7dc;
-  border-radius: 6px;
-  color: #4c6a24;
-  display: inline-flex;
-  flex: none;
-  font-size: 8pt;
-  font-weight: 850;
-  height: 24px;
-  justify-content: center;
-  width: 26px;
-}
+.pdf-section-title { border-bottom: 1px solid #e2e6dd; padding-bottom: 3mm; }
 .pdf-section-title h2 { font-size: 13pt; font-weight: 800; margin: 0; }
-.pdf-section-title small { color: #7d887d; font-size: 8pt; margin-inline-start: auto; }
 
 .pdf-overview { margin-bottom: 8mm; }
 .pdf-stats { display: grid; gap: 3mm; grid-template-columns: repeat(4, 1fr); margin: 5mm 0; }
@@ -207,15 +178,6 @@
 .pdf-facts > div { border-bottom: 1px dashed #e2e6dd; display: flex; gap: 3mm; justify-content: space-between; padding: 2mm 0; }
 .pdf-facts small { color: #7d887d; flex: none; font-size: 8pt; }
 .pdf-facts span { font-size: 9pt; font-weight: 700; text-align: left; }
-.pdf-hint {
-  background: #fff8e8;
-  border: 1px solid #f0dca6;
-  border-radius: 7px;
-  color: #7a5b16;
-  font-size: 8.5pt;
-  margin: 5mm 0 0;
-  padding: 3mm 4mm;
-}
 .pdf-days-intro { margin-bottom: 2mm; }
 
 .pdf-day {
@@ -240,7 +202,6 @@
   width: 32px;
 }
 .pdf-day__head > div { flex: 1; min-width: 0; }
-.pdf-day__head small { color: #7d887d; display: block; font-size: 7.5pt; }
 .pdf-day__head h3 { font-size: 12pt; font-weight: 800; line-height: 1.4; margin: 0; }
 .pdf-day__head > b {
   background: #eef7dc;
@@ -268,6 +229,7 @@
 .pdf-table tbody tr:last-child td { border-bottom: 0; }
 .pdf-table .pdf-strong { font-weight: 750; color: #1e2620; }
 .pdf-table .pdf-note { color: #6b756b; font-size: 7.5pt; }
+.pdf-cell-label { display: none; }
 
 .pdf-targets { display: grid; gap: 2mm; grid-template-columns: repeat(4, 1fr); margin: 4mm 0 1mm; }
 .pdf-targets > div { background: #f6f9f0; border-radius: 7px; padding: 2.5mm; text-align: center; }
@@ -305,7 +267,6 @@
 }
 .pdf-foot > div { flex: 1; min-width: 0; }
 .pdf-foot strong { display: block; font-size: 9.5pt; font-weight: 800; }
-.pdf-foot small { color: #b9c6b9; display: block; font-size: 7.5pt; line-height: 1.7; }
 .pdf-foot > b { color: #bde858; flex: none; font-size: 8pt; font-weight: 800; }
 
 /* سربرگ کوتاهی که در صفحههای دوم به بعد فایل PDF تکرار میشود */
@@ -315,7 +276,7 @@
   border-bottom: 1.2mm solid #bde858;
   color: #ffffff;
   direction: rtl;
-  display: flex;
+  display: none;
   font-family: var(--font-estedad), Tahoma, sans-serif;
   gap: 3.5mm;
   padding: 3mm 16mm;
@@ -337,20 +298,46 @@
 .pdf-running > div { flex: 1; min-width: 0; }
 .pdf-running strong { display: block; font-size: 9pt; font-weight: 800; }
 .pdf-running small { color: #c8d3c8; display: block; font-size: 7.5pt; line-height: 1.5; }
-.pdf-running > b { color: #bde858; flex: none; font-size: 8pt; }
-.pdf-running-note {
-  color: #7d887d;
-  direction: rtl;
-  font-size: 11px;
-  margin: 10px auto 0;
-  max-width: 210mm;
-  text-align: center;
-}
-.theme-dark .pdf-running-note { color: #aeb9ad; }
-
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
   .pdf-page { padding: 12px 8px 40px; }
   .pdf-toolbar { position: static; }
+  .pdf-sheet { width: 100%; }
+}
+
+@media screen and (max-width: 640px) {
+  .pdf-toolbar { gap: 10px; margin-bottom: 12px; padding: 12px; }
+  .pdf-toolbar__lead small { font-size: 12px; }
+  .pdf-toolbar__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .pdf-student-pick, .pdf-btn--primary { grid-column: 1 / -1; }
+  .pdf-student-pick select { flex: 1; min-width: 0; font-size: 16px; }
+  .pdf-btn { min-height: 44px; padding-inline: 8px; }
+  .pdf-head, .pdf-body { padding: 16px; }
+  .pdf-head__top { gap: 10px; }
+  .pdf-head__title { margin-top: 16px; }
+  .pdf-head__title h1 { font-size: 22px; }
+  .pdf-head__meta { gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 16px; }
+  .pdf-head__meta > div { padding: 8px; }
+  .pdf-stats, .pdf-targets { gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pdf-facts { grid-template-columns: 1fr; }
+  .pdf-day { padding: 12px; }
+  .pdf-day__head { gap: 8px; }
+  .pdf-day__head > b { padding-inline: 8px; }
+  .pdf-table, .pdf-table tbody { display: block; }
+  .pdf-table thead { position: absolute; clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
+  .pdf-table tbody tr {
+    background: #f6f9f0;
+    border-radius: 8px;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 8px;
+    padding: 10px;
+  }
+  .pdf-table tbody td { border: 0; display: block; font-size: 13px; padding: 0; }
+  .pdf-table .pdf-strong, .pdf-table .pdf-note { grid-column: 1 / -1; }
+  .pdf-table .pdf-strong { order: -1; }
+  .pdf-cell-label { color: #5f6a5f; display: block; font-size: 11px; font-weight: 500; }
+  .pdf-foot { flex-wrap: wrap; padding: 12px; }
 }
 
 /* ── چاپ مستقیم از مرورگر (مسیر دوم خروجی PDF) ───────────────────────── */
@@ -359,7 +346,7 @@
   html, body { background: #ffffff !important; }
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .pdf-page { background: #ffffff !important; padding: 0 !important; }
-  .pdf-toolbar, .pdf-status, .pdf-running, .pdf-running-note { display: none !important; }
+  .pdf-toolbar, .pdf-status, .pdf-running { display: none !important; }
   .pdf-document { max-width: none; }
   .pdf-sheet { box-shadow: none; margin: 0; width: 210mm; }
   .pdf-head { break-after: avoid; page-break-after: avoid; }

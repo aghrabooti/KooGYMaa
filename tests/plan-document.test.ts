@@ -104,8 +104,8 @@ describe("سند PDF برنامههای تمرین و تغذیه", () => {
   it("خلاصهٔ آمار هر دو نوع طرح و نام فایل امن را میسازد", () => {
     expect(planTotals(workout()).map((item) => item.label)).toEqual([
       "روزهای تمرین",
-      "حرکتهای ثبتشده",
-      "مجموع ستثها",
+      "تعداد حرکت‌ها",
+      "تعداد کل ست‌ها",
       "شمارهٔ نسخه",
     ]);
     expect(planTotals(workout())[1].value).toBe("۲");
@@ -122,7 +122,7 @@ describe("سند PDF برنامههای تمرین و تغذیه", () => {
     expect(doc).toContain('id="pdf-head"');
     expect(doc).toContain("شاگرد");
     expect(doc).toContain("مربی");
-    expect(doc).toContain("تاریخ شمسی");
+    expect(doc).toContain("تاریخ صدور (شمسی)");
 
     const css = file("app/plans/preview/plan-print.css");
     expect(css).toContain("@page { size: A4 portrait; margin: 0; }");

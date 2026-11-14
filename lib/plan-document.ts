@@ -101,9 +101,9 @@ export const PLAN_KIND_SHORT: Record<PlanKind, string> = {
 };
 
 export const PLAN_STATUS_LABEL: Record<string, string> = {
-  DRAFT: "پیشنویس",
+  DRAFT: "پیش‌نویس",
   ACTIVE: "فعال",
-  ARCHIVED: "بایگانیشده",
+  ARCHIVED: "بایگانی‌شده",
 };
 
 /**
@@ -158,8 +158,8 @@ export function planTotals(doc: PlanDocumentData): Array<{ label: string; value:
     );
     return [
       { label: "روزهای تمرین", value: faNumber(doc.days.length) },
-      { label: "حرکتهای ثبتشده", value: faNumber(exercises) },
-      { label: "مجموع ستثها", value: faNumber(sets) },
+      { label: "تعداد حرکت‌ها", value: faNumber(exercises) },
+      { label: "تعداد کل ست‌ها", value: faNumber(sets) },
       { label: "شمارهٔ نسخه", value: faNumber(doc.version) },
     ];
   }
@@ -170,13 +170,18 @@ export function planTotals(doc: PlanDocumentData): Array<{ label: string; value:
   );
   return [
     { label: "روزهای برنامه", value: faNumber(doc.days.length) },
-    { label: "وعدههای غذایی", value: faNumber(meals) },
+    { label: "وعده‌های غذایی", value: faNumber(meals) },
     { label: "مواد غذایی", value: faNumber(foods) },
-    { label: "هدف کالری روزانه", value: doc.dailyCalories ? faNumber(doc.dailyCalories) : "منعطف" },
+    { label: "هدف روزانه (کیلوکالری)", value: faNumber(doc.dailyCalories, "تعیین نشده") },
   ];
 }
 
 /** Compact one-line header repeated on every PDF page after the first. */
 export function runningHeaderLine(doc: PlanDocumentData): string {
-  return `${PLAN_KIND_LABEL[doc.kind]} «${doc.title}» · شاگرد: ${doc.studentName} · مربی: ${doc.trainerName} · ${formatPersianDate(doc.issuedAt)}`;
+  return [
+    `${PLAN_KIND_LABEL[doc.kind]} «${doc.title}»`,
+    doc.genericPreview ? null : `شاگرد: ${doc.studentName}`,
+    `مربی: ${doc.trainerName}`,
+    formatPersianDate(doc.issuedAt),
+  ].filter(Boolean).join(" · ");
 }
