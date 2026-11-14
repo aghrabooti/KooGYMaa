@@ -30,7 +30,7 @@ export async function POST(request: NextRequest, { params }: Context) {
       create: { planId: plan.id, userId: client.userId, trainerClientId: client.id, status: "ACTIVE", startDate: validation.data.startDate ?? new Date(), endDate: validation.data.endDate },
       select: { id: true, status: true, assignedAt: true },
     });
-    await transaction.notification.create({ data: { userId: client.userId, type: "PLAN_ASSIGNED", title: "New workout plan", message: `${plan.title} is ready for you.`, href: "/user/workouts" } });
+    await transaction.notification.create({ data: { userId: client.userId, type: "PLAN_ASSIGNED", title: "برنامه تمرینی تازه", message: `برنامه «${plan.title}» برای شما آماده است.`, href: "/user/workouts" } });
     return created;
   });
   return NextResponse.json({ assignment }, { status: 201 });
