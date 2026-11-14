@@ -26,7 +26,7 @@ export function AuthShell({ eyebrow, title, description, children }: AuthShellPr
 
   return (
     <main className="auth-page">
-      <section className="auth-story" aria-label="About KooGYMaa">
+      <section className="auth-story" aria-label="درباره کوجیما">
         <div className="auth-story__glow" />
         <Brand light />
         <span className="auth-brand-fa">{t("brand.fa")}</span>
