@@ -6,8 +6,8 @@ import { createT } from "@/lib/i18n/translations";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Meet the trainers",
-  description: "Available trainers on KooGYMaa — specialties, experience, transparent pricing and verified reviews.",
+  title: "آشنایی با مربیها",
+  description: "مربیهای کوجیما — تخصص، سابقه، قیمت شفاف و نظرات تأییدشده.",
 };
 
 export default async function PublicTrainersPage() {
