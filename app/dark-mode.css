@@ -1,0 +1,961 @@
+/* ══════════════════════════════════════════════════════════════════════
+   لایهٔ جامع حالت شب — KooGYMaa dark-mode completeness layer
+   ──────────────────────────────────────────────────────────────────────
+   «globals.css» صدها سطح رنگی با مقادیر ثابت (white / #f7f8f4 / #dfe1da)
+   دارد. بخش «Dark theme» آن فقط تعدادی از آن‌ها را پوشش میداد؛ برای همین
+   قاب «افزودن طرح تازه» و کارت‌های برنامهٔ تمرین/تغذیه در حالت شب روشن
+   میماندند.
+
+   این فایل بعد از «globals.css» و «usability.css» وارد میشود و سه بخش دارد:
+   ۱) متغیرهای سطح/متن/خط که در حالت شب جابهجا میشوند.
+   ۲) پوشش خودکار تمام سطوح و قاب‌هایی که رنگ روشن ثابت داشتند.
+   ۳) اصلاحات دستی برای رنگ‌های معنایی، افکت‌ها، کنترل‌ها و پیام‌ها.
+
+   نگهداری: اگر قانونی با رنگ روشن تازه به «globals.css» اضافه شد،
+   «tests/dark-mode.test.ts» شکست میخورد تا معادل تاریک آن هم افزوده شود.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── ۱. توکن‌های سطوح، متن و خط ─────────────────────────────────────── */
+:root {
+  --card-bg: #f7f8f4;
+  --card-bg-raised: #ffffff;
+  --field-bg: #fafbf8;
+  --hover-bg: #eef0ea;
+  --line-soft: #e7e9e3;
+  --text-soft: #697168;
+  --text-strong: #171b17;
+}
+
+.theme-dark {
+  color-scheme: dark;
+  --card-bg: #121a14;
+  --card-bg-raised: #161c16;
+  --field-bg: #0d130f;
+  --hover-bg: #1e281f;
+  --line-soft: #2a322b;
+  --text-soft: #aeb9ad;
+  --text-strong: #e9ede7;
+  scrollbar-color: #3b473d #0d120e;
+}
+
+/* ── ۲. پوشش خودکار سطوح و قاب‌ها ────────────────────────────────────── */
+/* هر قانون زیر معادل تاریکِ یک سطح/قاب روشن در «globals.css» است. */
+.theme-dark .product-card {
+  background-color: var(--card-bg);
+}
+.theme-dark .session-strip__people span {
+  background-color: var(--hover-bg);
+  border-color: var(--line-soft);
+  color: var(--text-strong);
+}
+.theme-dark .mini-stats > div {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .chart-card {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .chart-card__heading > span {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-soft);
+}
+.theme-dark .feature-card {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .feature-card--violet .feature-card__icon {
+  background-color: var(--card-bg);
+}
+.theme-dark .confidence-section {
+  background-color: var(--card-bg);
+}
+.theme-dark .auth-page {
+  background-color: var(--paper-2);
+}
+.theme-dark .field__control {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+  color: var(--text-soft);
+}
+.theme-dark .button-loader {
+  border-color: var(--line-soft);
+}
+.theme-dark .role-picker label {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .role-picker label.active {
+  background-color: var(--field-bg);
+}
+.theme-dark .role-picker label > span {
+  background-color: var(--field-bg);
+}
+.theme-dark .dashboard-shell {
+  background-color: var(--paper-2);
+}
+.theme-dark .dashboard-topbar {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .icon-button > span {
+  border-color: var(--line-soft);
+}
+.theme-dark .dashboard-stat {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .dashboard-stat__icon {
+  background-color: var(--card-bg);
+}
+.theme-dark .dashboard-panel {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .dashboard-panel__header button {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-soft);
+}
+.theme-dark .activity-summary > span {
+  background-color: var(--card-bg);
+}
+.theme-dark .progress-legend {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .progress-legend span:last-child i {
+  background-color: var(--hover-bg);
+}
+.theme-dark .schedule-item {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .schedule-people span {
+  background-color: var(--hover-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .schedule-people span:nth-child(2) {
+  background-color: var(--card-bg);
+  color: var(--text-strong);
+}
+.theme-dark .schedule-people span:nth-child(3) {
+  background-color: var(--card-bg);
+  color: var(--text-soft);
+}
+.theme-dark .workspace-page {
+  background-color: var(--paper-2);
+}
+.theme-dark .workspace-page__header {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .workspace-card {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .workspace-card__stats {
+  border-bottom-color: var(--line-soft);
+  border-top-color: var(--line-soft);
+}
+.theme-dark .workspace-empty {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-shell {
+  background-color: var(--paper-2);
+}
+.theme-dark .admin-metric-card {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-panel {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-panel__heading > span {
+  background-color: var(--card-bg);
+  color: var(--text-soft);
+}
+.theme-dark .admin-bar-chart {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .admin-request-list > a {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .admin-quick-grid > a {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-summary-strip {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-summary-strip > div {
+  border-left-color: var(--line-soft);
+}
+.theme-dark .admin-toolbar form {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-soft);
+}
+.theme-dark .admin-table th {
+  background-color: var(--card-bg);
+  border-bottom-color: var(--line-soft);
+  color: var(--text-soft);
+}
+.theme-dark .admin-table td {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .admin-table tbody tr:hover {
+  background-color: var(--card-bg);
+}
+.theme-dark .admin-person > span {
+  background-color: var(--hover-bg);
+}
+.theme-dark .admin-row-actions button {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-strong);
+}
+.theme-dark .admin-subscription-actions button {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-strong);
+}
+.theme-dark .admin-inline-form {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-inline-form input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-inline-form select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-create-form input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-create-form select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-settings-form input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-settings-form select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-settings-form textarea {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-create-form {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-trainer-card {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-plan-card {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .admin-trainer-card__meta {
+  border-bottom-color: var(--line-soft);
+  border-top-color: var(--line-soft);
+}
+.theme-dark .admin-trainer-card .admin-row-actions {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .admin-plan-price {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .admin-mobile-header {
+  background-color: var(--card-bg-raised);
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .admin-mobile-header > a:last-child {
+  background-color: var(--card-bg);
+}
+.theme-dark .admin-mobile-nav {
+  background-color: var(--card-bg-raised);
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .trainer-shell {
+  background-color: var(--paper-2);
+}
+.theme-dark .trainer-metric-grid article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-panel {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-session-list > a {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-session-list > a > b {
+  background-color: var(--card-bg);
+  color: var(--text-soft);
+}
+.theme-dark .trainer-tool-list > a {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-tool-disabled {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-form-grid input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-form-grid select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-form-grid textarea {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-inline-form input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-inline-form select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-slot-list select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-slot-list input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-search {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+  color: var(--text-soft);
+}
+.theme-dark .trainer-summary {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-summary > div {
+  border-left-color: var(--line-soft);
+}
+.theme-dark .trainer-gym-grid > article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-student-grid > article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-gym-stats {
+  border-bottom-color: var(--line-soft);
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-student-context {
+  background-color: var(--card-bg);
+  color: var(--text-soft);
+}
+.theme-dark .trainer-student-stats {
+  border-bottom-color: var(--line-soft);
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-row-actions button {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-strong);
+}
+.theme-dark .trainer-session-actions button {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-strong);
+}
+.theme-dark .trainer-row-actions button.approve {
+  background-color: var(--card-bg);
+}
+.theme-dark .trainer-session-actions button.complete {
+  background-color: var(--card-bg);
+}
+.theme-dark .trainer-inline-form {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-session-form {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-schedule-list article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-slot-list button {
+  background-color: var(--card-bg);
+}
+.theme-dark .trainer-history article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-mobile-header {
+  background-color: var(--card-bg-raised);
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .trainer-mobile-nav {
+  background-color: var(--card-bg-raised);
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .trainer-plan-create {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-plan-grid > article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-plan-stats {
+  border-bottom-color: var(--line-soft);
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-plan-actions button {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-strong);
+}
+.theme-dark .trainer-plan-editor__meta {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-plan-editor__meta input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-plan-editor__meta select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-plan-editor__meta textarea {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-plan-editor__meta input:disabled {
+  background-color: var(--field-bg);
+  color: var(--text-soft);
+}
+.theme-dark .trainer-plan-editor__meta select:disabled {
+  background-color: var(--field-bg);
+  color: var(--text-soft);
+}
+.theme-dark .trainer-plan-editor__meta textarea:disabled {
+  background-color: var(--field-bg);
+  color: var(--text-soft);
+}
+.theme-dark .trainer-plan-editor__meta > aside {
+  border-left-color: var(--line-soft);
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-workout-day {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .nutrition-day {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-workout-day > header {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .nutrition-day > header {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .trainer-workout-day input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .nutrition-day input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-workout-day input:disabled {
+  background-color: var(--field-bg);
+  color: var(--text-soft);
+}
+.theme-dark .nutrition-day input:disabled {
+  background-color: var(--field-bg);
+  color: var(--text-soft);
+}
+.theme-dark .trainer-workout-day header > button {
+  background-color: var(--card-bg);
+}
+.theme-dark .nutrition-day header > button {
+  background-color: var(--card-bg);
+}
+.theme-dark .trainer-exercise-row > button {
+  background-color: var(--card-bg);
+}
+.theme-dark .nutrition-food-row > button {
+  background-color: var(--card-bg);
+}
+.theme-dark .trainer-exercise-row {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-add-row {
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-add-day {
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-assign-form input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-assign-form select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-assignment-list article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-assignment-list article > span {
+  background-color: var(--card-bg);
+}
+.theme-dark .trainer-assignment-list article > button {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .nutrition-meal {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .nutrition-food-row {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-shell {
+  background-color: var(--paper-2);
+}
+.theme-dark .member-panel {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-workout-grid>article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-nutrition-grid>article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-workout-grid article>header {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .member-nutrition-grid article>header {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .member-workout-grid article>div:nth-child(2)>div {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-nutrition-grid article>div:nth-child(2)>section {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-workout-grid article>div span {
+  background-color: var(--card-bg);
+}
+.theme-dark .member-history article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-exercise-log {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-meal-log {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-exercise-log__head {
+  background-color: var(--card-bg);
+  color: var(--text-soft);
+}
+.theme-dark .member-exercise-log article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-exercise-log article.is-done {
+  background-color: var(--card-bg);
+}
+.theme-dark .member-meal-log article.is-done {
+  background-color: var(--card-bg);
+}
+.theme-dark .member-exercise-log article>label span {
+  border-color: var(--line-soft);
+}
+.theme-dark .member-meal-log article>label span {
+  border-color: var(--line-soft);
+}
+.theme-dark .member-exercise-log input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-meal-log input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-log-summary input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-log-summary textarea {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-log-summary {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-meal-log article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-progress-metrics article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-measurements>div:nth-child(2) span {
+  background-color: var(--card-bg);
+}
+.theme-dark .member-feedback>div>article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-feedback header b {
+  background-color: var(--card-bg);
+  color: var(--text-soft);
+}
+.theme-dark .member-feedback-reply {
+  background-color: var(--card-bg);
+}
+.theme-dark .member-reply-form textarea {
+  border-color: var(--line-soft);
+}
+.theme-dark .member-reply-form button {
+  background-color: var(--card-bg);
+}
+.theme-dark .member-measurement-form {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-measurement-form input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-measurement-form select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-notifications>a {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-notifications>div:not(.member-empty) {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-progress-grid>a {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-progress-card__meta {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-client-metrics article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-execution-feed article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-client-measurements article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-feedback-form {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-feedback-form select {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-feedback-form textarea {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .trainer-feedback-history article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .trainer-feedback-history article>div {
+  background-color: var(--card-bg);
+}
+.theme-dark .member-mobile-header {
+  background-color: var(--card-bg-raised);
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .member-mobile-nav {
+  background-color: var(--card-bg-raised);
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .member-dashboard-metrics article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-today>div:last-child>a {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-dashboard-notifications>div>a {
+  background-color: var(--card-bg);
+}
+.theme-dark .trainer-location-list>a {
+  background-color: var(--card-bg);
+}
+.theme-dark .trainer-availability-public>div {
+  border-bottom-color: var(--line-soft);
+}
+.theme-dark .member-schedule article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-subscription-list>article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .member-profile-form {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .member-profile-form input {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .review-editor {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .review-editor textarea {
+  background-color: var(--field-bg);
+  border-color: var(--line-soft);
+}
+.theme-dark .review-eligibility {
+  background-color: var(--card-bg);
+  color: var(--text-soft);
+}
+.theme-dark .checkout-card {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .checkout-summary {
+  background-color: var(--card-bg);
+}
+.theme-dark .checkout-summary>div {
+  border-left-color: var(--line-soft);
+  border-top-color: var(--line-soft);
+}
+.theme-dark .demo-payment-banner {
+  background-color: var(--card-bg);
+}
+.theme-dark .checkout-result {
+  background-color: var(--card-bg);
+}
+.theme-dark .checkout-result--failed {
+  background-color: var(--card-bg);
+}
+.theme-dark .checkout-result--cancelled {
+  background-color: var(--card-bg);
+}
+.theme-dark .payment-flash {
+  background-color: var(--card-bg);
+}
+.theme-dark .payment-flash--failed {
+  background-color: var(--card-bg);
+}
+.theme-dark .payment-history article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .admin-refund-action button {
+  background-color: var(--card-bg);
+}
+.theme-dark .audit-timeline article {
+  border-top-color: var(--line-soft);
+}
+.theme-dark .audit-timeline article>span {
+  background-color: var(--card-bg);
+}
+.theme-dark .system-state {
+  background-color: var(--paper-2);
+}
+.theme-dark .system-state a+ a {
+  background-color: var(--card-bg);
+  color: var(--text-strong);
+}
+.theme-dark .system-state button+ a {
+  background-color: var(--card-bg);
+  color: var(--text-strong);
+}
+.theme-dark .loading-shell {
+  background-color: var(--paper-2);
+}
+.theme-dark .loading-shell section>span {
+  background-color: var(--hover-bg);
+}
+.theme-dark .loading-shell i {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .loading-shell article {
+  background-color: var(--card-bg-raised);
+  border-color: var(--line-soft);
+}
+.theme-dark .auth-theme.theme-toggle {
+  background-color: var(--card-bg);
+  border-color: var(--line-soft);
+  color: var(--text-strong);
+}
+.theme-dark .auth-theme.theme-toggle:hover {
+  background-color: var(--hover-bg);
+}
+.theme-dark .account-panel {
+  background-color: var(--card-bg-raised);
+}
+.theme-dark .member-today-card {
+  background-color: var(--card-bg-raised);
+}
+.theme-dark .rest-timer {
+  background-color: var(--card-bg-raised);
+}
+.theme-dark .progress-chart {
+  background-color: var(--card-bg-raised);
+}
+.theme-dark .public-grid article {
+  background-color: var(--card-bg-raised);
+}
+.theme-dark .mobile-drawer__panel {
+  background-color: var(--card-bg-raised);
+}
+.theme-dark .admin-mobile-header > a {
+  background-color: var(--card-bg);
+}
+
+/* ── ۳. اصلاحات دستی ───────────────────────────────────────────────── */
+
+/* قاب «طرح تازه»، کارت‌ها و ویرایشگر روزها: سایهٔ تیره به جای سایهٔ روشن */
+.theme-dark :is(.trainer-plan-create, .trainer-plan-grid > article,
+  .trainer-plan-editor__meta, .trainer-workout-day, .nutrition-day,
+  .nutrition-meal, .trainer-assignment-list article) {
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .42);
+}
+.theme-dark .trainer-plan-create { border-color: var(--line-soft); }
+
+/* آیکون‌های رنگی بالای کارت‌ها، سربرگ روزها و فهرست تکالیف */
+.theme-dark :is(.trainer-plan-card__top > span,
+  .trainer-workout-day > header > span, .nutrition-day > header > span,
+  .trainer-assignment-list article > span) {
+  background: rgba(255, 130, 91, .16);
+  color: #ffa585;
+}
+.theme-dark .trainer-plan-grid--nutrition .trainer-plan-card__top > span {
+  background: rgba(201, 243, 107, .14);
+  color: #cdf07a;
+}
+.theme-dark .feature-card--violet .feature-card__icon {
+  background: rgba(158, 140, 246, .18);
+  color: #c3b6ff;
+}
+
+/* هشدارها، خطاها و پیام‌های موفقیت با رنگ معنایی */
+.theme-dark :is(.form-alert, .form-error, .member-form-error,
+  .trainer-form-error, .admin-form-error, .trainer-plan-notice) {
+  background: #2a1714;
+  border-color: #5a2b22;
+  color: #ffb79c;
+}
+.theme-dark :is(.form-success, .trainer-form-success, .admin-form-success) {
+  background: #16240f;
+  border-color: #3f5a22;
+  color: #c4e69a;
+}
+
+/* متن‌های ثانویه‌ای که رنگ خاکستری ثابت داشتند */
+.theme-dark :is(.trainer-form-grid label > span, .trainer-inline-form label > span,
+  .admin-create-form__heading span, .admin-create-form__heading > button,
+  .trainer-session-form__heading span, .trainer-session-form__heading > button,
+  .trainer-plan-grid article > small, .trainer-plan-grid article > p,
+  .trainer-plan-stats small, .trainer-plan-kcal span,
+  .trainer-plan-editor__meta label > span, .trainer-plan-editor__meta aside small,
+  .trainer-exercise-head, .nutrition-food-head, .nutrition-targets label,
+  .trainer-assignment-list small, .trainer-assignment-list article > small,
+  .member-progress-metrics p, .member-measurements span small,
+  .member-weight-chart small, .progress-copy p, .progress-legend span,
+  .member-feedback article em, .market-card-body > small,
+  .market-card-stats span, .market-trainer-strip a small) {
+  color: var(--text-soft);
+}
+
+/* لینک‌ها و دکمه‌های قهوه‌ای که روی زمینهٔ تیره کم‌کنتراست میشدند */
+.theme-dark :is(.trainer-back, .trainer-add-row, .trainer-add-day,
+  .nutrition-meal__heading > button, .trainer-workout-day header > button,
+  .nutrition-day header > button, .trainer-exercise-row > button,
+  .nutrition-food-row > button, .trainer-assignment-list article > button,
+  .member-back, .member-photo-link, .member-reply-button,
+  .msg-status.success, .msg-empty-list a, .msg-chat__head > a) {
+  color: #ffb79c;
+}
+.theme-dark .msg-status.success { color: #c8e58a; }
+.theme-dark .msg-status.error { color: #ffb79c; }
+.theme-dark .trainer-student-message { color: #c8e58a !important; }
+.theme-dark .trainer-gym-location { color: var(--text-soft) !important; }
+
+/* دکمهٔ «افزودن روز» و حالت hover در مرکز پیام‌ها */
+.theme-dark .trainer-add-day { background: rgba(255, 255, 255, .045); }
+.theme-dark .msg-new:hover { background: #2d3d1e; border-color: #5b7438; }
+.theme-dark .msg-quick button:hover {
+  background: #23301a;
+  border-color: #4b6131;
+  color: var(--lime);
+}
+
+/* نمودارها، حلقهٔ پیشرفت و نقاط راهنما */
+.theme-dark .progress-ring {
+  background: conic-gradient(var(--lime-strong) var(--progress), #253027 0);
+}
+.theme-dark .progress-ring::after { background: var(--card-bg); }
+.theme-dark .progress-legend span:last-child i { background: #3b473d; }
+.theme-dark :is(.hero-chart .chart-gridline, .activity-chart__grid,
+  .member-weight-chart svg path) { stroke: #2a322b; }
+.theme-dark .hero-chart circle { fill: #121a14; }
+
+/* کنترل‌های بومی، انتخاب متن و گزینه‌های «select» */
+.theme-dark :is(input, select, textarea, button) { color-scheme: dark; }
+.theme-dark select option {
+  background: var(--card-bg);
+  color: var(--text-strong);
+}
+.theme-dark :is(input, select, textarea)::placeholder { color: #6f786f; }
+.theme-dark ::selection { background: var(--lime); color: #16200f; }
+
+/* سطوحی که بهصورت درونخطی (inline style) رنگ گرفتهاند */
+.theme-dark .member-panel pre[style] {
+  background: var(--card-bg) !important;
+  color: var(--text-strong);
+}
+
+/* دکمهٔ حالت شب در صفحهٔ «انتخاب فضای کاری» (زمینهٔ روشن) */
+.workspace-theme.theme-toggle {
+  background: #eceee8;
+  border-color: #d9ddd5;
+  color: #5d655c;
+}
+.workspace-theme.theme-toggle:hover { background: #e2e5dd; }
+.theme-dark .workspace-theme.theme-toggle {
+  background: #202a21;
+  border-color: #3a453b;
+  color: var(--text-strong);
+}
+.theme-dark .workspace-theme.theme-toggle:hover { background: #2b372c; }
