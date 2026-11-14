@@ -117,8 +117,9 @@ setup file (`node scripts/dump-hosted-sql.mjs`), or re-run `npm run db:turso:fre
 
 The UI ships with English and Persian (فارسی), switchable from the language
 toggle (EN | فا) shown in the navigation, the auth screens, and the landing
-page header. The choice is saved in a `locale` cookie and flips the page
-direction to RTL for Persian.
+page header. **Persian is the default language for every section** (`DEFAULT_LOCALE = "fa"`),
+so a fresh visit opens RTL with Persian typography; English stays one click
+away. The choice is saved in a `locale` cookie and flips the page direction.
 
 - Translations live in `lib/i18n/translations.ts` — the `en` and `fa` objects
   must stay in key parity. Add a key to both, then use `t("your.key")` in a
@@ -130,9 +131,38 @@ direction to RTL for Persian.
   font hosts). For nicer Persian, add Vazirmatn via `next/font` and extend the
   `html.locale-fa` rule in `app/globals.css`.
 
-The nav bars, auth screens, landing page, and dashboard are localized. Inner
-page content reuses the same dictionary and can be translated incrementally by
-wrapping strings in `t(...)`.
+The nav bars, auth screens, landing page, public/legal pages, error states,
+dashboard and the messaging hub are all localized. Inner workspace pages are
+Persian-first (they already used Persian copy) and dictionary-driven labels
+follow the active locale. Add a key to both dictionaries, then use
+`t("your.key")` in a Client Component or `createT(await getLocale())` in a
+Server Component.
+
+## Trainer ↔ student communication (پیام‌ها)
+
+`/trainer/messages` and `/user/messages` share one easy-to-use chat hub:
+one conversation per active coaching relationship, searchable list, unread
+filter and badges, quick replies, Jalali dates, Enter-to-send, live refresh,
+mobile single-pane mode and dark-theme support. Messages reuse the existing
+`Feedback` model (`trainerClientId` binds a message to the relationship), so
+older progress feedback and replies appear in the same thread. The role- and
+ownership-checked endpoints are `POST /api/messages` and
+`POST /api/messages/read`. See `docs/RELEASES_FA.md`.
+
+## Versioned ZIP releases (لایو سرور)
+
+Every change produces a **new file name**: `KooGYMaa-v1.zip` →
+`KooGYMaa-v1.1.zip` → `KooGYMaa-v2.zip`.
+
+```bash
+npm run release          # next minor version (default)
+npm run release:major    # big change → v2
+npm run releases:serve   # live Persian download page on 0.0.0.0:4173
+```
+
+`releases/VERSIONS.json` is the manifest (version, date, size, SHA-256, note),
+`releases/CHANGELOG.md` records the changes, and generated ZIPs are ignored
+by Git. Full Persian documentation: `docs/RELEASES_FA.md`.
 
 ## Theme & typography
 
