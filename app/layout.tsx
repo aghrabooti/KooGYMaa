@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./usability.css";
@@ -11,8 +10,11 @@ import { DIRECTION } from "@/lib/i18n/translations";
 import { ThemeProvider } from "@/lib/theme/theme-provider";
 import { getTheme } from "@/lib/theme/server";
 
-const inter = Inter({
-  subsets: ["latin"],
+// Inter (latin variable) is self-hosted too, so production builds never need
+// to reach fonts.googleapis.com. License: public/fonts/OFL-Inter.txt.
+const inter = localFont({
+  src: "../public/fonts/Inter-Variable.woff2",
+  weight: "100 900",
   variable: "--font-inter",
   display: "swap",
 });
