@@ -60,7 +60,9 @@ export function proxy(request: NextRequest) {
 
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("X-Frame-Options", "DENY");
+  // The embedded live preview (PREVIEW_MODE=1) is shown inside an iframe;
+  // production keeps the strict clickjacking header.
+  if (process.env.PREVIEW_MODE !== "1") response.headers.set("X-Frame-Options", "DENY");
   return response;
 }
 
