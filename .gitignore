@@ -53,3 +53,6 @@ data/
 
 # local backups (never commit)
 backups/
+
+# generated release ZIPs are built by `npm run release` (manifest is kept)
+/releases/*.zip
