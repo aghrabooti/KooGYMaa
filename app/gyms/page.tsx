@@ -7,8 +7,8 @@ import { createT } from "@/lib/i18n/translations";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Discover gyms",
-  description: "Browse active gyms on KooGYMaa — compare plans, trainers and verified reviews.",
+  title: "باشگاهها",
+  description: "باشگاههای فعال کوجیما — مقایسه طرحها، مربیها و نظرات تأییدشده.",
 };
 
 export default async function PublicGymsPage() {
