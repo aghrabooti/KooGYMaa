@@ -12,6 +12,8 @@ import { useT } from "@/lib/i18n/language-provider";
 
 const items: Array<{ href: string; icon: IconName; labelKey: string }> = [
   { href: "/user", icon: "grid", labelKey: "nav.overview" },
+  { href: "/user/messages", icon: "mail", labelKey: "nav.messages" },
+  { href: "/user/journey", icon: "clipboard", labelKey: "nav.journey" },
   { href: "/user/gyms", icon: "building", labelKey: "nav.discoverGyms" },
   { href: "/user/trainers", icon: "users", labelKey: "nav.findTrainers" },
   { href: "/user/workouts", icon: "dumbbell", labelKey: "nav.workouts" },
@@ -23,7 +25,7 @@ const items: Array<{ href: string; icon: IconName; labelKey: string }> = [
   { href: "/user/profile", icon: "user", labelKey: "nav.profile" },
 ];
 
-export function UserNav({ name, unread }: { name: string; unread: number }) {
+export function UserNav({ name, unread, unreadMessages }: { name: string; unread: number; unreadMessages: number }) {
   const pathname = usePathname();
   const t = useT();
   const isActive = (href: string) => (href === "/user" ? pathname === href : pathname.startsWith(href));
@@ -40,6 +42,7 @@ export function UserNav({ name, unread }: { name: string; unread: number }) {
             <Link className={isActive(item.href) ? "active" : ""} href={item.href} key={item.labelKey}>
               <Icon name={item.icon} size={19} />
               <span>{t(item.labelKey)}</span>
+              {item.labelKey === "nav.messages" && unreadMessages > 0 && <b>{unreadMessages}</b>}
               {item.labelKey === "nav.notifications" && unread > 0 && <b>{unread}</b>}
             </Link>
           ))}
@@ -49,10 +52,11 @@ export function UserNav({ name, unread }: { name: string; unread: number }) {
       <header className="member-mobile-header">
         <Brand compact />
         <div><strong>{name}</strong><small>{t("nav.memberWorkspace")}</small></div>
+        <Link href="/user/messages" aria-label={t("nav.messages")}><Icon name="mail" size={18} />{unreadMessages > 0 && <b>{unreadMessages}</b>}</Link>
         <Link href="/user/notifications" aria-label={t("nav.notifications")}><Icon name="bell" size={18} />{unread > 0 && <b>{unread}</b>}</Link>
         <MobileMenu
           identity={<><span className="mobile-drawer__avatar">{name.slice(0, 2).toUpperCase()}</span><div><strong>{name}</strong><small>{t("nav.memberWorkspace")}</small></div></>}
-          items={items.map((item) => ({ href: item.href, icon: item.icon, label: t(item.labelKey), active: isActive(item.href), badge: item.labelKey === "nav.notifications" ? unread : 0 }))}
+          items={items.map((item) => ({ href: item.href, icon: item.icon, label: t(item.labelKey), active: isActive(item.href), badge: item.labelKey === "nav.notifications" ? unread : item.labelKey === "nav.messages" ? unreadMessages : 0 }))}
           showLogout
         />
       </header>
