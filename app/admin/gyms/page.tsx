@@ -3,6 +3,7 @@ import { Brand } from "@/components/brand";
 import { GymCreateForm } from "@/components/admin/gym-create-form";
 import { Icon } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { requireCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { faStatus } from "@/components/fa";
@@ -38,7 +39,7 @@ export default async function AdminGymsPage() {
     <main className="workspace-page">
       <header className="workspace-page__header">
         <Brand />
-        <div><span>{user.name}</span><LogoutButton /></div>
+        <div><span>{user.name}</span><ThemeToggle className="workspace-theme" /><LogoutButton /></div>
       </header>
       <section className="workspace-page__content">
         <div className="workspace-heading">
