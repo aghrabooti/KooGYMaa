@@ -32,10 +32,10 @@ const dashboardData: Record<DashboardRole, {
     subtitleKey: "dash.adminSubtitle",
     actionKey: "dash.actionAddMember",
     stats: [
-      { labelKey: "dash.statActiveMembers", value: "1,248", change: "+8.4% this month", icon: "users", tone: "lime" },
-      { labelKey: "dash.statMonthlyRevenue", value: "$48.2k", change: "+12.1% this month", icon: "trend", tone: "orange" },
-      { labelKey: "dash.statTodaysCheckins", value: "186", change: "72% of daily avg.", icon: "check", tone: "violet" },
-      { labelKey: "dash.statActiveTrainers", value: "24", change: "4 coaching now", icon: "dumbbell", tone: "blue" },
+      { labelKey: "dash.statActiveMembers", value: "1,248", change: "۸٫۴٪+ نسبت به ماه قبل", icon: "users", tone: "lime" },
+      { labelKey: "dash.statMonthlyRevenue", value: "۴۸٫۲ میلیون تومان", change: "۱۲٫۱٪+ نسبت به ماه قبل", icon: "trend", tone: "orange" },
+      { labelKey: "dash.statTodaysCheckins", value: "186", change: "۷۲٪ میانگین روزانه", icon: "check", tone: "violet" },
+      { labelKey: "dash.statActiveTrainers", value: "24", change: "۴ مربی هم اکنون فعالاند", icon: "dumbbell", tone: "blue" },
     ],
   },
   TRAINER: {
@@ -43,10 +43,10 @@ const dashboardData: Record<DashboardRole, {
     subtitleKey: "dash.trainerSubtitle",
     actionKey: "dash.actionBuildPlan",
     stats: [
-      { labelKey: "dash.statActiveClients", value: "28", change: "+3 this month", icon: "users", tone: "lime" },
-      { labelKey: "dash.statTodaysSessions", value: "8", change: "Next at 10:30", icon: "calendar", tone: "orange" },
-      { labelKey: "dash.statPlansDelivered", value: "42", change: "6 updated this week", icon: "clipboard", tone: "violet" },
-      { labelKey: "dash.statAverageRating", value: "4.9", change: "From 96 reviews", icon: "sparkles", tone: "blue" },
+      { labelKey: "dash.statActiveClients", value: "28", change: "۳+ شاگرد تازه", icon: "users", tone: "lime" },
+      { labelKey: "dash.statTodaysSessions", value: "8", change: "جلسه بعدی ساعت ۱۰:۳۰", icon: "calendar", tone: "orange" },
+      { labelKey: "dash.statPlansDelivered", value: "42", change: "۶ برنامه بهروزرسانی شد", icon: "clipboard", tone: "violet" },
+      { labelKey: "dash.statAverageRating", value: "4.9", change: "از ۹۶ نظر", icon: "sparkles", tone: "blue" },
     ],
   },
   USER: {
@@ -54,10 +54,10 @@ const dashboardData: Record<DashboardRole, {
     subtitleKey: "dash.userSubtitle",
     actionKey: "dash.actionStartWorkout",
     stats: [
-      { labelKey: "dash.statWorkoutsThisWeek", value: "4/5", change: "One more to goal", icon: "dumbbell", tone: "lime" },
-      { labelKey: "dash.statCurrentStreak", value: "12 days", change: "Personal best", icon: "flame", tone: "orange" },
-      { labelKey: "dash.statPlanProgress", value: "76%", change: "+9% this week", icon: "trend", tone: "violet" },
-      { labelKey: "dash.statNextSession", value: "10:30", change: "Upper body", icon: "clock", tone: "blue" },
+      { labelKey: "dash.statWorkoutsThisWeek", value: "4/5", change: "یک تمرین تا هدف", icon: "dumbbell", tone: "lime" },
+      { labelKey: "dash.statCurrentStreak", value: "۱۲ روز", change: "بهترین رکورد شما", icon: "flame", tone: "orange" },
+      { labelKey: "dash.statPlanProgress", value: "76%", change: "۹٪+ این هفته", icon: "trend", tone: "violet" },
+      { labelKey: "dash.statNextSession", value: "10:30", change: "تمرین بالاتنه", icon: "clock", tone: "blue" },
     ],
   },
 };
@@ -71,9 +71,9 @@ const navItems: Array<{ labelKey: string; icon: IconName; href: string }> = [
 ];
 
 const schedule = [
-  { time: "10:30", period: "AM", title: "Strength Fundamentals", meta: "Studio A · 9 members", tone: "lime", initials: ["JR", "MO", "+7"] },
-  { time: "12:00", period: "PM", title: "Mobility & Recovery", meta: "Studio B · 6 members", tone: "orange", initials: ["KA", "NS", "+4"] },
-  { time: "02:30", period: "PM", title: "1:1 Coaching · Alex M.", meta: "Training floor · 60 min", tone: "violet", initials: ["AM"] },
+  { time: "۱۰:۳۰", period: "صبح", title: "اصول قدرت", meta: "استودیو A · ۹ عضو", tone: "lime", initials: ["JR", "MO", "+7"] },
+  { time: "۱۲:۰۰", period: "ظهر", title: "تحرک و ریکاوری", meta: "استودیو B · ۶ عضو", tone: "orange", initials: ["KA", "NS", "+4"] },
+  { time: "۱۴:۳۰", period: "عصر", title: "مربیگری خصوصی · آرش م.", meta: "سالن تمرین · ۶۰ دقیقه", tone: "violet", initials: ["AM"] },
 ];
 
 function roleLabelKey(role: DashboardRole) {
@@ -119,14 +119,14 @@ export default async function DashboardPage() {
       <aside className="dashboard-sidebar">
         <Brand light />
         <div className="dashboard-workspace">
-          <span>WORKSPACE</span>
+          <span>فضای کاری</span>
           <button type="button">
             <span className="workspace-mark">KG</span>
-            <span><strong>KooGYMaa HQ</strong><small>Tokyo, Japan</small></span>
+            <span><strong>دفتر مرکزی کوجیما</strong><small>تهران، ایران</small></span>
             <Icon name="chevron" size={15} />
           </button>
         </div>
-        <nav className="dashboard-nav" aria-label="Dashboard navigation">
+        <nav className="dashboard-nav" aria-label="ناوبری پیشخوان">
           <small>{t("nav.mainMenu")}</small>
           {navItems.map((item, index) => (
             <a className={`dashboard-nav__item ${index === 0 ? "active" : ""}`} href={item.href} key={item.labelKey}>
@@ -169,14 +169,14 @@ export default async function DashboardPage() {
         <div className="dashboard-content">
           <div className="dashboard-welcome">
             <div>
-              <span className="dashboard-date">FRIDAY · AUGUST 21</span>
+              <span className="dashboard-date">{new Intl.DateTimeFormat("fa-IR", { weekday: "long", day: "numeric", month: "long", timeZone: "Asia/Tehran" }).format(new Date())}</span>
               <h1>{t(data.titleKey)}</h1>
               <p>{t(data.subtitleKey)}</p>
             </div>
             <button className="dashboard-primary-action" type="button"><Icon name="plus" size={18} /> {t(data.actionKey)}</button>
           </div>
 
-          <section className="dashboard-stat-grid" aria-label="At a glance">
+          <section className="dashboard-stat-grid" aria-label="یک نگاه کلی">
             {data.stats.map((stat) => (
               <article className="dashboard-stat" key={stat.labelKey}>
                 <div className={`dashboard-stat__icon dashboard-stat__icon--${stat.tone}`}><Icon name={stat.icon} size={21} /></div>
@@ -193,10 +193,10 @@ export default async function DashboardPage() {
                 <div><h2>{t("dash.weeklyActivity")}</h2><p>{t("dash.memberVisits")}</p></div>
                 <button type="button">{t("dash.last7Days")} <span>⌄</span></button>
               </div>
-              <div className="activity-summary"><strong>2,846</strong><span><Icon name="trend" size={15} /> 14.2%</span><small>vs. previous week</small></div>
+              <div className="activity-summary"><strong>2,846</strong><span><Icon name="trend" size={15} /> 14.2%</span><small>نسبت به هفته قبل</small></div>
               <div className="activity-chart-wrap">
                 <div className="chart-y-axis"><span>800</span><span>600</span><span>400</span><span>200</span><span>0</span></div>
-                <svg className="activity-chart" viewBox="0 0 680 230" preserveAspectRatio="none" role="img" aria-label="Weekly member activity chart">
+                <svg className="activity-chart" viewBox="0 0 680 230" preserveAspectRatio="none" role="img" aria-label="نمودار فعالیت هفتگی اعضا">
                   <defs>
                     <linearGradient id="dashboardArea" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#bde65f" stopOpacity=".35" /><stop offset="1" stopColor="#bde65f" stopOpacity="0" /></linearGradient>
                   </defs>
@@ -206,13 +206,13 @@ export default async function DashboardPage() {
                   <circle cx="498" cy="54" r="6" />
                   <line x1="498" x2="498" y1="54" y2="218" />
                 </svg>
-                <div className="chart-tooltip"><small>SATURDAY</small><strong>684 visits</strong></div>
-                <div className="activity-days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+                <div className="chart-tooltip"><small>شنبه</small><strong>۶۸۴ مراجعه</strong></div>
+                <div className="activity-days"><span>دوشنبه</span><span>سهشنبه</span><span>چهارشنبه</span><span>پنجشنبه</span><span>جمعه</span><span>شنبه</span><span>یکشنبه</span></div>
               </div>
             </section>
 
             <section className="dashboard-panel progress-panel" id="plans">
-              <div className="dashboard-panel__header"><div><h2>{t("dash.monthlyGoal")}</h2><p>{t("dash.monthProgress")}</p></div><button aria-label="More options" className="more-button" type="button">•••</button></div>
+              <div className="dashboard-panel__header"><div><h2>{t("dash.monthlyGoal")}</h2><p>{t("dash.monthProgress")}</p></div><button aria-label="گزینههای بیشتر" className="more-button" type="button">•••</button></div>
               <div className="progress-ring" style={{ "--progress": "76%" } as CSSProperties}>
                 <div><strong>76%</strong><span>{t("dash.monthProgress")}</span></div>
               </div>
@@ -220,13 +220,13 @@ export default async function DashboardPage() {
                 <strong>{t("dash.greatMomentum")}</strong>
                 <p>{t("dash.visitsToTarget")}</p>
               </div>
-              <div className="progress-legend"><span><i /> 3,860 completed</span><span><i /> 5,000 goal</span></div>
+              <div className="progress-legend"><span><i /> ۳٬۸۶۰ انجامشده</span><span><i /> هدف ۵٬۰۰۰</span></div>
             </section>
           </div>
 
           <section className="dashboard-panel schedule-panel" id="schedule">
             <div className="dashboard-panel__header">
-              <div><h2>{t("dash.todaysSchedule")}</h2><p>8 sessions · Friday, August 21</p></div>
+              <div><h2>{t("dash.todaysSchedule")}</h2><p>۸ جلسه · امروز</p></div>
               <a href="#schedule">{t("landing.explorePlatform")} <Icon name="arrow" size={16} /></a>
             </div>
             <div className="schedule-list">
@@ -234,17 +234,17 @@ export default async function DashboardPage() {
                 <article className="schedule-item" key={session.time}>
                   <div className="schedule-time"><strong>{session.time}</strong><span>{session.period}</span></div>
                   <div className={`schedule-line schedule-line--${session.tone}`} />
-                  <div className={`schedule-icon schedule-icon--${session.tone}`}><Icon name={session.title.startsWith("1:1") ? "user" : "dumbbell"} size={20} /></div>
+                  <div className={`schedule-icon schedule-icon--${session.tone}`}><Icon name={session.title.includes("خصوصی") ? "user" : "dumbbell"} size={20} /></div>
                   <div className="schedule-info"><strong>{session.title}</strong><span><Icon name="location" size={13} /> {session.meta}</span></div>
                   <div className="schedule-people">{session.initials.map((initial) => <span key={initial}>{initial}</span>)}</div>
-                  <button aria-label={`Open ${session.title}`} type="button"><Icon name="chevron" size={17} /></button>
+                  <button aria-label={`باز کردن ${session.title}`} type="button"><Icon name="chevron" size={17} /></button>
                 </article>
               ))}
             </div>
           </section>
 
           <footer className="dashboard-footer">
-            <span>© 2026 KooGYMaa</span>
+            <span>© ۱۴۰۵ کوجیما</span>
             <div><Link href="/">{t("common.home")}</Link><a href="#settings">{t("common.helpCenter")}</a><a href="#settings">{t("common.privacy")}</a></div>
           </footer>
         </div>
