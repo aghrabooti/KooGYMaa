@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FeedbackReply, MeasurementForm } from "@/components/user/progress-controls";
 import { ProgressChart } from "@/components/user/progress-chart";
 import { GoalsPanel } from "@/components/user/goals-panel";
@@ -39,14 +40,14 @@ export default async function UserProgressPage() {
       <section className="member-progress-metrics">
         <article><span><Icon name="trend" size={19} /></span><small>وزن فعلی</small><strong>{latest?.weightKg ? `${latest.weightKg} کیلوگرم` : "—"}</strong><p>{weightChange === null ? "نخستین حضور خود را ثبت کنید" : `${weightChange > 0 ? "+" : ""}${toFaDigits(weightChange.toFixed(1))} کیلوگرم در مجموع`}</p></article>
         <article><span><Icon name="dumbbell" size={19} /></span><small>پایبندی تمرین</small><strong>{workoutCompliance}%</strong><p>{exerciseDone} از {exerciseTotal} حرکت</p></article>
-        <article><span><Icon name="heart" size={19} /></span><small>پایبندی تغذیه</small><strong>{mealCompliance}%</strong><p>{mealDone} of {mealTotal} وعده</p></article>
+        <article><span><Icon name="heart" size={19} /></span><small>پایبندی تغذیه</small><strong>{mealCompliance}%</strong><p>{mealDone} از {mealTotal} وعده</p></article>
         <article><span><Icon name="clipboard" size={19} /></span><small>بازخورد مربی</small><strong>{feedback.length}</strong><p>رشته‌های بازخورد</p></article>
       </section>
       <ProgressChart points={chartPoints} />
       <div className="member-progress-grid">
         <section className="member-panel member-measurements">
           <div className="member-panel__heading"><div><h2>آخرین اندازه‌گیری‌ها</h2><p>{latest ? latest.recordedAt.toLocaleDateString("fa-IR") : "هنوز داده‌ای ثبت نشده"}</p></div></div>
-          {latest ? <div>{[["چربی بدن", latest.bodyFatPercent, "%"], ["Waist", latest.waistCm, "cm"], ["Chest", latest.chestCm, "cm"], ["Arm", latest.armCm, "cm"], ["Hips", latest.hipsCm, "cm"], ["Thigh", latest.thighCm, "cm"]].map(([label, value, unit]) => <span key={String(label)}><small>{label}</small><strong>{value ? `${value} ${unit}` : "—"}</strong></span>)}</div> : <p className="member-empty-line">هنوز اندازه‌گیری ثبت نشده است.</p>}
+          {latest ? <div>{[["چربی بدن", latest.bodyFatPercent, "٪"], ["دور کمر", latest.waistCm, "سانتیمتر"], ["دور سینه", latest.chestCm, "سانتیمتر"], ["دور بازو", latest.armCm, "سانتیمتر"], ["دور باسن", latest.hipsCm, "سانتیمتر"], ["دور ران", latest.thighCm, "سانتیمتر"]].map(([label, value, unit]) => <span key={String(label)}><small>{label}</small><strong>{value ? `${value} ${unit}` : "—"}</strong></span>)}</div> : <p className="member-empty-line">هنوز اندازه‌گیری ثبت نشده است.</p>}
         </section>
         <GoalsPanel latest={{ weightKg: latest?.weightKg ?? null, bodyFatPercent: latest?.bodyFatPercent ?? null, waistCm: latest?.waistCm ?? null }} />
       </div>
@@ -55,16 +56,16 @@ export default async function UserProgressPage() {
         {allPhotos.length ? (
           <div className="member-photo-grid">
             {allPhotos.slice(0, 12).map((photo: any) => (
-              <a key={photo.id} href={photoSrc(photo.imageUrl, photo.id)} target="_blank" rel="noreferrer" title={`${photo.pose || "progress"} — ${new Date(photo.at).toLocaleDateString("fa-IR")}`}>
+              <a key={photo.id} href={photoSrc(photo.imageUrl, photo.id)} target="_blank" rel="noreferrer" title={`${photo.pose || "تصویر پیشرفت"} — ${new Date(photo.at).toLocaleDateString("fa-IR")}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={photoSrc(photo.imageUrl, photo.id)} alt={`${photo.pose || "progress"} photo`} loading="lazy" />
+                <img src={photoSrc(photo.imageUrl, photo.id)} alt={`${photo.pose || "تصویر پیشرفت"}`} loading="lazy" />
                 <small>{photo.pose || "progress"}</small>
               </a>
             ))}
           </div>
         ) : <p className="member-empty-line">نخستین تصویر پیشرفت‌تان را بارگذاری کنید — فایل واقعی، خصوصی ذخیره می‌شود.</p>}
       </section>
-      <section className="member-panel member-feedback"><div className="member-panel__heading"><div><h2>بازخورد مربی</h2><p>راهنمایی پیوندخورده با اجرای اخیر شما</p></div></div>{feedback.length ? <div>{feedback.map((item: any) => <article key={item.id}><span className="member-feedback-avatar">{item.author.name.slice(0, 2).toUpperCase()}</span><div><header><strong>{item.author.name}</strong><b>{faStatus(item.type)}</b><small>{item.createdAt.toLocaleDateString("fa-IR")}</small></header><p>{item.content}</p>{(item.workoutLog || item.nutritionLog) && <em>{item.workoutLog?.workoutDay.name || item.nutritionLog?.dietDay.name}</em>}{item.replies.map((reply: any) => <div className="member-feedback-reply" key={reply.id}><strong>{reply.author.name}</strong><p>{reply.content}</p></div>)}<FeedbackReply feedbackId={item.id} /></div></article>)}</div> : <p className="member-empty-line">بازخورد مربی شما اینجا نمایش داده می‌شود.</p>}</section>
+      <section className="member-panel member-feedback"><div className="member-panel__heading"><div><h2>بازخورد مربی</h2><p>راهنمایی پیوندخورده با اجرای اخیر شما</p></div><Link href="/user/messages"><Icon name="mail" size={14} /> گفتگو با مربی</Link></div>{feedback.length ? <div>{feedback.map((item: any) => <article key={item.id}><span className="member-feedback-avatar">{item.author.name.slice(0, 2).toUpperCase()}</span><div><header><strong>{item.author.name}</strong><b>{faStatus(item.type)}</b><small>{item.createdAt.toLocaleDateString("fa-IR")}</small></header><p>{item.content}</p>{(item.workoutLog || item.nutritionLog) && <em>{item.workoutLog?.workoutDay.name || item.nutritionLog?.dietDay.name}</em>}{item.replies.map((reply: any) => <div className="member-feedback-reply" key={reply.id}><strong>{reply.author.name}</strong><p>{reply.content}</p></div>)}<FeedbackReply feedbackId={item.id} /></div></article>)}</div> : <p className="member-empty-line">بازخورد مربی شما اینجا نمایش داده می‌شود.</p>}</section>
     </div>
   );
 }
