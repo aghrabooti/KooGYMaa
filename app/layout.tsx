@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./usability.css";
+import "./dark-mode.css";
 import { LanguageProvider } from "@/lib/i18n/language-provider";
 import { getLocale } from "@/lib/i18n/server";
 import { DIRECTION } from "@/lib/i18n/translations";
