@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { getLocale } from "@/lib/i18n/server";
+import { createT } from "@/lib/i18n/translations";
 
-export default function NotFoundPage() {
-  return <main className="system-state"><span>404</span><h1>Page not found</h1><p>The page may have moved, or you may not have access to this workspace.</p><div><Link href="/">Go home</Link><Link href="/dashboard">Open dashboard</Link></div></main>;
+export default async function NotFoundPage() {
+  const t = createT(await getLocale());
+  return <main className="system-state"><span>۴۰۴</span><h1>{t("sys.notFoundTitle")}</h1><p>{t("sys.notFoundDesc")}</p><div><Link href="/">{t("sys.home")}</Link><Link href="/dashboard">{t("sys.dashboard")}</Link></div></main>;
 }
