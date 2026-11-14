@@ -3,7 +3,7 @@ import { PublicNav } from "@/components/public-nav";
 import { getLocale } from "@/lib/i18n/server";
 import { createT } from "@/lib/i18n/translations";
 
-export const metadata: Metadata = { title: "Privacy policy", description: "How KooGYMaa handles your data." };
+export const metadata: Metadata = { title: "سیاست حفظ حریم خصوصی", description: "نحوه نگهداری دادهها در کوجیما" };
 
 export default async function PrivacyPage() {
   const t = createT(await getLocale());
@@ -11,9 +11,9 @@ export default async function PrivacyPage() {
     <main className="container public-page">
       <PublicNav />
       <h1>{t("public.privacyTitle")}</h1>
-      <section><h2>Data we store</h2><p>Account details, memberships, training and payment records needed to run the service. Money values are stored as integers in the smallest currency unit.</p></section>
-      <section><h2>Progress photos</h2><p>Photos are stored privately and visible only to you, your active trainer, and your gym admin. You can delete them at any time.</p></section>
-      <section><h2>Sessions & security</h2><p>Sessions are signed HttpOnly cookies. You can review and revoke active sessions from your profile. Sensitive admin actions are audit-logged.</p></section>
+      <section><h2>{t("public.privacy1Title")}</h2><p>{t("public.privacy1Body")}</p></section>
+      <section><h2>{t("public.privacy2Title")}</h2><p>{t("public.privacy2Body")}</p></section>
+      <section><h2>{t("public.privacy3Title")}</h2><p>{t("public.privacy3Body")}</p></section>
     </main>
   );
 }
