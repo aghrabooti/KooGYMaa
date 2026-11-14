@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       },
       select: { id: true, title: true, startsAt: true, endsAt: true, status: true },
     });
-    await transaction.notification.create({ data: { userId: client.userId, type: "SESSION_REMINDER", title: "New coaching session", message: `${title} has been scheduled.`, href: "/user/progress" } });
+    await transaction.notification.create({ data: { userId: client.userId, type: "SESSION_REMINDER", title: "جلسه مربیگری تازه", message: `جلسه «${title}» زمانبندی شد.`, href: "/user/schedule" } });
     return created;
   });
   return NextResponse.json({ session }, { status: 201 });
