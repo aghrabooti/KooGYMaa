@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { AuthShell } from "@/components/auth-shell";
 import { ForgotPasswordForm } from "@/components/account/account-panels";
 
-export const metadata: Metadata = { title: "Forgot password", description: "Recover your KooGYMaa account." };
+export const metadata: Metadata = { title: "فراموشی گذرواژه", description: "بازیابی حساب کوجیما" };
 
 export default function ForgotPasswordPage() {
   return (
