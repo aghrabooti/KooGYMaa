@@ -194,7 +194,7 @@ export default async function UserJourneyPage() {
             مدت شاگردی از تاریخ <code>startedAt</code> در جدول <code>TrainerClient</code> محاسبه می‌شود.
             هر بار که مربی سارا یک شاگرد را می‌پذیرد، این تاریخ ثبت می‌شود.
           </p>
-          <pre style={{ background: "#f5f5f5", padding: "1rem", borderRadius: "8px", overflowX: "auto", direction: "ltr", textAlign: "left" }}>
+          <pre style={{ background: "var(--card-bg, #f5f5f5)", padding: "1rem", borderRadius: "8px", overflowX: "auto", direction: "ltr", textAlign: "left" }}>
             {`function calculateMonthsAsStudent(startedAt: Date): number {
   const now = new Date();
   const years = now.getFullYear() - startedAt.getFullYear();
