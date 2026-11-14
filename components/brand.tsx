@@ -9,7 +9,7 @@ type BrandProps = {
 export function Brand({ light = false, compact = false, className = "" }: BrandProps) {
   return (
     <Link
-      aria-label="KooGYMaa home"
+      aria-label="صفحه نخست کوجیما"
       className={`brand ${light ? "brand--light" : ""} ${className}`}
       href="/"
     >
