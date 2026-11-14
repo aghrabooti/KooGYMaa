@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import "./usability.css";
 import { LanguageProvider } from "@/lib/i18n/language-provider";
 import { getLocale } from "@/lib/i18n/server";
 import { DIRECTION } from "@/lib/i18n/translations";
@@ -27,11 +28,11 @@ const estedad = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "KooGYMaa — Move better. Manage smarter.",
-    template: "%s | KooGYMaa",
+    default: "کوجیما — تمرین بهتر، مدیریت هوشمندتر",
+    template: "%s | کوجیما",
   },
   description:
-    "One powerful workspace for gyms, trainers, and members to manage training, progress, and community.",
+    "یک فضای کاری کامل برای باشگاه‌ها، مربی‌ها و اعضا؛ مدیریت تمرین، پیشرفت و ارتباط مربی با شاگرد.",
 };
 
 export default async function RootLayout({
