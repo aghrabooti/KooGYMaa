@@ -24,7 +24,7 @@ export async function PublicNav({ backHref = "/", backLabel }: PublicNavProps) {
     { href: "/contact", label: t("public.contactTitle"), icon: "bell" as const },
   ];
   return (
-    <nav aria-label="Public navigation" className="public-nav">
+    <nav aria-label="ناوبری عمومی" className="public-nav">
       <Brand />
       <div className="public-nav__links">
         {items.slice(0, 3).map((item) => (
