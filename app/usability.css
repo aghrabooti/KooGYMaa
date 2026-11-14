@@ -359,3 +359,63 @@ html.locale-fa .msg-send svg { transform: scaleX(-1); }
   .msg-bubble { max-width: 88%; }
   .msg-send { min-width: 92px; }
 }
+
+/* ── 3. خروجی PDF برنامههای تمرین / تغذیه ──────────────────────────── */
+/* دکمههای «پیشنمایش سند» و «دانلود PDF» داخل سربرگ طرح فعال شاگرد */
+.member-plan-hero { flex-wrap: wrap; }
+.member-plan-hero > div:nth-child(3) { text-align: right; }
+.member-plan-hero > div:nth-child(3) > strong,
+.member-plan-hero > div:nth-child(3) > span { display: block; }
+.member-plan-hero > div:nth-child(3) > strong { font-size: 22px; }
+.member-plan-hero > div.member-plan-pdf {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  text-align: start;
+}
+.member-plan-hero > div.member-plan-pdf a { font-size: 12.5px; min-height: 40px; padding: 0 13px; white-space: nowrap; }
+.member-plan-hero > div.member-plan-pdf :is(strong, span) { display: inline; font-size: inherit; }
+@media (max-width: 720px) {
+  .member-plan-hero > div.member-plan-pdf { width: 100%; }
+  .member-plan-hero > div:nth-child(3) { text-align: start; }
+}
+
+/* پیوندهای پیشنمایش و خروجی PDF در پنل مربی */
+.trainer-plan-preview {
+  align-items: center;
+  background: #202b21;
+  border: 1px solid #3b473d;
+  border-radius: 5px;
+  color: #e9ede7;
+  display: inline-flex;
+  font-size: 12.5px;
+  font-weight: 700;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 9px;
+  white-space: nowrap;
+}
+.trainer-plan-preview:hover { background: #2d3a2b; border-color: #6f8a45; }
+.trainer-assignment-pdf {
+  align-items: center;
+  background: #eef7dc;
+  border: 1px solid #b9d97a;
+  border-radius: 6px;
+  color: #3d5222;
+  display: inline-flex;
+  flex: none;
+  font-size: 12.5px;
+  font-weight: 750;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 9px;
+  white-space: nowrap;
+}
+.trainer-assignment-pdf:hover { background: #dff0bd; }
+.theme-dark .trainer-plan-preview { background: #1e251e; border-color: var(--line-soft); color: var(--text-strong); }
+.theme-dark .trainer-assignment-pdf { background: #22301a; border-color: #4a6428; color: #c8e58a; }
+.trainer-assignment-list article { flex-wrap: wrap; }
+.trainer-assignment-pdf--download { background: #202b21; border-color: #3b473d; color: #f2f6ed; }
+.trainer-assignment-pdf--download:hover { background: #2f3c2d; }
+.theme-dark .trainer-assignment-pdf--download { background: #1e251e; border-color: var(--line-soft); color: var(--text-strong); }
