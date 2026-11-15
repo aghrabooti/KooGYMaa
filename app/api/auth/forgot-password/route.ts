@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, message: "اگر حسابی با این ایمیل وجود داشته باشد، لینک بازیابی ارسال می‌شود." });
   }
   const user = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true } });
-  if (!user) {
+  if (!user?.email) {
     return NextResponse.json({ ok: true, message: "اگر حسابی با این ایمیل وجود داشته باشد، لینک بازیابی ارسال می‌شود." });
   }
   const token = signResetToken(user.id, user.email);
