@@ -15,6 +15,7 @@ const PASSWORD_PATTERN = "(?=.*[A-Za-z])(?=.*\\d).{8,72}";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"USER" | "TRAINER">("USER");
@@ -34,7 +35,7 @@ export default function RegisterPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify({ name, username, email, password, role }),
       });
       const data = await response.json();
 
@@ -76,14 +77,32 @@ export default function RegisterPage() {
         </label>
 
         <label className="field">
-          <span>{t("auth.email")}</span>
+          <span>{t("auth.username")}</span>
+          <div className="field__control">
+            <Icon name="user" size={19} />
+            <input
+              autoCapitalize="none"
+              autoComplete="username"
+              dir="ltr"
+              minLength={3}
+              maxLength={32}
+              onChange={(event) => setUsername(event.target.value)}
+              placeholder={t("auth.placeholderUsername")}
+              required
+              spellCheck={false}
+              value={username}
+            />
+          </div>
+        </label>
+
+        <label className="field">
+          <span>{t("auth.optionalEmail")}</span>
           <div className="field__control">
             <Icon name="mail" size={19} />
             <input
               autoComplete="email"
               onChange={(event) => setEmail(event.target.value)}
               placeholder={t("auth.placeholderEmail")}
-              required
               type="email"
               value={email}
             />
