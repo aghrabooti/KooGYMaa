@@ -17,6 +17,7 @@ export async function POST(request: NextRequest) {
   if (!auth.ok) return auth.response;
   const user = await prisma.user.findUnique({ where: { id: auth.user.id }, select: { id: true, email: true } });
   if (!user) return NextResponse.json({ error: "کاربر یافت نشد." }, { status: 404 });
+  if (!user.email) return NextResponse.json({ error: "برای این حساب ایمیلی ثبت نشده است." }, { status: 400 });
   const token = signVerifyToken(user.id, user.email);
   return NextResponse.json({
     ok: true,
