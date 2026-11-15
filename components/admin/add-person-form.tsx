@@ -25,14 +25,13 @@ export function AddPersonForm({ endpoint, kind }: AddPersonFormProps) {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.get("email") }),
+        body: JSON.stringify({ identifier: form.get("identifier") }),
       });
       const data = await response.json();
       if (!response.ok) {
         setError(data.error || `${kind === "member" ? "عضو" : "مربی"} افزوده نشد.`);
         return;
       }
-      event.currentTarget.reset();
       setOpen(false);
       router.refresh();
     } catch {
@@ -43,13 +42,13 @@ export function AddPersonForm({ endpoint, kind }: AddPersonFormProps) {
   }
 
   if (!open) {
-    return <button className="admin-primary-button" onClick={() => setOpen(true)} type="button"><Icon name="plus" size={16} /> افزودن {kind === "member" ? "عضو" : "مربی"}</button>;
+    return <button className={kind === "member" ? "admin-primary-button" : "admin-secondary-button"} onClick={() => { setError(""); setOpen(true); }} type="button"><Icon name="plus" size={16} /> افزودن {kind === "member" ? "عضو" : "مربی"} با حساب موجود</button>;
   }
 
   return (
     <form className="admin-inline-form" onSubmit={submit}>
-      <label><span>{kind === "member" ? "عضو" : "مربی"} ایمیل حساب</span><input autoFocus name="email" placeholder={`${kind}@example.com`} required type="email" /></label>
-      <button className="admin-primary-button" disabled={pending} type="submit">{pending ? "در حال افزودن…" : "Add"}</button>
+      <label><span>نام کاربری یا ایمیل</span><input autoFocus dir="ltr" autoCapitalize="none" name="identifier" required /></label>
+      <button className="admin-primary-button" disabled={pending} type="submit">{pending ? "در حال افزودن…" : "افزودن"}</button>
       <button className="admin-secondary-button" onClick={() => setOpen(false)} type="button">انصراف</button>
       {error && <small role="alert">{error}</small>}
     </form>
