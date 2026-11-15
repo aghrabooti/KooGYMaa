@@ -8,7 +8,7 @@ import { Icon } from "@/components/icon";
 import { useT } from "@/lib/i18n/language-provider";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -27,7 +27,7 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
-        body: JSON.stringify({ email, password, remember }),
+        body: JSON.stringify({ identifier, password, remember }),
       });
       const data = await response.json();
 
@@ -54,16 +54,19 @@ export default function LoginPage() {
       {error && <div className="form-alert" role="alert">{error}</div>}
       <form className="auth-form" onSubmit={handleSubmit}>
         <label className="field">
-          <span>{t("auth.email")}</span>
+          <span>{t("auth.loginIdentifier")}</span>
           <div className="field__control">
-            <Icon name="mail" size={19} />
+            <Icon name="user" size={19} />
             <input
-              autoComplete="email"
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder={t("auth.placeholderEmail")}
+              autoCapitalize="none"
+              autoComplete="username"
+              dir="ltr"
+              maxLength={254}
+              onChange={(event) => setIdentifier(event.target.value)}
+              placeholder={t("auth.placeholderUsername")}
               required
-              type="email"
-              value={email}
+              spellCheck={false}
+              value={identifier}
             />
           </div>
         </label>
