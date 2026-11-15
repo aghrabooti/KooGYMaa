@@ -4,6 +4,56 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { FormError, FormSuccess } from "@/components/forms";
 
+export function UsernamePanel({ username }: { username: string | null }) {
+  const [value, setValue] = useState(username ?? "");
+  const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
+  const [pending, setPending] = useState(false);
+  const router = useRouter();
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setSaved(false);
+    setPending(true);
+    try {
+      const response = await fetch("/api/auth/username", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: value }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error || "نام کاربری ذخیره نشد.");
+        return;
+      }
+      setValue(data.username);
+      setSaved(true);
+      router.refresh();
+    } catch {
+      setError("ارتباط برقرار نشد. دوباره تلاش کنید.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <section className="account-panel">
+      <h2>نام کاربری ورود</h2>
+      <form onSubmit={submit}>
+        <label>
+          <span>نام کاربری</span>
+          <input dir="ltr" autoComplete="username" autoCapitalize="none" spellCheck={false}
+            minLength={3} maxLength={32} required value={value} onChange={(event) => { setValue(event.target.value); setSaved(false); }} />
+        </label>
+        <FormError message={error} />
+        <FormSuccess message={saved ? "نام کاربری ذخیره شد." : ""} />
+        <button className="member-primary-button" disabled={pending} type="submit">{pending ? "در حال ذخیره…" : "ذخیره نام کاربری"}</button>
+      </form>
+    </section>
+  );
+}
+
 // Item 1: account completion panels — change password, verify email, sessions.
 export function ChangePasswordPanel() {
   const [error, setError] = useState("");
