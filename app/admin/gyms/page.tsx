@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { GymCreateForm } from "@/components/admin/gym-create-form";
+import { ChangePasswordPanel, UsernamePanel } from "@/components/account/account-panels";
 import { Icon } from "@/components/icon";
 import { LogoutButton } from "@/components/logout-button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -73,6 +74,10 @@ export default async function AdminGymsPage() {
             ))}
           </div>
         )}
+        <div className="account-grid">
+          <UsernamePanel username={user.username} />
+          <ChangePasswordPanel />
+        </div>
       </section>
     </main>
   );
