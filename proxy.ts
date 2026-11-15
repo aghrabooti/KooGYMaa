@@ -6,7 +6,6 @@ import {
   verifyToken,
 } from "@/lib/auth";
 
-const AUTH_ROUTES = new Set(["/login", "/register"]);
 const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/trainer", "/user"];
 const ROLE_PREFIXES: Array<{ prefix: string; role: AppRole }> = [
   { prefix: "/admin", role: "ADMIN" },
@@ -29,7 +28,9 @@ function expireInvalidCookies(response: NextResponse) {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  const session = verifyToken(token);
+  // A signed cookie can outlive its database session. Keep sign-in reachable
+  // when a previous session sends the user back here.
+  const session = pathname === "/login" ? null : verifyToken(token);
   const isProtected = PROTECTED_PREFIXES.some((prefix) =>
     matchesPrefix(pathname, prefix),
   );
@@ -40,7 +41,7 @@ export function proxy(request: NextRequest) {
     return expireInvalidCookies(NextResponse.redirect(loginUrl));
   }
 
-  if (AUTH_ROUTES.has(pathname) && session) {
+  if (pathname === "/register" && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
@@ -56,7 +57,7 @@ export function proxy(request: NextRequest) {
 
   const response = NextResponse.next();
 
-  if (token && !session) expireInvalidCookies(response);
+  if (pathname !== "/login" && token && !session) expireInvalidCookies(response);
 
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("X-Content-Type-Options", "nosniff");

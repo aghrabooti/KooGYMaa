@@ -1,12 +1,15 @@
 import jwt from "jsonwebtoken";
+import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   hashPassword,
+  SESSION_COOKIE_NAME,
   signToken,
   verifyPassword,
   verifyPasswordForUser,
   verifyToken,
 } from "@/lib/auth";
+import { proxy } from "@/proxy";
 
 const TEST_SECRET = "test-secret-with-at-least-thirty-two-characters";
 
@@ -61,4 +64,14 @@ describe("session tokens", () => {
 
     expect(verifyToken(token)).toBeNull();
   });
+});
+
+it("keeps sign-in accessible with a signed cookie, including a revoked session", () => {
+  const token = signToken("user-123", "USER", 60, "previous-session");
+  const response = proxy(new NextRequest("https://example.com/login", {
+    headers: { cookie: `${SESSION_COOKIE_NAME}=${token}` },
+  }));
+  expect(response.status).toBe(200);
+  expect(response.headers.get("location")).toBeNull();
+  expect(response.cookies.get(SESSION_COOKIE_NAME)).toBeUndefined();
 });

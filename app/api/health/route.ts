@@ -38,6 +38,8 @@ export async function GET() {
     const [users, pendingSweep] = await Promise.all([
       prisma.user.count(),
       prisma.subscription.count({ where: { status: "ACTIVE", endDate: { lte: new Date() } } }),
+      // A row count alone succeeds even when the deployed auth schema is behind.
+      prisma.user.findFirst({ select: { username: true } }),
     ]);
     return NextResponse.json(
       {
