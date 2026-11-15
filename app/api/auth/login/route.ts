@@ -7,6 +7,7 @@ import {
   verifyPasswordForUser,
 } from "@/lib/auth";
 import { validateLoginInput } from "@/lib/auth-validation";
+import { accountIdentifierWhere } from "@/lib/accounts";
 import { prisma } from "@/lib/prisma";
 import {
   checkRateLimit,
@@ -20,7 +21,7 @@ const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
 function rateLimitedResponse(retryAfter: number) {
   return NextResponse.json(
-    { error: "Too many login attempts. Please try again later." },
+    { error: "تلاش‌های زیادی برای ورود انجام شده است. کمی بعد دوباره امتحان کنید." },
     {
       headers: { "Retry-After": String(retryAfter) },
       status: 429,
@@ -43,16 +44,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    const { email, password, remember } = validation.data;
-    const accountKey = `login:account:${email}`;
-    const accountLimit = checkRateLimit(accountKey, 8, LOGIN_WINDOW_MS);
-
-    if (!accountLimit.allowed) {
-      return rateLimitedResponse(accountLimit.retryAfter);
-    }
+    const { identifier, password, remember } = validation.data;
 
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: accountIdentifierWhere(identifier),
       select: {
         email: true,
         id: true,
@@ -60,21 +55,26 @@ export async function POST(request: NextRequest) {
         password: true,
         role: true,
         status: true,
+        username: true,
       },
     });
+
+    const accountKey = `login:account:${user?.id ?? identifier}`;
+    const accountLimit = checkRateLimit(accountKey, 8, LOGIN_WINDOW_MS);
+    if (!accountLimit.allowed) return rateLimitedResponse(accountLimit.retryAfter);
 
     const isValid = await verifyPasswordForUser(password, user?.password);
 
     if (!user || !isValid || !isAppRole(user.role)) {
       return NextResponse.json(
-        { error: "Invalid email or password." },
+        { error: "نام کاربری، ایمیل یا گذرواژه درست نیست." },
         { status: 401 },
       );
     }
 
     if (user.status !== "ACTIVE") {
       return NextResponse.json(
-        { error: "This account is not currently active." },
+        { error: "این حساب فعال نیست." },
         { status: 403 },
       );
     }
@@ -104,6 +104,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         name: user.name,
         role: user.role,
+        username: user.username,
       },
     });
 
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Login failed:", error);
     return NextResponse.json(
-      { error: "Unable to sign in right now. Please try again." },
+      { error: "ورود انجام نشد. دوباره تلاش کنید." },
       { status: 500 },
     );
   }
