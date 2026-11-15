@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { authorizeTrainerRequest } from "@/lib/trainer-access";
 import { prisma } from "@/lib/prisma";
+import { accountIdentifierWhere } from "@/lib/accounts";
+import { parseAccountIdentifier } from "@/lib/auth-validation";
 
 export async function GET(request: NextRequest) {
   const authorization = await authorizeTrainerRequest(request);
@@ -27,11 +29,11 @@ export async function POST(request: NextRequest) {
   const authorization = await authorizeTrainerRequest(request);
   if (!authorization.ok) return authorization.response;
 
-  const body = await request.json().catch(() => null) as { email?: unknown; gymId?: unknown } | null;
-  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+  const body = await request.json().catch(() => null);
+  const identifier = parseAccountIdentifier(body?.identifier ?? body?.email);
   const gymId = typeof body?.gymId === "string" && body.gymId.trim() ? body.gymId.trim() : null;
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: "Enter a valid member email." }, { status: 400 });
+  if (!identifier) {
+    return NextResponse.json({ error: "نام کاربری یا ایمیل شاگرد را درست وارد کنید." }, { status: 400 });
   }
 
   if (gymId) {
@@ -43,10 +45,10 @@ export async function POST(request: NextRequest) {
   }
 
   const user = await prisma.user.findFirst({
-    where: { email, role: "USER", status: "ACTIVE" },
+    where: { ...accountIdentifierWhere(identifier), role: "USER", status: "ACTIVE" },
     select: { id: true },
   });
-  if (!user) return NextResponse.json({ error: "No active member account was found for this email." }, { status: 404 });
+  if (!user) return NextResponse.json({ error: "حساب فعال شاگرد با این نام کاربری یا ایمیل پیدا نشد." }, { status: 404 });
 
   const current = await prisma.trainerClient.findUnique({
     where: { trainerId_userId: { trainerId: authorization.access.profile.id, userId: user.id } },
