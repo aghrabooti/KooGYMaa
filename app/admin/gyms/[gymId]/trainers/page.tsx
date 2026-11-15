@@ -1,4 +1,5 @@
 import { AddPersonForm } from "@/components/admin/add-person-form";
+import { CreateAccountForm } from "@/components/account/create-account-form";
 import { StatusActions } from "@/components/admin/status-actions";
 import { BulkBar, Pagination } from "@/components/admin/data-table";
 import { Icon } from "@/components/icon";
@@ -21,13 +22,13 @@ const PAGE_SIZE = 20;
 
 export default async function TrainersPage({ params, searchParams }: PageProps) {
   const { gymId } = await params;
-  const access = await requireGymAdminAccess(gymId);
+  await requireGymAdminAccess(gymId);
   const filters = await searchParams;
   const query = filters.q?.trim();
   const validStatuses = new Set(["PENDING", "ACTIVE", "REJECTED", "SUSPENDED", "EXPIRED", "CANCELLED"]);
   const status = filters.status && validStatuses.has(filters.status) ? filters.status : undefined;
   const page = Math.max(1, Number(filters.page) || 1);
-  const where = { gymId, ...(status ? { status: status as "PENDING" | "ACTIVE" | "REJECTED" | "SUSPENDED" | "EXPIRED" | "CANCELLED" } : {}), ...(query ? { trainer: { user: { OR: [{ name: { contains: query } }, { email: { contains: query } }] } } } : {}) };
+  const where = { gymId, ...(status ? { status: status as "PENDING" | "ACTIVE" | "REJECTED" | "SUSPENDED" | "EXPIRED" | "CANCELLED" } : {}), ...(query ? { trainer: { user: { OR: [{ name: { contains: query } }, { email: { contains: query } }, { username: { contains: query.toLowerCase() } }] } } } : {}) };
 
   const [trainers, grouped, total] = await Promise.all([
     prisma.gymTrainer.findMany({
@@ -44,7 +45,7 @@ export default async function TrainersPage({ params, searchParams }: PageProps) 
             hourlyRate: true,
             currency: true,
             isAvailable: true,
-            user: { select: { name: true, email: true, phone: true } },
+            user: { select: { name: true, email: true, phone: true, username: true } },
             _count: { select: { clients: { where: { status: "ACTIVE" } } } },
           },
         },
@@ -64,7 +65,10 @@ export default async function TrainersPage({ params, searchParams }: PageProps) 
     <div className="admin-page">
       <header className="admin-page__heading admin-page__heading--compact">
         <div><span>تیم مربی‌گری</span><h1>مربی‌ها</h1><p>درخواست‌ها را مرور کنید و فهرست فعال مربی‌گری‌تان را مدیریت کنید.</p></div>
-        <AddPersonForm endpoint={`/api/admin/gyms/${gymId}/trainers`} kind="trainer" />
+        <div className="account-create-actions">
+          <CreateAccountForm endpoint={`/api/admin/gyms/${gymId}/trainers/accounts`} kind="مربی" panel="admin" />
+          <AddPersonForm endpoint={`/api/admin/gyms/${gymId}/trainers`} kind="trainer" />
+        </div>
       </header>
 
       <section className="admin-summary-strip">
@@ -76,14 +80,13 @@ export default async function TrainersPage({ params, searchParams }: PageProps) 
 
       <section className="admin-panel admin-table-panel">
         <div className="admin-toolbar">
-          <form><Icon name="search" size={17} /><input defaultValue={query} name="q" placeholder="جستجوی مربی‌ها با نام یا ایمیل" /><button type="submit">جستجو</button></form>
+          <form><Icon name="search" size={17} /><input defaultValue={query} name="q" placeholder="نام، نام کاربری یا ایمیل مربی" /><button type="submit">جستجو</button></form>
           <div className="admin-filter-links">
             {["ALL", "PENDING", "ACTIVE", "SUSPENDED"].map((item) => (
               <a className={(item === "ALL" ? !status : status === item) ? "active" : ""} href={item === "ALL" ? `?${query ? `q=${encodeURIComponent(query)}` : ""}` : `?status=${item}${query ? `&q=${encodeURIComponent(query)}` : ""}`} key={item}>{item === "ALL" ? "همه" : faStatus(item)}</a>
             ))}
           </div>
         </div>
-        {access.staffRole !== "OWNER" && <p className="admin-note">تأیید نهایی مربی‌های تازه بر عهده مالک باشگاه است؛ مدیران می‌توانند مرور کنند اما تأییدها ثبت می‌شود.</p>}
         <BulkBar endpoint={`/api/admin/gyms/${gymId}/trainers/bulk`} label="عملیات گروهی مربیان" actions={[{ value: "ACTIVE", label: "تأیید گروهی" }, { value: "SUSPENDED", label: "تعلیق گروهی" }, { value: "REJECTED", label: "رد گروهی" }]} />
 
       {trainers.length ? <div className="admin-trainer-grid">{trainers.map((membership: any) => {
@@ -97,11 +100,11 @@ export default async function TrainersPage({ params, searchParams }: PageProps) 
               <span><Icon name="users" size={15} /><strong>{trainer._count.clients}</strong><small>مراجعان فعال</small></span>
               <span><Icon name="credit-card" size={15} /><strong>{formatMoney(trainer.hourlyRate, trainer.currency)}</strong><small>نرخ ساعتی</small></span>
             </div>
-            <div className="admin-trainer-card__contact"><span>{trainer.user.email}</span><span>{trainer.user.phone || "تلفن ثبت نشده است"}</span></div>
+            <div className="admin-trainer-card__contact"><span><bdi>{trainer.user.email || trainer.user.username}</bdi></span><span>{trainer.user.phone || "تلفن ثبت نشده است"}</span></div>
             <div className="admin-trainer-card__foot"><input type="checkbox" data-bulk-id={membership.id} aria-label={`انتخاب ${trainer.user.name}`} /><StatusActions endpoint={`/api/admin/gyms/${gymId}/trainers/${membership.id}`} status={membership.status} /></div>
           </article>
         );
-      })}</div> : <div className="admin-panel admin-empty-table"><span><Icon name="dumbbell" size={27} /></span><h2>هنوز مربی ثبت نشده است</h2><p>با ایمیل مربی اضافه کنید یا منتظر درخواست‌ها بمانید.</p></div>}
+      })}</div> : <div className="admin-panel admin-empty-table"><span><Icon name="dumbbell" size={27} /></span><h2>هنوز مربی ثبت نشده است</h2><p>حساب مربی بسازید یا یک مربی با حساب موجود اضافه کنید.</p></div>}
         <Pagination page={page} totalPages={totalPages} base={baseQuery || "?"} />
       </section>
     </div>
