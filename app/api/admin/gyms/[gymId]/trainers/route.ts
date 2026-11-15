@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { authorizeGymAdminRequest } from "@/lib/admin-access";
 import { prisma } from "@/lib/prisma";
+import { accountIdentifierWhere } from "@/lib/accounts";
+import { parseAccountIdentifier } from "@/lib/auth-validation";
 
 type Context = { params: Promise<{ gymId: string }> };
 
@@ -40,18 +42,18 @@ export async function POST(request: NextRequest, { params }: Context) {
   const authorization = await authorizeGymAdminRequest(request, gymId);
   if (!authorization.ok) return authorization.response;
 
-  const body = await request.json().catch(() => null) as { email?: unknown } | null;
-  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: "Enter a valid trainer email." }, { status: 400 });
+  const body = await request.json().catch(() => null);
+  const identifier = parseAccountIdentifier(body?.identifier ?? body?.email);
+  if (!identifier) {
+    return NextResponse.json({ error: "نام کاربری یا ایمیل مربی را درست وارد کنید." }, { status: 400 });
   }
 
   const trainer = await prisma.trainerProfile.findFirst({
-    where: { user: { email, role: "TRAINER", status: "ACTIVE" } },
+    where: { user: { ...accountIdentifierWhere(identifier), role: "TRAINER", status: "ACTIVE" } },
     select: { id: true },
   });
   if (!trainer) {
-    return NextResponse.json({ error: "No active trainer account was found for this email." }, { status: 404 });
+    return NextResponse.json({ error: "حساب فعال مربی با این نام کاربری یا ایمیل پیدا نشد." }, { status: 404 });
   }
 
   const now = new Date();
