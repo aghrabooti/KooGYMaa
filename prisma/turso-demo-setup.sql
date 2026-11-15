@@ -26,7 +26,8 @@ INSERT INTO "Gym" ("id", "name", "slug", "description", "email", "phone", "addre
 CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL CHECK (length(trim("name")) BETWEEN 2 AND 80),
-    "email" TEXT NOT NULL CHECK (length("email") BETWEEN 3 AND 254),
+    "email" TEXT CHECK (length("email") BETWEEN 3 AND 254),
+    "username" TEXT CHECK (length("username") BETWEEN 3 AND 32 AND "username" GLOB '[a-z0-9]*' AND "username" NOT GLOB '*[^a-z0-9_.-]*'),
     "password" TEXT NOT NULL,
     "phone" TEXT,
     "avatarUrl" TEXT,
@@ -675,6 +676,7 @@ CREATE INDEX "TrainingSession_trainerClientId_startsAt_idx" ON "TrainingSession"
 CREATE INDEX "TrainingSession_trainerId_startsAt_status_idx" ON "TrainingSession"("trainerId", "startsAt", "status");
 CREATE INDEX "User_createdAt_idx" ON "User"("createdAt");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 CREATE INDEX "User_role_status_idx" ON "User"("role", "status");
 CREATE UNIQUE INDEX "WorkoutAssignment_planId_userId_key" ON "WorkoutAssignment"("planId", "userId");
 CREATE INDEX "WorkoutAssignment_trainerClientId_idx" ON "WorkoutAssignment"("trainerClientId");
