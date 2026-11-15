@@ -1,7 +1,5 @@
-import { readFile, readdir, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
-import { randomUUID } from "node:crypto";
 import { createClient, type Client } from "@libsql/client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -13,8 +11,6 @@ const migrationsDir = "prisma/migrations";
 // the live site gets a schema that does not match what Prisma Client expects
 // (login/register break with 500s). Guard the contract here.
 
-const migrationsDbPath = join(tmpdir(), `koogymaa-mig-${randomUUID()}.db`);
-const hostedDbPath = join(tmpdir(), `koogymaa-hosted-${randomUUID()}.db`);
 let migrationsDb: Client;
 let hostedDb: Client;
 
@@ -30,7 +26,7 @@ async function catalog(client: Client) {
 }
 
 beforeAll(async () => {
-  migrationsDb = createClient({ url: `file:${migrationsDbPath}` });
+  migrationsDb = createClient({ url: ":memory:" });
   const migrationDirs = (await readdir(migrationsDir)).filter((name) => /\d+_.+/.test(name)).sort();
   for (const dir of migrationDirs) {
     await migrationsDb.executeMultiple(
@@ -38,15 +34,13 @@ beforeAll(async () => {
     );
   }
 
-  hostedDb = createClient({ url: `file:${hostedDbPath}` });
+  hostedDb = createClient({ url: ":memory:" });
   await hostedDb.executeMultiple(await readFile(setupPath, "utf8"));
 });
 
-afterAll(async () => {
+afterAll(() => {
   migrationsDb.close();
   hostedDb.close();
-  await rm(migrationsDbPath, { force: true });
-  await rm(hostedDbPath, { force: true });
 });
 
 describe("hosted setup SQL", () => {
