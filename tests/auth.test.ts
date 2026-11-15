@@ -66,9 +66,9 @@ describe("session tokens", () => {
   });
 });
 
-it("keeps sign-in accessible with a signed cookie, including a revoked session", () => {
+it.each(["/login", "/register"])("keeps %s accessible with a cookie from a previous session", (pathname) => {
   const token = signToken("user-123", "USER", 60, "previous-session");
-  const response = proxy(new NextRequest("https://example.com/login", {
+  const response = proxy(new NextRequest(`https://example.com${pathname}`, {
     headers: { cookie: `${SESSION_COOKIE_NAME}=${token}` },
   }));
   expect(response.status).toBe(200);

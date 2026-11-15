@@ -78,20 +78,20 @@ export function PlanExportToolbar({
           <div>
             <strong>پیش‌نمایش برنامه</strong>
             {genericPreview && students.length > 0 ? (
-              <small>برای درج نام شاگرد در فایل، او را از فهرست انتخاب کنید.</small>
+              <small>برای شخصی‌سازی فایل، نام فرد را از فهرست انتخاب کنید.</small>
             ) : null}
           </div>
         </div>
         <div className="pdf-toolbar__actions">
           {students.length > 0 ? (
             <label className="pdf-student-pick">
-              <span>شاگرد</span>
+              <span>برنامه برای</span>
               <select
                 value={selectedStudentId ?? ""}
                 onChange={(event) => changeStudent(event.target.value)}
                 disabled={pending}
               >
-                <option value="">بدون نام شاگرد</option>
+                <option value="">بدون نام</option>
                 {students.map((student) => (
                   <option key={student.id} value={student.id}>
                     {student.name}

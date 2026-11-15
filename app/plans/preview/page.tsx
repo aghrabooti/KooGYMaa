@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { PlanDocument } from "@/components/plans/plan-document";
 import { PlanExportToolbar } from "@/components/plans/plan-export-toolbar";
-import { PLAN_KIND_LABEL, pdfFilename, type PlanKind } from "@/lib/plan-document";
+import { pdfFilename, runningHeaderLine, type PlanKind } from "@/lib/plan-document";
 import { loadPlanDocument } from "@/lib/plan-document-loader";
 import { requireCurrentUser } from "@/lib/session";
 import "./plan-print.css";
@@ -25,9 +25,7 @@ export default async function PlanPreviewPage({ searchParams }: PageProps) {
 
   const backHref =
     user.role === "TRAINER" ? `/trainer/${kind}/${planId}` : `/user/${kind}`;
-  const documentTitle = [doc.title, PLAN_KIND_LABEL[kind], doc.genericPreview ? null : doc.studentName, doc.trainerName]
-    .filter(Boolean)
-    .join("، ");
+  const documentTitle = runningHeaderLine(doc);
 
   return (
     <main className="pdf-page" dir="rtl" lang="fa">

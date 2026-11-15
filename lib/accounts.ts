@@ -1,12 +1,17 @@
 import "server-only";
 
 import { NextResponse } from "next/server";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { hashPassword, type AppRole } from "@/lib/auth";
 import { validateAccountInput, type AccountInput } from "@/lib/auth-validation";
 import { prisma } from "@/lib/prisma";
 
-type AccountRelations = Pick<Prisma.UserCreateInput, "trainerProfile" | "trainerRelationships" | "gymStaffMemberships">;
+type AccountRelations = Pick<Prisma.UserCreateInput, "trainerProfile" | "trainerRelationships" | "gymStaffMemberships" | "gymMemberships">;
+
+export function accountSearchWhere(query: string): Prisma.UserWhereInput {
+  const identifier = query.toLowerCase();
+  return { OR: [{ name: { contains: query } }, { username: { contains: identifier } }, { email: { contains: identifier } }] };
+}
 
 export function accountIdentifierWhere(identifier: string): { email: string } | { username: string } {
   return identifier.includes("@") ? { email: identifier } : { username: identifier };
@@ -27,6 +32,11 @@ export function isAccountConflict(error: unknown) {
 export function accountCreationError(error: unknown) {
   if (isAccountConflict(error)) {
     return NextResponse.json({ error: "این نام کاربری یا ایمیل قبلاً ثبت شده است." }, { status: 409 });
+  }
+  // Deployments that added only the username column can still require email.
+  if (error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2011" && error.meta?.modelName === "User" && error.message.includes("(`email`)")) {
+    return NextResponse.json({ error: "در نسخهٔ فعلی پایگاه داده، ایمیل برای ساخت حساب لازم است. یک ایمیل معتبر وارد کنید." }, { status: 400 });
   }
   console.error("Account creation failed:", error);
   return NextResponse.json({ error: "حساب ساخته نشد. دوباره تلاش کنید." }, { status: 500 });

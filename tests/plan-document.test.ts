@@ -9,6 +9,7 @@ import {
   pdfFilename,
   planTotals,
   runningHeaderLine,
+  planDocumentHeading,
   type NutritionDocument,
   type WorkoutDocument,
 } from "../lib/plan-document";
@@ -93,12 +94,16 @@ describe("سند PDF برنامههای تمرین و تغذیه", () => {
     expect(faNumber(null)).toBe("—");
   });
 
-  it("سربرگ تکرارشونده شامل نام شاگرد، مربی و تاریخ شمسی است", () => {
+  it("سربرگ برنامه را به نام دریافت‌کننده نمایش می‌دهد", () => {
     const line = runningHeaderLine(workout());
-    expect(line).toContain("نیما احمدی");
-    expect(line).toContain("سارا مربی");
+    const heading = `${PLAN_KIND_LABEL.workouts} «نیما احمدی»`;
+    expect(planDocumentHeading(workout())).toBe(heading);
+    expect(line).toContain(heading);
+    expect(line).toContain("با راهنمایی سارا مربی");
     expect(line).toContain("۲۴ آبان ۱۴۰۵");
-    expect(line).toContain(PLAN_KIND_LABEL.workouts);
+    const generic = { ...workout(), genericPreview: true };
+    expect(planDocumentHeading(generic)).toBe(generic.title);
+    expect(runningHeaderLine(generic)).not.toContain("نیما احمدی");
   });
 
   it("خلاصهٔ آمار هر دو نوع طرح و نام فایل امن را میسازد", () => {
@@ -120,8 +125,7 @@ describe("سند PDF برنامههای تمرین و تغذیه", () => {
   it("سند، سربرگ و مسیرهای پیشنمایش/دانلود به هم وصلاند", () => {
     const doc = file("components/plans/plan-document.tsx");
     expect(doc).toContain('id="pdf-head"');
-    expect(doc).toContain("شاگرد");
-    expect(doc).toContain("مربی");
+    expect(doc).toContain("با راهنمایی");
     expect(doc).toContain("تاریخ صدور (شمسی)");
 
     const css = file("app/plans/preview/plan-print.css");

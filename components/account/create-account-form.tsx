@@ -6,7 +6,7 @@ import { Icon } from "@/components/icon";
 
 type Props = {
   endpoint: string;
-  kind: "مدیر باشگاه" | "مربی" | "شاگرد";
+  kind: "مدیر باشگاه" | "مربی" | "شاگرد" | "عضو";
   panel: "admin" | "trainer";
   gyms?: Array<{ id: string; name: string }>;
 };

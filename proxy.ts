@@ -28,9 +28,10 @@ function expireInvalidCookies(response: NextResponse) {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
-  // A signed cookie can outlive its database session. Keep sign-in reachable
-  // when a previous session sends the user back here.
-  const session = pathname === "/login" ? null : verifyToken(token);
+  // A signed cookie can outlive its database session. Keep both auth pages
+  // reachable when the previous session can no longer open the dashboard.
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const session = isAuthPage ? null : verifyToken(token);
   const isProtected = PROTECTED_PREFIXES.some((prefix) =>
     matchesPrefix(pathname, prefix),
   );
@@ -39,10 +40,6 @@ export function proxy(request: NextRequest) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     return expireInvalidCookies(NextResponse.redirect(loginUrl));
-  }
-
-  if (pathname === "/register" && session) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   if (session) {
@@ -57,7 +54,7 @@ export function proxy(request: NextRequest) {
 
   const response = NextResponse.next();
 
-  if (pathname !== "/login" && token && !session) expireInvalidCookies(response);
+  if (!isAuthPage && token && !session) expireInvalidCookies(response);
 
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("X-Content-Type-Options", "nosniff");

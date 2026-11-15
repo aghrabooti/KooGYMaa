@@ -6,6 +6,7 @@ import {
   formatPersianDate,
   planTotals,
   runningHeaderLine,
+  planDocumentHeading,
   type PlanDocumentData,
   type PlanFoodItem,
   type PlanWorkoutDay,
@@ -218,20 +219,16 @@ export function PlanDocument({ doc }: { doc: PlanDocumentData }) {
           </div>
 
           <div className="pdf-head__title">
-            <span className="pdf-kicker">{PLAN_KIND_LABEL[doc.kind]}</span>
-            <h1>{doc.title}</h1>
+            {doc.genericPreview && <span className="pdf-kicker">{PLAN_KIND_LABEL[doc.kind]}</span>}
+            <h1>{planDocumentHeading(doc)}</h1>
+            {!doc.genericPreview && doc.title && <p>{doc.title}</p>}
+            {doc.studentEmail && <p><bdi>{doc.studentEmail}</bdi></p>}
             {doc.description ? <p>{doc.description}</p> : null}
           </div>
 
           <div className="pdf-head__meta">
             <div>
-              <small>شاگرد</small>
-              <strong>{doc.genericPreview ? "بدون نام شاگرد" : doc.studentName}</strong>
-              {doc.studentEmail ? <em dir="ltr">{doc.studentEmail}</em> : null}
-            </div>
-            <div>
-              <small>مربی</small>
-              <strong>{doc.trainerName}</strong>
+              <strong>با راهنمایی {doc.trainerName}</strong>
               {doc.trainerSpecialty ? <em>{doc.trainerSpecialty}</em> : null}
             </div>
             <div>

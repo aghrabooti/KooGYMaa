@@ -176,12 +176,15 @@ export function planTotals(doc: PlanDocumentData): Array<{ label: string; value:
   ];
 }
 
+export function planDocumentHeading(doc: PlanDocumentData): string {
+  return doc.genericPreview ? doc.title : `${PLAN_KIND_LABEL[doc.kind]} «${doc.studentName}»`;
+}
+
 /** Compact one-line header repeated on every PDF page after the first. */
 export function runningHeaderLine(doc: PlanDocumentData): string {
   return [
-    `${PLAN_KIND_LABEL[doc.kind]} «${doc.title}»`,
-    doc.genericPreview ? null : `شاگرد: ${doc.studentName}`,
-    `مربی: ${doc.trainerName}`,
+    doc.genericPreview ? `${PLAN_KIND_LABEL[doc.kind]} «${doc.title}»` : planDocumentHeading(doc),
+    `با راهنمایی ${doc.trainerName}`,
     formatPersianDate(doc.issuedAt),
   ].filter(Boolean).join(" · ");
 }

@@ -6,6 +6,7 @@ import { Icon } from "@/components/icon";
 import { requireGymAdminAccess } from "@/lib/admin-access";
 import { prisma } from "@/lib/prisma";
 import { faStatus } from "@/components/fa";
+import { accountSearchWhere } from "@/lib/accounts";
 
 type PageProps = { params: Promise<{ gymId: string }>; searchParams: Promise<{ q?: string; status?: string; page?: string }> };
 
@@ -28,7 +29,7 @@ export default async function TrainersPage({ params, searchParams }: PageProps) 
   const validStatuses = new Set(["PENDING", "ACTIVE", "REJECTED", "SUSPENDED", "EXPIRED", "CANCELLED"]);
   const status = filters.status && validStatuses.has(filters.status) ? filters.status : undefined;
   const page = Math.max(1, Number(filters.page) || 1);
-  const where = { gymId, ...(status ? { status: status as "PENDING" | "ACTIVE" | "REJECTED" | "SUSPENDED" | "EXPIRED" | "CANCELLED" } : {}), ...(query ? { trainer: { user: { OR: [{ name: { contains: query } }, { email: { contains: query } }, { username: { contains: query.toLowerCase() } }] } } } : {}) };
+  const where = { gymId, ...(status ? { status: status as "PENDING" | "ACTIVE" | "REJECTED" | "SUSPENDED" | "EXPIRED" | "CANCELLED" } : {}), ...(query ? { trainer: { user: accountSearchWhere(query) } } : {}) };
 
   const [trainers, grouped, total] = await Promise.all([
     prisma.gymTrainer.findMany({
@@ -100,7 +101,7 @@ export default async function TrainersPage({ params, searchParams }: PageProps) 
               <span><Icon name="users" size={15} /><strong>{trainer._count.clients}</strong><small>مراجعان فعال</small></span>
               <span><Icon name="credit-card" size={15} /><strong>{formatMoney(trainer.hourlyRate, trainer.currency)}</strong><small>نرخ ساعتی</small></span>
             </div>
-            <div className="admin-trainer-card__contact"><span><bdi>{trainer.user.email || trainer.user.username}</bdi></span><span>{trainer.user.phone || "تلفن ثبت نشده است"}</span></div>
+            <div className="admin-trainer-card__contact"><span><bdi>{[trainer.user.username, trainer.user.email].filter(Boolean).join(" · ")}</bdi></span><span>{trainer.user.phone || "تلفن ثبت نشده است"}</span></div>
             <div className="admin-trainer-card__foot"><input type="checkbox" data-bulk-id={membership.id} aria-label={`انتخاب ${trainer.user.name}`} /><StatusActions endpoint={`/api/admin/gyms/${gymId}/trainers/${membership.id}`} status={membership.status} /></div>
           </article>
         );
