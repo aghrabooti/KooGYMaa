@@ -12,7 +12,8 @@ import {
 import { prisma } from "@/lib/prisma";
 
 export type SessionUser = {
-  email: string;
+  email: string | null;
+  username: string | null;
   id: string;
   name: string;
   role: AppRole;
@@ -42,6 +43,7 @@ export async function getUserFromSessionToken(
       name: true,
       role: true,
       status: true,
+      username: true,
     },
   });
 
@@ -52,6 +54,7 @@ export async function getUserFromSessionToken(
     id: user.id,
     name: user.name,
     role: user.role,
+    username: user.username,
   };
 }
 
