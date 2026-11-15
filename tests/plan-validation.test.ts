@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import kashaniWorkout from "@/lib/kashani-workout.json";
 import {
   validateCloneMode,
   validateDietPlan,
@@ -7,6 +8,17 @@ import {
 } from "@/lib/plan-validation";
 
 describe("structured plan validation", () => {
+  it("accepts all four days and 24 prescriptions in the Kashani workout import", () => {
+    const result = validateWorkoutPlan(kashaniWorkout);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.isTemplate).toBe(true);
+    expect(result.data.days.map((day) => day.exercises.length)).toEqual([6, 6, 6, 6]);
+    expect(result.data.days.flatMap((day) => day.exercises).every(({ sets, reps, restSeconds }) =>
+      sets !== null && reps !== null && restSeconds !== null,
+    )).toBe(true);
+  });
+
   it("accepts a structured workout day", () => {
     const result = validateWorkoutPlan({
       title: "Foundation Strength",
