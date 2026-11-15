@@ -11,12 +11,14 @@ describe("registration validation", () => {
       name: "  Mina    Ahmadi ",
       password: "Strongpass1",
       role: "USER",
+      username: "  Mina.Ahmadi ",
     })).toEqual({
       data: {
         email: "member@example.com",
         name: "Mina Ahmadi",
         password: "Strongpass1",
         role: "USER",
+        username: "mina.ahmadi",
       },
       ok: true,
     });
@@ -30,6 +32,7 @@ describe("registration validation", () => {
         name: "Mina Ahmadi",
         password: "Strongpass1",
         role,
+        username: "mina.ahmadi",
       });
 
       expect(result.ok).toBe(false);
@@ -44,11 +47,19 @@ describe("registration validation", () => {
         name: "Mina Ahmadi",
         password,
         role: "USER",
+        username: "mina.ahmadi",
       });
 
       expect(result.ok).toBe(false);
     },
   );
+
+  it("accepts a username-only account and rejects usernames that look like emails", () => {
+    const account = { name: "Mina Ahmadi", username: "mina-ahmadi", password: "Strongpass1", role: "USER" };
+    expect(validateRegisterInput(account)).toMatchObject({ ok: true, data: { email: null, username: "mina-ahmadi" } });
+    expect(validateRegisterInput({ ...account, username: "mina@example.test" }).ok).toBe(false);
+    expect(validateRegisterInput({ ...account, username: "" }).ok).toBe(false);
+  });
 });
 
 describe("login validation", () => {
@@ -59,11 +70,18 @@ describe("login validation", () => {
       remember: true,
     })).toEqual({
       data: {
-        email: "user@example.com",
+        identifier: "user@example.com",
         password: "password",
         remember: true,
       },
       ok: true,
+    });
+  });
+
+  it("normalizes usernames for login", () => {
+    expect(validateLoginInput({ identifier: "  Mina.Ahmadi ", password: "Strongpass1" })).toEqual({
+      ok: true,
+      data: { identifier: "mina.ahmadi", password: "Strongpass1", remember: false },
     });
   });
 
