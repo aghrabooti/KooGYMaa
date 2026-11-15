@@ -1,7 +1,4 @@
-import { readFile, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { createClient, type Client } from "@libsql/client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -11,11 +8,11 @@ const trainerMigration = "prisma/migrations/20260821040000_trainer_scheduling/mi
 const plansMigration = "prisma/migrations/20260821060000_structured_plans/migration.sql";
 const progressMigration = "prisma/migrations/20260821080000_progress_tracking/migration.sql";
 const commerceMigration = "prisma/migrations/20260821100000_payments_reviews_audit/migration.sql";
-const databasePath = join(tmpdir(), `koogymaa-schema-${randomUUID()}.db`);
+const usernamesMigration = "prisma/migrations/20261115040000_usernames/migration.sql";
 let database: Client;
 
 beforeAll(async () => {
-  database = createClient({ url: `file:${databasePath}` });
+  database = createClient({ url: ":memory:" });
   await database.executeMultiple(await readFile(initialMigration, "utf8"));
   await database.execute({
     sql: `INSERT INTO User (id, name, email, password, role, createdAt, updatedAt)
@@ -27,11 +24,17 @@ beforeAll(async () => {
   await database.executeMultiple(await readFile(plansMigration, "utf8"));
   await database.executeMultiple(await readFile(progressMigration, "utf8"));
   await database.executeMultiple(await readFile(commerceMigration, "utf8"));
+  await database.executeMultiple(`
+    INSERT INTO "Gym" ("id", "name", "slug", "updatedAt")
+    VALUES ('legacy-gym', 'Legacy Gym', 'legacy-gym', CURRENT_TIMESTAMP);
+    INSERT INTO "GymMembership" ("id", "gymId", "userId", "updatedAt")
+    VALUES ('legacy-membership', 'legacy-gym', 'legacy-user', CURRENT_TIMESTAMP);
+  `);
+  await database.executeMultiple(await readFile(usernamesMigration, "utf8"));
 });
 
-afterAll(async () => {
+afterAll(() => {
   database.close();
-  await rm(databasePath, { force: true });
 });
 
 describe("domain foundation migration", () => {
@@ -46,6 +49,20 @@ describe("domain foundation migration", () => {
       role: "USER",
       status: "ACTIVE",
     });
+  });
+
+  it("preserves existing memberships and enforces unique usernames for accounts without email", async () => {
+    const membership = await database.execute("SELECT userId FROM GymMembership WHERE id = 'legacy-membership'");
+    expect(membership.rows[0]?.userId).toBe("legacy-user");
+    expect((await database.execute("PRAGMA foreign_key_check")).rows).toHaveLength(0);
+
+    const createAccount = (id: string, username: string) => database.execute({
+      sql: 'INSERT INTO "User" ("id", "name", "username", "password", "updatedAt") VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)',
+      args: [id, "New User", username, "hash"],
+    });
+    await createAccount("new-user-1", "new.user1");
+    await createAccount("new-user-2", "new.user2");
+    await expect(createAccount("new-user-3", "new.user1")).rejects.toThrow(/unique/i);
   });
 
   it("creates the complete domain table set", async () => {
