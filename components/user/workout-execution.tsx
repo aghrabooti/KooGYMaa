@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@/components/icon";
+import { ExerciseDemoLink } from "@/components/exercise-demo-link";
+import type { ExerciseDemo } from "@/lib/exercises";
 import { faStatus } from "@/components/fa";
 import { RestTimer } from "@/components/user/rest-timer";
 
@@ -26,7 +28,7 @@ export type PreviousExercise = { exerciseId: string; actualSets: number | null; 
 // Item 8: autosave (localStorage + server drafts), resume, rest timer, previous-session comparison.
 export function WorkoutLogForm({ logId, initial, title, previous, resumed }: {
   logId: string;
-  initial: Exercise[];
+  initial: (Exercise & { demo?: ExerciseDemo })[];
   title: string;
   previous?: PreviousExercise[];
   resumed?: boolean;
@@ -54,6 +56,7 @@ export function WorkoutLogForm({ logId, initial, title, previous, resumed }: {
     stateRef.current = { exercises, effort, notes };
   });
   const prevById = new Map((previous || []).map((p) => [p.exerciseId, p]));
+  const demoById = new Map(initial.map(({ exerciseId, demo }) => [exerciseId, demo]));
 
   // Autosave: local draft every change + quiet server draft every 20s.
   useEffect(() => {
@@ -108,6 +111,7 @@ export function WorkoutLogForm({ logId, initial, title, previous, resumed }: {
         return <article className={exercise.completed ? "is-done" : ""} key={exercise.exerciseId}>
           <label><input checked={exercise.completed} type="checkbox" onChange={(event) => patch(index, { completed: event.target.checked })} /><span><Icon name="check" size={13} /></span></label>
           <div><strong>{exercise.name}</strong><small>{exercise.prescribedSets || "—"} ست · {exercise.prescribedReps || "—"} تکرار · {exercise.prescribedWeight || "وزن بدن"}</small>
+            <ExerciseDemoLink demo={demoById.get(exercise.exerciseId)} name={exercise.name} />
             {prev && (prev.actualSets || prev.actualReps || prev.actualWeight) && <small className="member-prev">جلسه قبل: {prev.actualSets ?? "—"}×{prev.actualReps ?? "—"} · {prev.actualWeight ?? "—"}</small>}</div>
           <input min="0" type="number" value={exercise.actualSets ?? ""} aria-label="ست‌ها" onChange={(event) => patch(index, { actualSets: event.target.value ? Number(event.target.value) : null })} />
           <input value={exercise.actualReps} aria-label="تکرارها" onChange={(event) => patch(index, { actualReps: event.target.value })} />

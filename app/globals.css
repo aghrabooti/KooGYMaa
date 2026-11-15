@@ -2823,12 +2823,22 @@ html.locale-fa .admin-table :is(th, td) { text-align: right; }
 /* ── Exercise library (item 10) ── */
 .exercise-picker { border: 1px dashed var(--line); border-radius: 12px; margin-top: 10px; padding: 12px; }
 .exercise-picker__filters { display: flex; gap: 8px; margin-bottom: 10px; }
-.exercise-picker__filters label { align-items: center; display: flex; flex: 1; gap: 6px; }
+.exercise-picker__filters label { align-items: center; display: flex; flex: 1; gap: 6px; min-width: 0; }
+.exercise-picker__filters input { min-width: 0; width: 100%; }
 .exercise-picker__filters input, .exercise-picker__filters select { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
 .exercise-picker__results { display: grid; gap: 8px; max-height: 300px; overflow: auto; }
 .exercise-picker__results article { align-items: center; border: 1px solid var(--line); border-radius: 10px; display: flex; justify-content: space-between; gap: 8px; padding: 8px 12px; }
 .exercise-picker__results small { color: var(--muted); display: block; }
-.exercise-picker__actions { align-items: center; display: flex; gap: 8px; }
+.exercise-picker__actions { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }
+.exercise-picker__pagination { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; margin-top: 10px; }
+.exercise-picker__pagination > div { display: flex; gap: 8px; }
+.exercise-picker__pagination button { border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; }
+.exercise-picker__pagination button:disabled { opacity: .5; }
+.exercise-demo-link { color: var(--ink); display: inline-block; font-size: .8rem; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 540px) {
+  .exercise-picker__filters { flex-direction: column; }
+  .exercise-picker__results article { align-items: stretch; flex-direction: column; }
+}
 .trainer-day-tools { display: flex; gap: 4px; }
 .trainer-day-tools button { border: 1px solid var(--line); border-radius: 7px; cursor: pointer; padding: 2px 8px; }
 .trainer-dirty { color: var(--orange); font-weight: 700; }

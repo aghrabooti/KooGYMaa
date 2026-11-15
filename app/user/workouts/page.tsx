@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/icon";
+import { ExerciseDemoLink } from "@/components/exercise-demo-link";
 import { StartWorkout, WorkoutLogForm } from "@/components/user/workout-execution";
 import { requireCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { faStatus } from "@/components/fa";
+import { findExerciseDemo } from "@/lib/exercises";
 
 type PageProps = { searchParams: Promise<{ log?: string; resumed?: string }> };
 
@@ -43,6 +45,7 @@ export default async function UserWorkoutsPage({ searchParams }: PageProps) {
           previous={(prev?.exerciseLogs || []).map((e: any) => ({ ...e, completedAt: prev?.completedAt?.toISOString() || null }))}
           initial={log.exerciseLogs.map((item: any) => ({
             exerciseId: item.exerciseId, name: item.exercise.name,
+            demo: findExerciseDemo(item.exercise.name),
             prescribedSets: item.exercise.sets, prescribedReps: item.exercise.reps, prescribedWeight: item.exercise.weight,
             completed: item.completed, actualSets: item.actualSets, actualReps: item.actualReps || "",
             actualWeight: item.actualWeight || "", rpe: item.rpe, notes: item.notes || "",
@@ -89,7 +92,13 @@ export default async function UserWorkoutsPage({ searchParams }: PageProps) {
             {assignment.plan.days.map((day: any) => (
               <article key={day.id}>
                 <header><span>{day.dayNumber}</span><div><h2>{day.name}</h2><p>{day.notes || `${day.exercises.length} حرکت`}</p></div></header>
-                <div>{day.exercises.map((exercise: any) => <div key={exercise.id}><span><Icon name="dumbbell" size={14} /></span><strong>{exercise.name}</strong><small>{exercise.sets || "—"} × {exercise.reps || "—"}{exercise.restSeconds ? ` · ${exercise.restSeconds} ثانیه استراحت` : ""}</small></div>)}</div>
+                <div>{day.exercises.map((exercise: { id: string; name: string; sets: number | null; reps: string | null; restSeconds: number | null }) => (
+                  <div key={exercise.id}>
+                    <span><Icon name="dumbbell" size={14} /></span>
+                    <div><strong>{exercise.name}</strong><ExerciseDemoLink name={exercise.name} demo={findExerciseDemo(exercise.name)} /></div>
+                    <small>{exercise.sets || "—"} × {exercise.reps || "—"}{exercise.restSeconds ? ` · ${exercise.restSeconds} ثانیه استراحت` : ""}</small>
+                  </div>
+                ))}</div>
                 <StartWorkout assignmentId={assignment.id} dayId={day.id} hasUnfinished={unfinishedKeys.has(`${assignment.id}:${day.id}`)} />
               </article>
             ))}
