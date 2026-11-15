@@ -1907,6 +1907,10 @@ button {
 .admin-settings-form select:focus,
 .admin-settings-form textarea:focus { border-color: #9ebc63; box-shadow: 0 0 0 3px rgba(158, 188, 99, .12); }
 .admin-inline-form > small { color: #b24e36; font-size: 12.5px; width: 100%; }
+.account-create-actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; min-width: 0; }
+.account-create { max-width: 100%; }
+.account-create input { min-width: 0; }
+.account-create > p { margin-block: 8px 0; }
 .admin-inline-form--subscription { margin-bottom: 13px; width: min(760px, 100%); }
 .admin-inline-form--subscription .admin-checkbox { align-items: center; display: flex; flex-direction: row; gap: 6px; min-width: auto; padding: 0 7px 11px; }
 .admin-checkbox input { min-height: auto; width: 13px; }
