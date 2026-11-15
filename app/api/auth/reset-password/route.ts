@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "گذرواژه جدید باید ۸ تا ۷۲ کاراکتر و شامل حرف و عدد باشد." }, { status: 400 });
   }
   const user = await prisma.user.findUnique({ where: { id: claims.userId }, select: { id: true, email: true } });
-  if (!user || user.email.toLowerCase() !== claims.email.toLowerCase()) {
+  if (!user?.email || user.email.toLowerCase() !== claims.email.toLowerCase()) {
     return NextResponse.json({ error: "لینک بازیابی نامعتبر است." }, { status: 400 });
   }
   await prisma.user.update({ where: { id: user.id }, data: { password: await hashPassword(next) } });
