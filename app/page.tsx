@@ -366,11 +366,10 @@ export default async function Home() {
 
       <footer className="site-footer">
         <div className="container site-footer__main">
-          <Brand light />
+          <Brand light stacked />
           <p>{t("landing.movementManaged")}</p>
           <div><a href="#platform">{t("landing.platform")}</a><a href="#for-you">{t("landing.forYou")}</a><Link href="/gyms">{t("footer.gyms")}</Link><Link href="/trainers">{t("footer.trainers")}</Link><Link href="/about">{t("footer.about")}</Link><Link href="/contact">{t("footer.contact")}</Link><Link href="/help">{t("footer.help")}</Link><Link href="/terms">{t("footer.terms")}</Link><Link href="/privacy">{t("footer.privacy")}</Link><Link href="/login">{t("landing.logIn")}</Link></div>
         </div>
-        <div className="site-footer__giant" aria-hidden="true">KooGYMaa</div>
         <div className="container site-footer__bottom"><span>© ۱۴۰۵ کوجیما</span><span>{t("landing.madeForPeople")}</span></div>
       </footer>
     </main>
